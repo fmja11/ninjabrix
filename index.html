@@ -549,7 +549,7 @@
   // ===== SUPABASE CONNECTION =====
   const SUPABASE_URL = "https://zwliqmsvihfdkyaadnsi.supabase.co";
   const SUPABASE_KEY = "sb_publishable_hdU4cQVhQvPsyqBr46iycg_mty30Cfv";
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
 <script>
   // ===== TRANSLATIONS =====
@@ -710,7 +710,7 @@
     const city = document.getElementById('sellCity').value.trim();
     if(!title || !price || !city){ alert(t('fillRequired')); return; }
 
-    const { error } = await supabase.from('listings').insert({
+    const { error } = await db.from('listings').insert({
       seller_id: currentUser.id,
       title: title,
       description: document.getElementById('sellDesc').value.trim(),
@@ -762,38 +762,43 @@
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
     if(!email || !password){ alert(t('enterEmail')); return; }
+    try{
 
     if(authTab === 'signup'){
       const name = document.getElementById('authName').value.trim() || t('newUser');
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await db.auth.signUp({ email, password });
       if(error){ alert(error.message); return; }
       if(data.user){
         // Create the matching profile row — role is fixed at 'buyer' server-side
         // regardless of what's picked here unless you manually promote an account
         // to 'owner' in the Supabase table editor (see schema notes).
         const role = pickedRole.toLowerCase() === 'seller' ? 'seller' : 'buyer';
-        await supabase.from('profiles').insert({ id: data.user.id, full_name: name, role: role });
+        await db.from('profiles').insert({ id: data.user.id, full_name: name, role: role });
         if(!data.session){ alert('Check your email to confirm your account, then sign in.'); document.getElementById('authOverlay').classList.remove('open'); return; }
       }
     } else {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await db.auth.signInWithPassword({ email, password });
       if(error){ alert(error.message); return; }
     }
     document.getElementById('authOverlay').classList.remove('open');
     await refreshCurrentUser();
+    }catch(err){
+      alert('Something went wrong: ' + err.message);
+      console.error(err);
+    }
   }
 
   async function signOut(){
-    await supabase.auth.signOut();
+    await db.auth.signOut();
     currentUser = null;
     document.getElementById('accountMenu').classList.remove('open');
     renderAccountState();
   }
 
   async function refreshCurrentUser(){
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await db.auth.getSession();
     if(!session){ currentUser = null; renderAccountState(); return; }
-    const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+    const { data: profile } = await db.from('profiles').select('*').eq('id', session.user.id).single();
     currentUser = {
       id: session.user.id,
       email: session.user.email,
@@ -833,11 +838,11 @@
     // Counts come straight from the database. RLS still enforces owner-only
     // access server-side, so a non-owner gets nothing back even if they call this.
     const [listingsRes, sellersRes, salesRes, signupsRes, pendingRes] = await Promise.all([
-      supabase.from('listings').select('id', { count:'exact', head:true }).eq('status','active'),
-      supabase.from('profiles').select('id', { count:'exact', head:true }).eq('role','seller'),
-      supabase.from('sales').select('commission_amount, status'),
-      supabase.from('profiles').select('full_name, role, created_at').order('created_at', { ascending:false }).limit(5),
-      supabase.from('listings').select('title, price, city').eq('status','pending_review').limit(5)
+      db.from('listings').select('id', { count:'exact', head:true }).eq('status','active'),
+      db.from('profiles').select('id', { count:'exact', head:true }).eq('role','seller'),
+      db.from('sales').select('commission_amount, status'),
+      db.from('profiles').select('full_name, role, created_at').order('created_at', { ascending:false }).limit(5),
+      db.from('listings').select('title, price, city').eq('status','pending_review').limit(5)
     ]);
 
     document.getElementById('statListings').textContent = listingsRes.count ?? 0;
