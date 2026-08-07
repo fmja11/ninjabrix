@@ -1529,12 +1529,28 @@
     await refreshCurrentUser();
   }
 
-  // Supabase sends the user back with a recovery token — catch it and prompt
+  // Supabase returns the user with a recovery token in the URL hash.
+  // The client may process it before any listener attaches, so check the
+  // URL directly as well as listening for the event.
+  function checkForRecovery(){
+    const hash = window.location.hash || '';
+    const query = window.location.search || '';
+    if(hash.includes('type=recovery') || query.includes('type=recovery')){
+      document.getElementById('resetOverlay').classList.add('open');
+      // Clean the token out of the address bar
+      history.replaceState(null, '', window.location.pathname);
+      return true;
+    }
+    return false;
+  }
+
   db.auth.onAuthStateChange((event)=>{
     if(event === 'PASSWORD_RECOVERY'){
       document.getElementById('resetOverlay').classList.add('open');
     }
   });
+
+  checkForRecovery();
 
   // ===== EDIT LISTING =====
   let editingListingId = null;
