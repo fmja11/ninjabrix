@@ -486,7 +486,9 @@
 
 <footer>
   <div class="brand">NINJABRIX</div>
-  <p data-i18n="footerLine">Independent marketplace for ninja-brick collectors. Not affiliated with any toy or media brand.</p>
+  <p><span data-i18n="footerLine">Independent marketplace for ninja-brick collectors. Not affiliated with any toy or media brand.</span>
+     <br><a href="/privacy.html" style="color:#EDE9DD;" data-i18n="privacyPolicy">Privacy Policy</a> ·
+     <a href="/terms.html" style="color:#EDE9DD;" data-i18n="termsOfService">Terms of Service</a></p>
 </footer>
 
 <div class="sell-overlay" id="sellOverlay">
@@ -649,6 +651,10 @@
       <div class="admin-empty" id="adminPending" data-i18n="nothingReview">Nothing to review.</div>
     </div>
     <div class="admin-section">
+      <h4 data-i18n="openReports">Reported Listings</h4>
+      <div class="admin-empty" id="adminReports" data-i18n="noReports">No open reports.</div>
+    </div>
+    <div class="admin-section">
       <h4 data-i18n="payoutQueue">Payout Queue</h4>
       <div class="admin-empty" id="adminPayouts" data-i18n="noPayouts">No commission payouts owed yet.</div>
     </div>
@@ -728,7 +734,11 @@
       accountSettings:"Account Settings", dangerZone:"Danger Zone", deleteAccount:"Delete My Account",
       deleteAccountWarn:"Deleting your account removes your listings and profile permanently. This can't be undone.",
       confirmDeleteAccount:"Permanently delete your account and all your listings?",
-      typeDeleteToConfirm:"Type DELETE to confirm.", accountDeleted:"Your account has been deleted.", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
+      typeDeleteToConfirm:"Type DELETE to confirm.", accountDeleted:"Your account has been deleted.",
+      privacyPolicy:"Privacy Policy", termsOfService:"Terms of Service",
+      openReports:"Reported Listings", noReports:"No open reports.",
+      removeListing:"Remove listing", dismissReport:"Dismiss",
+      confirmRemoveReported:"Remove this listing from the marketplace?", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
       mySales:"My Sales & Commission", mySalesSub:"Every sale you've recorded, and the 5% owed on each.",
       totalSold:"Total sold", commissionOwed:"Commission owed", noSalesYet:"No sales recorded yet.",
       paid:"Paid", unpaid:"Unpaid",
@@ -781,7 +791,11 @@
       accountSettings:"إعدادات الحساب", dangerZone:"منطقة الخطر", deleteAccount:"حذف حسابي",
       deleteAccountWarn:"حذف حسابك يزيل إعلاناتك وملفك الشخصي نهائياً. لا يمкан التراجع عن هذا.",
       confirmDeleteAccount:"حذف حسابك وجميع إعلاناتك نهائياً؟",
-      typeDeleteToConfirm:"اكتب DELETE للتأكيد.", accountDeleted:"تم حذف حسابك.", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
+      typeDeleteToConfirm:"اكتب DELETE للتأكيد.", accountDeleted:"تم حذف حسابك.",
+      privacyPolicy:"سياسة الخصوصية", termsOfService:"شروط الاستخدام",
+      openReports:"الإعلانات المُبلّغ عنها", noReports:"لا توجد بلاغات مفتوحة.",
+      removeListing:"إزالة الإعلان", dismissReport:"تجاهل",
+      confirmRemoveReported:"إزالة هذا الإعلان من السوق؟", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
       mySales:"مبيعاتي والعمولة", mySalesSub:"كل عملية بيع سجّلتها، والعمولة المستحقة 5% على كل منها.",
       totalSold:"إجمالي المبيعات", commissionOwed:"العمولة المستحقة", noSalesYet:"لم تسجّل أي مبيعات بعد.",
       paid:"مدفوعة", unpaid:"غير مدفوعة",
@@ -1074,6 +1088,22 @@
       db.from('profiles').select('full_name, role, created_at').order('created_at', { ascending:false }).limit(5),
       db.from('listings').select('title, price, city').eq('status','pending_review').limit(5)
     ]);
+
+    const { data: reports } = await db.from('reports')
+      .select('*, listings(title, id)')
+      .eq('status','open')
+      .order('created_at', { ascending:false })
+      .limit(10);
+
+    const reportsEl = document.getElementById('adminReports');
+    reportsEl.innerHTML = (reports && reports.length)
+      ? reports.map(r=>`<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;">
+          <div style="font-weight:600;">${escapeHtml(r.listings ? r.listings.title : t('listingRemoved'))}</div>
+          <div style="color:var(--muted);margin:4px 0;">${escapeHtml(r.reason)}</div>
+          <button class="link-btn danger" onclick="removeReportedListing('${r.listings ? r.listings.id : ''}','${r.id}')">${t('removeListing')}</button>
+          <button class="link-btn" style="margin-inline-start:14px;" onclick="dismissReport('${r.id}')">${t('dismissReport')}</button>
+        </div>`).join('')
+      : t('noReports');
 
     document.getElementById('statListings').textContent = listingsRes.count ?? 0;
     document.getElementById('statSellers').textContent = sellersRes.count ?? 0;
@@ -1392,6 +1422,19 @@
     renderAccountState();
     await loadListings();
     alert(t('accountDeleted'));
+  }
+
+  async function removeReportedListing(listingId, reportId){
+    if(!confirm(t('confirmRemoveReported'))) return;
+    if(listingId){ await db.from('listings').update({ status:'removed' }).eq('id', listingId); }
+    await db.from('reports').update({ status:'actioned' }).eq('id', reportId);
+    await loadAdminData();
+    await loadListings();
+  }
+
+  async function dismissReport(reportId){
+    await db.from('reports').update({ status:'dismissed' }).eq('id', reportId);
+    await loadAdminData();
   }
 
   // ===== SUPPORT WIDGET =====
