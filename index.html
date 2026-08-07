@@ -670,7 +670,7 @@
       markSold:"Mark as Sold", markSoldTitle:"Mark as Sold", finalPriceLbl:"Final sale price (SAR)",
       soldNotice:"Ninjabrix charges 5% of the final sale price. You'll be invoiced for it — payment is arranged with you directly.",
       confirmSale:"Confirm Sale", salePrice:"Sale price", ninjabrixFee:"Ninjabrix fee (5%)", youKeep:"You keep",
-      enterSalePrice:"Enter the final sale price.", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
+      enterSalePrice:"Enter the final sale price.", checkEmail:"Check your email to confirm your account, then sign in.", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
       mySales:"My Sales & Commission", mySalesSub:"Every sale you've recorded, and the 5% owed on each.",
       totalSold:"Total sold", commissionOwed:"Commission owed", noSalesYet:"No sales recorded yet.",
       paid:"Paid", unpaid:"Unpaid",
@@ -715,7 +715,7 @@
       markSold:"تم البيع", markSoldTitle:"تسجيل عملية بيع", finalPriceLbl:"سعر البيع النهائي (ريال)",
       soldNotice:"تأخذ نينجابركس 5% من سعر البيع النهائي. ستصلك فاتورة بها ويتم الدفع بالتنسيق معك مباشرة.",
       confirmSale:"تأكيد البيع", salePrice:"سعر البيع", ninjabrixFee:"عمولة نينجابركس (5%)", youKeep:"تحصل على",
-      enterSalePrice:"أدخل سعر البيع النهائي.", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
+      enterSalePrice:"أدخل سعر البيع النهائي.", checkEmail:"تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل الدخول.", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
       mySales:"مبيعاتي والعمولة", mySalesSub:"كل عملية بيع سجّلتها، والعمولة المستحقة 5% على كل منها.",
       totalSold:"إجمالي المبيعات", commissionOwed:"العمولة المستحقة", noSalesYet:"لم تسجّل أي مبيعات بعد.",
       paid:"مدفوعة", unpaid:"غير مدفوعة",
@@ -920,15 +920,20 @@
 
     if(authTab === 'signup'){
       const name = document.getElementById('authName').value.trim() || t('newUser');
-      const { data, error } = await db.auth.signUp({ email, password });
+      // The profile row is created automatically by a database trigger
+      // (handle_new_user), which reads these metadata fields. Owner role is
+      // never self-assignable — it's set manually in the Supabase table editor.
+      const role = pickedRole.toLowerCase() === 'seller' ? 'seller' : 'buyer';
+      const { data, error } = await db.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name, role: role } }
+      });
       if(error){ alert(error.message); return; }
-      if(data.user){
-        // Create the matching profile row — role is fixed at 'buyer' server-side
-        // regardless of what's picked here unless you manually promote an account
-        // to 'owner' in the Supabase table editor (see schema notes).
-        const role = pickedRole.toLowerCase() === 'seller' ? 'seller' : 'buyer';
-        await db.from('profiles').insert({ id: data.user.id, full_name: name, role: role });
-        if(!data.session){ alert('Check your email to confirm your account, then sign in.'); document.getElementById('authOverlay').classList.remove('open'); return; }
+      if(data.user && !data.session){
+        alert(t('checkEmail'));
+        document.getElementById('authOverlay').classList.remove('open');
+        return;
       }
     } else {
       const { data, error } = await db.auth.signInWithPassword({ email, password });
