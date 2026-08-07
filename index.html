@@ -281,6 +281,11 @@
   .support-input-row input{ flex:1; border:0; padding:11px 12px; font-size:13px; font-family:inherit; outline:0; }
   .support-input-row button{ background:var(--ink); color:#fff; border:0; padding:0 16px; font-family:'Teko',sans-serif; letter-spacing:1px; text-transform:uppercase; }
 
+  .photo-preview{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .photo-preview img{ width:64px; height:64px; object-fit:cover; border:1px solid var(--line); }
+  .thumb img{ width:100%; height:100%; object-fit:cover; }
+  .upload-status{ font-size:12px; color:var(--muted); margin-top:6px; }
+
   .contact-btn{
     margin-top:10px; width:100%; background:var(--ink); color:#EDE9DD; border:0; padding:9px;
     font-family:'Teko',sans-serif; font-size:15px; letter-spacing:1px; text-transform:uppercase;
@@ -479,6 +484,11 @@
       <div class="field"><label data-i18n="cityLbl">City</label><input type="text" id="sellCity" placeholder="Dammam"></div>
     </div>
     <div class="field"><label data-i18n="descLbl">Description</label><textarea id="sellDesc" data-i18n-ph="descPh"></textarea></div>
+    <div class="field">
+      <label data-i18n="photosLbl">Photos (up to 4)</label>
+      <input type="file" id="sellPhotos" accept="image/*" multiple onchange="previewPhotos()">
+      <div class="photo-preview" id="photoPreview"></div>
+    </div>
     <div class="sell-actions">
       <button class="btn-cancel" onclick="document.getElementById('sellOverlay').classList.remove('open')" data-i18n="cancel">Cancel</button>
       <button class="btn-submit" onclick="submitListing()" data-i18n="postListing2">Post Listing</button>
@@ -620,6 +630,7 @@
       send:"Send", searchPh:"Search dojo sets, shards, parts…", supportPh:"Type a question…",
       newUser:"New User", enterEmail:"Enter both your email and password to continue.",
       contactSeller:"Contact Seller", mustSignInMsg:"Please sign in to message a seller.",
+      photosLbl:"Photos (up to 4)", uploading:"Uploading…",
       cantMessageSelf:"This is your own listing.", typeMessage:"Type a message…",
       asBuyer:"You're the buyer", asSeller:"You're the seller", listingRemoved:"Listing removed",
       ownerOnly:"Owner access only.",
@@ -657,6 +668,7 @@
       send:"إرسال", searchPh:"ابحث عن مجموعات، شظايا، قطع…", supportPh:"اكتب سؤالك…",
       newUser:"مستخدم جديد", enterEmail:"أدخل بريدك الإلكتروني وكلمة المرور للمتابعة.",
       contactSeller:"تواصل مع البائع", mustSignInMsg:"الرجاء تسجيل الدخول لمراسلة البائع.",
+      photosLbl:"الصور (حتى ٤)", uploading:"جاري الرفع…",
       cantMessageSelf:"هذا إعلانك أنت.", typeMessage:"اكتب رسالة…",
       asBuyer:"أنت المشتري", asSeller:"أنت البائع", listingRemoved:"تم حذف الإعلان",
       ownerOnly:"هذه الصلاحية للمالك فقط.",
@@ -692,7 +704,7 @@
       const tone = tones[l.category] || 'var(--muted)';
       el.innerHTML = `
         <div class="thumb" style="background:linear-gradient(160deg, #EFEBDF, #E2DCC9); color:${tone}">
-          <div class="glyph-tile"></div>
+          ${l.photo_urls && l.photo_urls.length ? `<img src="${l.photo_urls[0]}" alt="${l.title.replace(/"/g,'&quot;')}" loading="lazy">` : '<div class="glyph-tile"></div>'}
         </div>
         <div class="l-body">
           <div class="l-title">${l.title}</div>
@@ -746,6 +758,32 @@
   loadListings();
 
   // ===== POST A LISTING (saves to Supabase) =====
+  function previewPhotos(){
+    const files = Array.from(document.getElementById('sellPhotos').files).slice(0,4);
+    const box = document.getElementById('photoPreview');
+    box.innerHTML = '';
+    files.forEach(f=>{
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(f);
+      box.appendChild(img);
+    });
+  }
+
+  async function uploadPhotos(){
+    const files = Array.from(document.getElementById('sellPhotos').files).slice(0,4);
+    if(files.length === 0) return [];
+    const urls = [];
+    for(const file of files){
+      const ext = file.name.split('.').pop();
+      const path = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const { error } = await db.storage.from('listing-photos').upload(path, file);
+      if(error){ console.error('Upload failed:', error.message); continue; }
+      const { data } = db.storage.from('listing-photos').getPublicUrl(path);
+      urls.push(data.publicUrl);
+    }
+    return urls;
+  }
+
   async function submitListing(){
     if(!currentUser){ alert(t('mustSignIn')); return; }
     const title = document.getElementById('sellTitle').value.trim();
@@ -753,24 +791,42 @@
     const city = document.getElementById('sellCity').value.trim();
     if(!title || !price || !city){ alert(t('fillRequired')); return; }
 
-    const { error } = await db.from('listings').insert({
-      seller_id: currentUser.id,
-      title: title,
-      description: document.getElementById('sellDesc').value.trim(),
-      category: document.getElementById('sellCategory').value,
-      condition: document.getElementById('sellCondition').value,
-      price: Number(price),
-      city: city,
-      status: 'active'
-    });
-    if(error){ alert(error.message); return; }
+    const btn = document.querySelector('#sellOverlay .btn-submit');
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = t('uploading');
 
-    document.getElementById('sellTitle').value = '';
-    document.getElementById('sellPrice').value = '';
-    document.getElementById('sellCity').value = '';
-    document.getElementById('sellDesc').value = '';
-    document.getElementById('sellOverlay').classList.remove('open');
-    await loadListings();
+    try{
+      const photoUrls = await uploadPhotos();
+
+      const { error } = await db.from('listings').insert({
+        seller_id: currentUser.id,
+        title: title,
+        description: document.getElementById('sellDesc').value.trim(),
+        category: document.getElementById('sellCategory').value,
+        condition: document.getElementById('sellCondition').value,
+        price: Number(price),
+        city: city,
+        photo_urls: photoUrls,
+        status: 'active'
+      });
+      if(error){ alert(error.message); return; }
+
+      document.getElementById('sellTitle').value = '';
+      document.getElementById('sellPrice').value = '';
+      document.getElementById('sellCity').value = '';
+      document.getElementById('sellDesc').value = '';
+      document.getElementById('sellPhotos').value = '';
+      document.getElementById('photoPreview').innerHTML = '';
+      document.getElementById('sellOverlay').classList.remove('open');
+      await loadListings();
+    }catch(err){
+      alert('Something went wrong: ' + err.message);
+      console.error(err);
+    }finally{
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
   }
 
   // ===== ACCOUNT / AUTH (real Supabase auth) =====
