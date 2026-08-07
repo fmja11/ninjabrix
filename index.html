@@ -473,11 +473,10 @@
       <div class="role-pick">
         <div class="role-opt active" data-role="Buyer" onclick="pickRole(this)" data-i18n="roleBuyer">Buyer</div>
         <div class="role-opt" data-role="Seller" onclick="pickRole(this)" data-i18n="roleSeller">Seller</div>
-        <div class="role-opt" data-role="Owner" onclick="pickRole(this)" data-i18n="roleOwner">Owner (demo)</div>
       </div>
     </div>
     <div class="field"><label data-i18n="emailLbl">Email</label><input type="email" id="authEmail" placeholder="you@example.com"></div>
-    <div class="field"><label data-i18n="passwordLbl">Password</label><input type="password" placeholder="••••••••"></div>
+    <div class="field"><label data-i18n="passwordLbl">Password</label><input type="password" id="authPassword" placeholder="••••••••"></div>
     <div class="sell-actions">
       <button class="btn-cancel" onclick="document.getElementById('authOverlay').classList.remove('open')" data-i18n="cancel">Cancel</button>
       <button class="btn-submit" onclick="doAuth()" data-i18n="continueBtn">Continue</button>
@@ -547,6 +546,13 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ===== SUPABASE CONNECTION =====
+  const SUPABASE_URL = "https://zwliqmsvihfdkyaadnsi.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_hdU4cQVhQvPsyqBr46iycg_mty30Cfv";
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
 <script>
   // ===== TRANSLATIONS =====
   const translations = {
@@ -636,9 +642,9 @@
     renderAccountState();
   }
 
-  // ===== MARKETPLACE (starts empty — real listings come from your backend/database) =====
-  const listings = [];
-  const tones = { ember:"var(--ember-d)", jade:"var(--jade)", gold:"var(--gold)", stone:"#8A8272" };
+  // ===== MARKETPLACE (real data from Supabase) =====
+  let listings = [];
+  const tones = { dojo:"var(--ember-d)", elemental:"var(--jade)", rare:"var(--gold)", bundle:"var(--jade)", parts:"#8A8272" };
 
   const grid = document.getElementById('grid');
   const emptyState = document.getElementById('emptyState');
@@ -648,25 +654,37 @@
     items.forEach(l=>{
       const el = document.createElement('div');
       el.className = 'listing';
+      const tone = tones[l.category] || 'var(--muted)';
       el.innerHTML = `
-        <div class="thumb" style="background:linear-gradient(160deg, #EFEBDF, #E2DCC9); color:${tones[l.tone]}">
+        <div class="thumb" style="background:linear-gradient(160deg, #EFEBDF, #E2DCC9); color:${tone}">
           <div class="glyph-tile"></div>
         </div>
         <div class="l-body">
-          <div class="l-title">${l.t}</div>
-          <div class="l-price">${l.p.toLocaleString()} SAR</div>
-          <div class="l-meta"><span class="city">${l.city}</span><span>2h</span></div>
+          <div class="l-title">${l.title}</div>
+          <div class="l-price">${Number(l.price).toLocaleString()} SAR</div>
+          <div class="l-meta"><span class="city">${l.city}</span><span>${new Date(l.created_at).toLocaleDateString()}</span></div>
         </div>`;
       grid.appendChild(el);
     });
+  }
+
+  async function loadListings(){
+    const { data, error } = await supabase
+      .from('listings')
+      .select('*')
+      .eq('status', 'active')
+      .order('created_at', { ascending:false });
+    if(error){ console.error('Failed to load listings:', error.message); return; }
+    listings = data || [];
+    applyFilters();
   }
 
   let currentCat = 'all';
   function applyFilters(){
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
     const filtered = listings.filter(l=>
-      (currentCat==='all' || l.cat===currentCat) &&
-      (!q || l.t.toLowerCase().includes(q))
+      (currentCat==='all' || l.category===currentCat) &&
+      (!q || l.title.toLowerCase().includes(q))
     );
     render(filtered);
   }
@@ -686,10 +704,10 @@
     chip.addEventListener('click', ()=>selectCategory(chip.dataset.cat));
   });
 
-  render(listings);
+  loadListings();
 
-  // ===== ACCOUNT / AUTH (demo only — no real backend) =====
-  let currentUser = null; // { name, email, role }
+  // ===== ACCOUNT / AUTH (real Supabase auth) =====
+  let currentUser = null; // { name, email, role, id }
   let authTab = 'signin';
   let pickedRole = 'Buyer';
 
@@ -715,23 +733,52 @@
     el.classList.add('active');
     pickedRole = el.dataset.role;
   }
-  function doAuth(){
+
+  async function doAuth(){
     const email = document.getElementById('authEmail').value.trim();
-    if(!email){ alert(t('enterEmail')); return; }
+    const password = document.getElementById('authPassword').value;
+    if(!email || !password){ alert(t('enterEmail')); return; }
+
     if(authTab === 'signup'){
       const name = document.getElementById('authName').value.trim() || t('newUser');
-      currentUser = { name, email, role: pickedRole };
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if(error){ alert(error.message); return; }
+      if(data.user){
+        // Create the matching profile row — role is fixed at 'buyer' server-side
+        // regardless of what's picked here unless you manually promote an account
+        // to 'owner' in the Supabase table editor (see schema notes).
+        const role = pickedRole.toLowerCase() === 'seller' ? 'seller' : 'buyer';
+        await supabase.from('profiles').insert({ id: data.user.id, full_name: name, role: role });
+        if(!data.session){ alert('Check your email to confirm your account, then sign in.'); document.getElementById('authOverlay').classList.remove('open'); return; }
+      }
     } else {
-      currentUser = { name: email.split('@')[0], email, role: 'Buyer' };
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if(error){ alert(error.message); return; }
     }
     document.getElementById('authOverlay').classList.remove('open');
-    renderAccountState();
+    await refreshCurrentUser();
   }
-  function signOut(){
+
+  async function signOut(){
+    await supabase.auth.signOut();
     currentUser = null;
     document.getElementById('accountMenu').classList.remove('open');
     renderAccountState();
   }
+
+  async function refreshCurrentUser(){
+    const { data: { session } } = await supabase.auth.getSession();
+    if(!session){ currentUser = null; renderAccountState(); return; }
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+    currentUser = {
+      id: session.user.id,
+      email: session.user.email,
+      name: profile ? profile.full_name : session.user.email.split('@')[0],
+      role: profile ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : 'Buyer'
+    };
+    renderAccountState();
+  }
+
   function renderAccountState(){
     const btn = document.getElementById('acctBtn');
     const signedOut = document.getElementById('amSignedOut');
@@ -751,6 +798,8 @@
       signedIn.style.display = 'none';
     }
   }
+
+  refreshCurrentUser();
 
   function openMessages(){
     document.getElementById('accountMenu').classList.remove('open');
