@@ -286,6 +286,13 @@
   .thumb img{ width:100%; height:100%; object-fit:cover; }
   .upload-status{ font-size:12px; color:var(--muted); margin-top:6px; }
 
+  .commission-preview{ background:#F3EEDD; border:1px solid var(--line); padding:14px; margin-bottom:16px; font-size:13.5px; display:none; }
+  .commission-preview.show{ display:block; }
+  .commission-preview .row{ display:flex; justify-content:space-between; padding:4px 0; }
+  .commission-preview .row.total{ border-top:1px solid var(--line); margin-top:6px; padding-top:8px; font-weight:600; }
+  .sale-row{ padding:12px 0; border-bottom:1px solid var(--line); font-size:13.5px; display:flex; justify-content:space-between; gap:10px; }
+  .sale-row .sr-com{ color:var(--ember-d); font-weight:600; white-space:nowrap; }
+
   .contact-btn{
     margin-top:10px; width:100%; background:var(--ink); color:#EDE9DD; border:0; padding:9px;
     font-family:'Teko',sans-serif; font-size:15px; letter-spacing:1px; text-transform:uppercase;
@@ -385,7 +392,7 @@
           <div class="am-user"><div class="am-avatar" id="amAvatar">N</div><div><div class="am-name" id="amName">—</div><div class="am-role" id="amRole">Buyer</div></div></div>
           <a class="am-link" id="amAdminLink" href="#" onclick="openAdmin();return false;" style="display:none;" data-i18n="ownerDash">Owner Dashboard</a>
           <a class="am-link" href="#" onclick="openMessages();return false;" data-i18n="messages">Messages</a>
-          <a class="am-link" href="#" data-i18n="myListings">My Listings</a>
+          <a class="am-link" href="#" onclick="openMySales();return false;" data-i18n="mySales">My Sales &amp; Commission</a>
           <a class="am-link" href="#" onclick="signOut();return false;" data-i18n="signOut">Sign Out</a>
         </div>
       </div>
@@ -496,6 +503,20 @@
   </div>
 </div>
 
+<div class="sell-overlay" id="soldOverlay">
+  <div class="sell-panel">
+    <h2 data-i18n="markSoldTitle">Mark as Sold</h2>
+    <div class="sub" id="soldListingName"></div>
+    <div class="notice" data-i18n="soldNotice">Ninjabrix charges 5% of the final sale price. You'll be invoiced for it — payment is arranged with you directly.</div>
+    <div class="field"><label data-i18n="finalPriceLbl">Final sale price (SAR)</label><input type="number" id="soldPrice" placeholder="0" oninput="updateCommissionPreview()"></div>
+    <div class="commission-preview" id="commissionPreview"></div>
+    <div class="sell-actions">
+      <button class="btn-cancel" onclick="document.getElementById('soldOverlay').classList.remove('open')" data-i18n="cancel">Cancel</button>
+      <button class="btn-submit" onclick="confirmSold()" data-i18n="confirmSale">Confirm Sale</button>
+    </div>
+  </div>
+</div>
+
 <div class="sell-overlay" id="authOverlay">
   <div class="sell-panel">
     <div class="auth-tabs">
@@ -538,6 +559,21 @@
           <button onclick="sendMessage()" data-i18n="send">Send</button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="sell-overlay" id="mySalesOverlay">
+  <div class="sell-panel">
+    <h2 data-i18n="mySales">My Sales &amp; Commission</h2>
+    <div class="sub" data-i18n="mySalesSub">Every sale you've recorded, and the 5% owed on each.</div>
+    <div class="admin-stats" style="margin-bottom:18px;">
+      <div class="admin-stat"><div class="val" id="mySalesTotal">—</div><div class="lbl" data-i18n="totalSold">Total sold</div></div>
+      <div class="admin-stat"><div class="val" id="myCommissionOwed">—</div><div class="lbl" data-i18n="commissionOwed">Commission owed</div></div>
+    </div>
+    <div id="mySalesList"></div>
+    <div class="sell-actions" style="margin-top:16px;">
+      <button class="btn-cancel" onclick="document.getElementById('mySalesOverlay').classList.remove('open')" data-i18n="close">Close</button>
     </div>
   </div>
 </div>
@@ -631,6 +667,13 @@
       newUser:"New User", enterEmail:"Enter both your email and password to continue.",
       contactSeller:"Contact Seller", mustSignInMsg:"Please sign in to message a seller.",
       photosLbl:"Photos (up to 4)", uploading:"Uploading…",
+      markSold:"Mark as Sold", markSoldTitle:"Mark as Sold", finalPriceLbl:"Final sale price (SAR)",
+      soldNotice:"Ninjabrix charges 5% of the final sale price. You'll be invoiced for it — payment is arranged with you directly.",
+      confirmSale:"Confirm Sale", salePrice:"Sale price", ninjabrixFee:"Ninjabrix fee (5%)", youKeep:"You keep",
+      enterSalePrice:"Enter the final sale price.", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
+      mySales:"My Sales & Commission", mySalesSub:"Every sale you've recorded, and the 5% owed on each.",
+      totalSold:"Total sold", commissionOwed:"Commission owed", noSalesYet:"No sales recorded yet.",
+      paid:"Paid", unpaid:"Unpaid",
       cantMessageSelf:"This is your own listing.", typeMessage:"Type a message…",
       asBuyer:"You're the buyer", asSeller:"You're the seller", listingRemoved:"Listing removed",
       ownerOnly:"Owner access only.",
@@ -669,6 +712,13 @@
       newUser:"مستخدم جديد", enterEmail:"أدخل بريدك الإلكتروني وكلمة المرور للمتابعة.",
       contactSeller:"تواصل مع البائع", mustSignInMsg:"الرجاء تسجيل الدخول لمراسلة البائع.",
       photosLbl:"الصور (حتى ٤)", uploading:"جاري الرفع…",
+      markSold:"تم البيع", markSoldTitle:"تسجيل عملية بيع", finalPriceLbl:"سعر البيع النهائي (ريال)",
+      soldNotice:"تأخذ نينجابركس 5% من سعر البيع النهائي. ستصلك فاتورة بها ويتم الدفع بالتنسيق معك مباشرة.",
+      confirmSale:"تأكيد البيع", salePrice:"سعر البيع", ninjabrixFee:"عمولة نينجابركس (5%)", youKeep:"تحصل على",
+      enterSalePrice:"أدخل سعر البيع النهائي.", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
+      mySales:"مبيعاتي والعمولة", mySalesSub:"كل عملية بيع سجّلتها، والعمولة المستحقة 5% على كل منها.",
+      totalSold:"إجمالي المبيعات", commissionOwed:"العمولة المستحقة", noSalesYet:"لم تسجّل أي مبيعات بعد.",
+      paid:"مدفوعة", unpaid:"غير مدفوعة",
       cantMessageSelf:"هذا إعلانك أنت.", typeMessage:"اكتب رسالة…",
       asBuyer:"أنت المشتري", asSeller:"أنت البائع", listingRemoved:"تم حذف الإعلان",
       ownerOnly:"هذه الصلاحية للمالك فقط.",
@@ -713,8 +763,13 @@
           <button class="contact-btn" data-listing="${l.id}" data-seller="${l.seller_id}" data-title="${l.title.replace(/"/g,'&quot;')}">${t('contactSeller')}</button>
         </div>`;
       const btn = el.querySelector('.contact-btn');
-      if(currentUser && currentUser.id === l.seller_id){ btn.style.display = 'none'; }
-      btn.addEventListener('click', ()=> startConversation(l.id, l.seller_id, l.title));
+      if(currentUser && currentUser.id === l.seller_id){
+        btn.textContent = t('markSold');
+        btn.style.background = 'var(--jade)';
+        btn.addEventListener('click', ()=> openSoldPanel(l.id, l.title, l.price));
+      } else {
+        btn.addEventListener('click', ()=> startConversation(l.id, l.seller_id, l.title));
+      }
       grid.appendChild(el);
     });
   }
@@ -1091,6 +1146,92 @@
     });
     if(error){ alert(error.message); return; }
     await loadMessages();
+  }
+
+
+  // ===== SALES & COMMISSION =====
+  let soldListingId = null;
+
+  function openSoldPanel(listingId, title, price){
+    soldListingId = listingId;
+    document.getElementById('soldListingName').textContent = title;
+    document.getElementById('soldPrice').value = price || '';
+    document.getElementById('soldOverlay').classList.add('open');
+    updateCommissionPreview();
+  }
+
+  function updateCommissionPreview(){
+    const price = Number(document.getElementById('soldPrice').value) || 0;
+    const box = document.getElementById('commissionPreview');
+    if(price <= 0){ box.classList.remove('show'); return; }
+    const commission = Math.round(price * 0.05 * 100) / 100;
+    const payout = Math.round(price * 0.95 * 100) / 100;
+    box.innerHTML = `
+      <div class="row"><span>${t('salePrice')}</span><span>${price.toLocaleString()} SAR</span></div>
+      <div class="row"><span>${t('ninjabrixFee')}</span><span>-${commission.toLocaleString()} SAR</span></div>
+      <div class="row total"><span>${t('youKeep')}</span><span>${payout.toLocaleString()} SAR</span></div>`;
+    box.classList.add('show');
+  }
+
+  async function confirmSold(){
+    if(!currentUser || !soldListingId) return;
+    const price = Number(document.getElementById('soldPrice').value);
+    if(!price || price <= 0){ alert(t('enterSalePrice')); return; }
+
+    // Find the buyer from the conversation on this listing, if there is one.
+    // Falls back to the seller's own id when the sale happened off-platform.
+    const { data: convo } = await db.from('conversations')
+      .select('buyer_id')
+      .eq('listing_id', soldListingId)
+      .limit(1)
+      .maybeSingle();
+
+    const { error: saleError } = await db.from('sales').insert({
+      listing_id: soldListingId,
+      buyer_id: convo ? convo.buyer_id : currentUser.id,
+      seller_id: currentUser.id,
+      sale_price: price,
+      status: 'pending'
+    });
+    if(saleError){ alert(saleError.message); return; }
+
+    await db.from('listings').update({ status: 'sold' }).eq('id', soldListingId);
+
+    document.getElementById('soldOverlay').classList.remove('open');
+    soldListingId = null;
+    await loadListings();
+    alert(t('saleRecorded'));
+  }
+
+  async function openMySales(){
+    document.getElementById('accountMenu').classList.remove('open');
+    if(!currentUser){ alert(t('mustSignIn')); return; }
+    document.getElementById('mySalesOverlay').classList.add('open');
+
+    const { data, error } = await db.from('sales')
+      .select('*, listings(title)')
+      .eq('seller_id', currentUser.id)
+      .order('created_at', { ascending:false });
+    if(error){ console.error(error.message); return; }
+
+    const sales = data || [];
+    const totalSold = sales.reduce((sum,s)=> sum + Number(s.sale_price||0), 0);
+    const owed = sales.filter(s=> s.status === 'pending')
+                      .reduce((sum,s)=> sum + Number(s.commission_amount||0), 0);
+
+    document.getElementById('mySalesTotal').textContent = totalSold.toLocaleString() + ' SAR';
+    document.getElementById('myCommissionOwed').textContent = owed.toLocaleString() + ' SAR';
+
+    const listEl = document.getElementById('mySalesList');
+    listEl.innerHTML = sales.length ? sales.map(s=>{
+      const title = s.listings ? s.listings.title : t('listingRemoved');
+      const paid = s.status === 'paid_out';
+      return `<div class="sale-row">
+        <div><div style="font-weight:600;">${escapeHtml(title)}</div>
+        <div style="color:var(--muted);font-size:12px;">${Number(s.sale_price).toLocaleString()} SAR · ${paid ? t('paid') : t('unpaid')}</div></div>
+        <div class="sr-com">${Number(s.commission_amount).toLocaleString()} SAR</div>
+      </div>`;
+    }).join('') : `<div class="admin-empty">${t('noSalesYet')}</div>`;
   }
 
   // ===== SUPPORT WIDGET =====
