@@ -225,7 +225,6 @@
   .role-pick{ display:flex; gap:8px; margin-bottom:14px; }
   .role-opt{ flex:1; text-align:center; padding:8px; border:1px solid var(--line); font-family:'Teko',sans-serif; font-size:14px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); cursor:pointer; }
   .role-opt.active{ border-color:var(--gold); color:var(--text); background:#F3EEDD; font-weight:600; }
-  .demo-note{ font-size:11.5px; color:var(--muted); margin-top:14px; text-align:center; }
 
   /* ===== MESSAGES PANEL ===== */
   .msg-panel{ background:var(--card); width:100%; max-width:760px; border-top:4px solid var(--gold); display:flex; height:min(560px,80vh); }
@@ -441,23 +440,23 @@
   <div class="sell-panel">
     <h2 data-i18n="postListing2">Post a Listing</h2>
     <div class="sub" data-i18n="postSub">Free to list. Ninjabrix takes 5% only when your item actually sells.</div>
-    <div class="field"><label data-i18n="titleLbl">Title</label><input type="text" data-i18n-ph="titlePh"></div>
+    <div class="field"><label data-i18n="titleLbl">Title</label><input type="text" id="sellTitle" data-i18n-ph="titlePh"></div>
     <div class="field-row">
       <div class="field"><label data-i18n="categoryLbl">Category</label>
-        <select><option data-i18n="dojoKits">Dojo Kits</option><option data-i18n="elementalSets">Elemental Sets</option><option data-i18n="rareShards">Rare Shards</option><option data-i18n="bundles">Bundles</option><option data-i18n="looseParts">Loose Parts</option></select>
+        <select id="sellCategory"><option value="dojo" data-i18n="dojoKits">Dojo Kits</option><option value="elemental" data-i18n="elementalSets">Elemental Sets</option><option value="rare" data-i18n="rareShards">Rare Shards</option><option value="bundle" data-i18n="bundles">Bundles</option><option value="parts" data-i18n="looseParts">Loose Parts</option></select>
       </div>
       <div class="field"><label data-i18n="conditionLbl">Condition</label>
-        <select><option data-i18n="condNew">New, sealed</option><option data-i18n="condUsed">Used, complete</option><option data-i18n="condParts">Loose / spares</option></select>
+        <select id="sellCondition"><option value="new" data-i18n="condNew">New, sealed</option><option value="used" data-i18n="condUsed">Used, complete</option><option value="parts" data-i18n="condParts">Loose / spares</option></select>
       </div>
     </div>
     <div class="field-row">
-      <div class="field"><label data-i18n="priceLbl">Price (SAR)</label><input type="number" placeholder="0"></div>
-      <div class="field"><label data-i18n="cityLbl">City</label><input type="text" placeholder="Dammam"></div>
+      <div class="field"><label data-i18n="priceLbl">Price (SAR)</label><input type="number" id="sellPrice" placeholder="0"></div>
+      <div class="field"><label data-i18n="cityLbl">City</label><input type="text" id="sellCity" placeholder="Dammam"></div>
     </div>
-    <div class="field"><label data-i18n="descLbl">Description</label><textarea data-i18n-ph="descPh"></textarea></div>
+    <div class="field"><label data-i18n="descLbl">Description</label><textarea id="sellDesc" data-i18n-ph="descPh"></textarea></div>
     <div class="sell-actions">
       <button class="btn-cancel" onclick="document.getElementById('sellOverlay').classList.remove('open')" data-i18n="cancel">Cancel</button>
-      <button class="btn-submit" onclick="alert(t('demoAlert'))" data-i18n="postListing2">Post Listing</button>
+      <button class="btn-submit" onclick="submitListing()" data-i18n="postListing2">Post Listing</button>
     </div>
   </div>
 </div>
@@ -481,7 +480,6 @@
       <button class="btn-cancel" onclick="document.getElementById('authOverlay').classList.remove('open')" data-i18n="cancel">Cancel</button>
       <button class="btn-submit" onclick="doAuth()" data-i18n="continueBtn">Continue</button>
     </div>
-    <div class="demo-note" data-i18n="authDemoNote">This is a front-end demo — accounts aren't stored anywhere yet. Connect a real auth backend to go live.</div>
   </div>
 </div>
 
@@ -508,22 +506,22 @@
       <span class="role-tag" data-i18n="ownerAccess">Owner Access</span>
     </div>
     <div class="admin-stats">
-      <div class="admin-stat"><div class="val">0 SAR</div><div class="lbl" data-i18n="commCollected">Commission collected</div></div>
-      <div class="admin-stat"><div class="val">0</div><div class="lbl" data-i18n="activeListings">Active listings</div></div>
-      <div class="admin-stat"><div class="val">0</div><div class="lbl" data-i18n="regSellers">Registered sellers</div></div>
-      <div class="admin-stat"><div class="val">0</div><div class="lbl" data-i18n="completedSales">Completed sales</div></div>
+      <div class="admin-stat"><div class="val" id="statCommission">—</div><div class="lbl" data-i18n="commCollected">Commission collected</div></div>
+      <div class="admin-stat"><div class="val" id="statListings">—</div><div class="lbl" data-i18n="activeListings">Active listings</div></div>
+      <div class="admin-stat"><div class="val" id="statSellers">—</div><div class="lbl" data-i18n="regSellers">Registered sellers</div></div>
+      <div class="admin-stat"><div class="val" id="statSales">—</div><div class="lbl" data-i18n="completedSales">Completed sales</div></div>
     </div>
     <div class="admin-section">
       <h4 data-i18n="recentSignups">Recent Signups</h4>
-      <div class="admin-empty" data-i18n="noSignups">No one has signed up yet.</div>
+      <div class="admin-empty" id="adminSignups" data-i18n="noSignups">No one has signed up yet.</div>
     </div>
     <div class="admin-section">
       <h4 data-i18n="pendingReview">Listings Pending Review</h4>
-      <div class="admin-empty" data-i18n="nothingReview">Nothing to review.</div>
+      <div class="admin-empty" id="adminPending" data-i18n="nothingReview">Nothing to review.</div>
     </div>
     <div class="admin-section">
       <h4 data-i18n="payoutQueue">Payout Queue</h4>
-      <div class="admin-empty" data-i18n="noPayouts">No commission payouts owed yet.</div>
+      <div class="admin-empty" id="adminPayouts" data-i18n="noPayouts">No commission payouts owed yet.</div>
     </div>
     <div class="sell-actions" style="padding:0 26px 24px;">
       <button class="btn-cancel" onclick="document.getElementById('adminOverlay').classList.remove('open')" data-i18n="close">Close</button>
@@ -575,10 +573,9 @@
       postListing2:"Post a Listing", postSub:"Free to list. Ninjabrix takes 5% only when your item actually sells.",
       titleLbl:"Title", titlePh:"e.g. Ember Forge — Full Dojo Set", categoryLbl:"Category", conditionLbl:"Condition",
       priceLbl:"Price (SAR)", cityLbl:"City", descLbl:"Description", descPh:"Piece count, missing parts, box condition…",
-      cancel:"Cancel", demoAlert:"This is a demo — hook this up to your backend to go live.", fullNameLbl:"Full Name",
-      fullNamePh:"Your name", roleBuyer:"Buyer", roleSeller:"Seller", roleOwner:"Owner (demo)", emailLbl:"Email",
+      cancel:"Cancel", mustSignIn:"Please sign in before posting a listing.", fillRequired:"Please fill in the title, price, and city.", fullNameLbl:"Full Name",
+      fullNamePh:"Your name", roleBuyer:"Buyer", roleSeller:"Seller", roleOwner:"Owner", emailLbl:"Email",
       passwordLbl:"Password", continueBtn:"Continue",
-      authDemoNote:"This is a front-end demo — accounts aren't stored anywhere yet. Connect a real auth backend to go live.",
       conversations:"Conversations", noConvos:"No conversations yet.", nothingHere:"Nothing here yet",
       msgEmptyP:"When a buyer messages you about a listing, the conversation will show up here.",
       ownerAccess:"Owner Access", commCollected:"Commission collected", activeListings:"Active listings",
@@ -588,7 +585,7 @@
       supportTitle:"Ninjabrix Support", supportSub:"Usually replies instantly",
       supportGreeting:"Hi! I'm the Ninjabrix support bot. Ask me about commission, posting a listing, or how buying works here.",
       send:"Send", searchPh:"Search dojo sets, shards, parts…", supportPh:"Type a question…",
-      newUser:"New User", enterEmail:"Enter an email to continue — this is a demo, no password check happens.",
+      newUser:"New User", enterEmail:"Enter both your email and password to continue.",
       ownerOnly:"Owner access only.",
     },
     ar: {
@@ -610,10 +607,9 @@
       postListing2:"أضف إعلان", postSub:"النشر مجاني. تأخذ نينجابركس 5% فقط عند بيع القطعة فعلاً.",
       titleLbl:"العنوان", titlePh:"مثال: Ember Forge — مجموعة دوجو كاملة", categoryLbl:"القسم", conditionLbl:"الحالة",
       priceLbl:"السعر (ريال)", cityLbl:"المدينة", descLbl:"الوصف", descPh:"عدد القطع، الأجزاء الناقصة، حالة العلبة…",
-      cancel:"إلغاء", demoAlert:"هذا عرض تجريبي — اربطه بخادمك الخلفي لتفعيله فعلياً.", fullNameLbl:"الاسم الكامل",
-      fullNamePh:"اسمك", roleBuyer:"مشتري", roleSeller:"بائع", roleOwner:"مالك (تجريبي)", emailLbl:"البريد الإلكتروني",
+      cancel:"إلغاء", mustSignIn:"الرجاء تسجيل الدخول قبل نشر إعلان.", fillRequired:"الرجاء تعبئة العنوان والسعر والمدينة.", fullNameLbl:"الاسم الكامل",
+      fullNamePh:"اسمك", roleBuyer:"مشتري", roleSeller:"بائع", roleOwner:"مالك", emailLbl:"البريد الإلكتروني",
       passwordLbl:"كلمة المرور", continueBtn:"متابعة",
-      authDemoNote:"هذا عرض تجريبي للواجهة — لا يتم حفظ الحسابات بعد. اربطه بخادم مصادقة حقيقي لتفعيله.",
       conversations:"المحادثات", noConvos:"لا توجد محادثات بعد.", nothingHere:"لا يوجد شيء هنا بعد",
       msgEmptyP:"عندما يراسلك مشترٍ بخصوص إعلان، ستظهر المحادثة هنا.",
       ownerAccess:"صلاحية المالك", commCollected:"العمولات المحصّلة", activeListings:"الإعلانات النشطة",
@@ -623,7 +619,7 @@
       supportTitle:"دعم نينجابركس", supportSub:"يرد عادة فوراً",
       supportGreeting:"مرحباً! أنا بوت دعم نينجابركس. اسألني عن العمولة، نشر الإعلانات، أو كيف يعمل الشراء هنا.",
       send:"إرسال", searchPh:"ابحث عن مجموعات، شظايا، قطع…", supportPh:"اكتب سؤالك…",
-      newUser:"مستخدم جديد", enterEmail:"أدخل بريدك الإلكتروني للمتابعة — هذا عرض تجريبي، لا يوجد تحقق من كلمة المرور.",
+      newUser:"مستخدم جديد", enterEmail:"أدخل بريدك الإلكتروني وكلمة المرور للمتابعة.",
       ownerOnly:"هذه الصلاحية للمالك فقط.",
     }
   };
@@ -705,6 +701,34 @@
   });
 
   loadListings();
+
+  // ===== POST A LISTING (saves to Supabase) =====
+  async function submitListing(){
+    if(!currentUser){ alert(t('mustSignIn')); return; }
+    const title = document.getElementById('sellTitle').value.trim();
+    const price = document.getElementById('sellPrice').value;
+    const city = document.getElementById('sellCity').value.trim();
+    if(!title || !price || !city){ alert(t('fillRequired')); return; }
+
+    const { error } = await supabase.from('listings').insert({
+      seller_id: currentUser.id,
+      title: title,
+      description: document.getElementById('sellDesc').value.trim(),
+      category: document.getElementById('sellCategory').value,
+      condition: document.getElementById('sellCondition').value,
+      price: Number(price),
+      city: city,
+      status: 'active'
+    });
+    if(error){ alert(error.message); return; }
+
+    document.getElementById('sellTitle').value = '';
+    document.getElementById('sellPrice').value = '';
+    document.getElementById('sellCity').value = '';
+    document.getElementById('sellDesc').value = '';
+    document.getElementById('sellOverlay').classList.remove('open');
+    await loadListings();
+  }
 
   // ===== ACCOUNT / AUTH (real Supabase auth) =====
   let currentUser = null; // { name, email, role, id }
@@ -805,28 +829,67 @@
     document.getElementById('accountMenu').classList.remove('open');
     document.getElementById('messagesOverlay').classList.add('open');
   }
+  async function loadAdminData(){
+    // Counts come straight from the database. RLS still enforces owner-only
+    // access server-side, so a non-owner gets nothing back even if they call this.
+    const [listingsRes, sellersRes, salesRes, signupsRes, pendingRes] = await Promise.all([
+      supabase.from('listings').select('id', { count:'exact', head:true }).eq('status','active'),
+      supabase.from('profiles').select('id', { count:'exact', head:true }).eq('role','seller'),
+      supabase.from('sales').select('commission_amount, status'),
+      supabase.from('profiles').select('full_name, role, created_at').order('created_at', { ascending:false }).limit(5),
+      supabase.from('listings').select('title, price, city').eq('status','pending_review').limit(5)
+    ]);
+
+    document.getElementById('statListings').textContent = listingsRes.count ?? 0;
+    document.getElementById('statSellers').textContent = sellersRes.count ?? 0;
+
+    const sales = salesRes.data || [];
+    const totalCommission = sales.reduce((sum,s)=> sum + Number(s.commission_amount || 0), 0);
+    document.getElementById('statCommission').textContent = totalCommission.toLocaleString() + ' SAR';
+    document.getElementById('statSales').textContent = sales.length;
+
+    const signups = signupsRes.data || [];
+    const signupsEl = document.getElementById('adminSignups');
+    signupsEl.innerHTML = signups.length
+      ? signups.map(u=>`<div style="padding:6px 0;border-bottom:1px solid var(--line);font-size:13px;">${u.full_name} <span style="color:var(--muted);">— ${u.role}</span></div>`).join('')
+      : t('noSignups');
+
+    const pending = pendingRes.data || [];
+    const pendingEl = document.getElementById('adminPending');
+    pendingEl.innerHTML = pending.length
+      ? pending.map(l=>`<div style="padding:6px 0;border-bottom:1px solid var(--line);font-size:13px;">${l.title} <span style="color:var(--muted);">— ${Number(l.price).toLocaleString()} SAR, ${l.city}</span></div>`).join('')
+      : t('nothingReview');
+
+    const owed = sales.filter(s=> s.status === 'pending');
+    const payoutsEl = document.getElementById('adminPayouts');
+    payoutsEl.textContent = owed.length
+      ? owed.length + ' sale(s) pending payout — ' + owed.reduce((sum,s)=> sum + Number(s.commission_amount||0), 0).toLocaleString() + ' SAR in commission'
+      : t('noPayouts');
+  }
+
   function openAdmin(){
     if(!currentUser || currentUser.role !== 'Owner'){ alert(t('ownerOnly')); return; }
     document.getElementById('adminOverlay').classList.add('open');
+    loadAdminData();
   }
 
   document.querySelectorAll('.sell-overlay').forEach(ov=>{
     ov.addEventListener('click', (e)=>{ if(e.target === ov) ov.classList.remove('open'); });
   });
 
-  // ===== SUPPORT WIDGET (scripted demo bot — not live AI) =====
+  // ===== SUPPORT WIDGET =====
   function toggleSupport(){ document.getElementById('supportWindow').classList.toggle('open'); }
   const supportReplies = {
     en: [
       { k: ['commission','fee','percent','5%'], a: "Ninjabrix takes a flat 5% commission only when a sale actually closes. Listing an item is always free." },
       { k: ['list','post','sell'], a: "Tap '+ Post a Listing' in the top bar, fill in the item details and price, and it'll appear in the marketplace right away." },
-      { k: ['owner','admin','dashboard'], a: "Owner accounts get access to a dashboard with commission totals, sellers, and pending reviews — sign up and pick 'Owner (demo)' to see it." },
+      { k: ['owner','admin','dashboard'], a: "Owner accounts get access to a dashboard with commission totals, sellers, and pending reviews — owner access is granted by the Ninjabrix team." },
       { k: ['account','sign up','login','sign in'], a: "You can create an account from the Sign In menu in the top right — pick Buyer, Seller, or Owner." },
     ],
     ar: [
       { k: ['عمولة','رسوم','نسبة','5%'], a: "تأخذ نينجابركس عمولة ثابتة 5% فقط عند إتمام البيع فعلياً. نشر الإعلان مجاني دائماً." },
       { k: ['نشر','إعلان','بيع'], a: "اضغط على '+ أضف إعلان' في الأعلى، أدخل تفاصيل القطعة والسعر، وسيظهر إعلانك في السوق فوراً." },
-      { k: ['مالك','إدارة','لوحة'], a: "حسابات المالك تحصل على لوحة تحكم تعرض إجمالي العمولات والبائعين والمراجعات المعلقة — أنشئ حساباً واختر 'مالك (تجريبي)' لرؤيتها." },
+      { k: ['مالك','إدارة','لوحة'], a: "حسابات المالك تحصل على لوحة تحكم تعرض إجمالي العمولات والبائعين والمراجعات المعلقة — يتم منح صلاحية المالك من قبل فريق نينجابركس." },
       { k: ['حساب','تسجيل','دخول'], a: "يمكنك إنشاء حساب من قائمة تسجيل الدخول أعلى يمين الصفحة — اختر مشتري أو بائع أو مالك." },
     ]
   };
