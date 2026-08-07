@@ -413,7 +413,7 @@
         </div>
       </div>
     </div>
-    <button class="post-btn" onclick="document.getElementById('sellOverlay').classList.add('open')" data-i18n="postListing">+ Post a Listing</button>
+    <button class="post-btn" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="postListing">+ Post a Listing</button>
   </div>
 </div>
 
@@ -443,15 +443,17 @@
     <div class="cat-item" data-cat="parts"><span data-i18n="looseParts">Loose Parts</span></div>
 
     <div class="side-label" data-i18n="city">City</div>
-    <div class="cat-item">Dammam</div>
-    <div class="cat-item">Khobar</div>
-    <div class="cat-item">Riyadh</div>
-    <div class="cat-item">Jeddah</div>
+    <div class="cat-item active" data-city="all" data-i18n="allCities">All Cities</div>
+    <div class="cat-item" data-city="Dammam">Dammam</div>
+    <div class="cat-item" data-city="Khobar">Khobar</div>
+    <div class="cat-item" data-city="Riyadh">Riyadh</div>
+    <div class="cat-item" data-city="Jeddah">Jeddah</div>
 
     <div class="side-label" data-i18n="condition">Condition</div>
-    <div class="cat-item" data-i18n="condNew">New, sealed</div>
-    <div class="cat-item" data-i18n="condUsed">Used, complete</div>
-    <div class="cat-item" data-i18n="condParts">Loose / spares</div>
+    <div class="cat-item active" data-cond="all" data-i18n="anyCondition">Any Condition</div>
+    <div class="cat-item" data-cond="new" data-i18n="condNew">New, sealed</div>
+    <div class="cat-item" data-cond="used" data-i18n="condUsed">Used, complete</div>
+    <div class="cat-item" data-cond="parts" data-i18n="condParts">Loose / spares</div>
   </aside>
 
   <main>
@@ -460,11 +462,10 @@
         <h1 data-i18n="marketTitle">Ninjabrix Marketplace</h1>
         <p data-i18n="marketSub">Buy and sell directly with collectors near you.</p>
       </div>
-      <select class="sort">
-        <option data-i18n="sortNew">Newest first</option>
-        <option data-i18n="sortLow">Price: low to high</option>
-        <option data-i18n="sortHigh">Price: high to low</option>
-        <option data-i18n="sortClose">Closest to me</option>
+      <select class="sort" id="sortSelect" onchange="applyFilters()">
+        <option value="new" data-i18n="sortNew">Newest first</option>
+        <option value="low" data-i18n="sortLow">Price: low to high</option>
+        <option value="high" data-i18n="sortHigh">Price: high to low</option>
       </select>
     </div>
 
@@ -479,7 +480,7 @@
       <div class="empty-glyph"></div>
       <h3 data-i18n="emptyH">No listings here yet</h3>
       <p data-i18n="emptyP">Ninjabrix just opened its doors. Be the first to list an Ember set, a rare Gilt Shard, or a box of loose parts.</p>
-      <button class="post-btn" onclick="document.getElementById('sellOverlay').classList.add('open')" data-i18n="postFirst">+ Post the First Listing</button>
+      <button class="post-btn" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="postFirst">+ Post the First Listing</button>
     </div>
   </main>
 </div>
@@ -493,7 +494,7 @@
 
 <div class="sell-overlay" id="sellOverlay">
   <div class="sell-panel">
-    <h2 data-i18n="postListing2">Post a Listing</h2>
+    <h2 id="sellPanelTitle" data-i18n="postListing2">Post a Listing</h2>
     <div class="sub" data-i18n="postSub">Free to list. Ninjabrix takes 5% only when your item actually sells.</div>
     <div class="field"><label data-i18n="titleLbl">Title</label><input type="text" id="sellTitle" data-i18n-ph="titlePh"></div>
     <div class="field-row">
@@ -521,6 +522,17 @@
   </div>
 </div>
 
+<div class="sell-overlay" id="resetOverlay">
+  <div class="sell-panel">
+    <h2 data-i18n="setNewPassword">Set a New Password</h2>
+    <div class="sub" data-i18n="setNewPasswordSub">Choose a new password for your account.</div>
+    <div class="field"><label data-i18n="newPasswordLbl">New password</label><input type="password" id="newPassword" placeholder="••••••••"></div>
+    <div class="sell-actions">
+      <button class="btn-submit" onclick="updatePassword()" data-i18n="savePassword">Save Password</button>
+    </div>
+  </div>
+</div>
+
 <div class="sell-overlay" id="detailOverlay">
   <div class="sell-panel" style="max-width:620px;">
     <div class="detail-gallery" id="detailGallery"></div>
@@ -535,6 +547,7 @@
     </div>
     <div class="detail-footer">
       <button class="link-btn" id="detailReport" onclick="reportListing()" data-i18n="reportListing">Report this listing</button>
+      <button class="link-btn" id="detailEdit" onclick="editListing()" style="display:none;" data-i18n="editListing">Edit listing</button>
       <button class="link-btn danger" id="detailDelete" onclick="deleteListing()" style="display:none;" data-i18n="deleteListing">Delete listing</button>
     </div>
   </div>
@@ -569,6 +582,7 @@
     </div>
     <div class="field"><label data-i18n="emailLbl">Email</label><input type="email" id="authEmail" placeholder="you@example.com"></div>
     <div class="field"><label data-i18n="passwordLbl">Password</label><input type="password" id="authPassword" placeholder="••••••••"></div>
+    <button class="link-btn" id="forgotLink" onclick="sendPasswordReset()" style="margin-bottom:12px;" data-i18n="forgotPassword">Forgot your password?</button>
     <div class="sell-actions">
       <button class="btn-cancel" onclick="document.getElementById('authOverlay').classList.remove('open')" data-i18n="cancel">Cancel</button>
       <button class="btn-submit" onclick="doAuth()" data-i18n="continueBtn">Continue</button>
@@ -738,7 +752,14 @@
       privacyPolicy:"Privacy Policy", termsOfService:"Terms of Service",
       openReports:"Reported Listings", noReports:"No open reports.",
       removeListing:"Remove listing", dismissReport:"Dismiss",
-      confirmRemoveReported:"Remove this listing from the marketplace?", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
+      confirmRemoveReported:"Remove this listing from the marketplace?",
+      forgotPassword:"Forgot your password?", enterEmailForReset:"Enter your email above first, then tap reset.",
+      resetEmailSent:"Check your email for a password reset link.",
+      setNewPassword:"Set a New Password", setNewPasswordSub:"Choose a new password for your account.",
+      newPasswordLbl:"New password", savePassword:"Save Password",
+      passwordTooShort:"Password must be at least 6 characters.", passwordUpdated:"Your password has been updated.",
+      editListing:"Edit listing", editListingTitle:"Edit Listing",
+      allCities:"All Cities", anyCondition:"Any Condition", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
       mySales:"My Sales & Commission", mySalesSub:"Every sale you've recorded, and the 5% owed on each.",
       totalSold:"Total sold", commissionOwed:"Commission owed", noSalesYet:"No sales recorded yet.",
       paid:"Paid", unpaid:"Unpaid",
@@ -795,7 +816,14 @@
       privacyPolicy:"سياسة الخصوصية", termsOfService:"شروط الاستخدام",
       openReports:"الإعلانات المُبلّغ عنها", noReports:"لا توجد بلاغات مفتوحة.",
       removeListing:"إزالة الإعلان", dismissReport:"تجاهل",
-      confirmRemoveReported:"إزالة هذا الإعلان من السوق؟", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
+      confirmRemoveReported:"إزالة هذا الإعلان من السوق؟",
+      forgotPassword:"نسيت كلمة المرور؟", enterEmailForReset:"أدخل بريدك الإلكتروني أعلاه أولاً، ثم اضغط إعادة التعيين.",
+      resetEmailSent:"تحقق من بريدك الإلكتروني للحصول على رابط إعادة تعيين كلمة المرور.",
+      setNewPassword:"تعيين كلمة مرور جديدة", setNewPasswordSub:"اختر كلمة مرور جديدة لحسابك.",
+      newPasswordLbl:"كلمة المرور الجديدة", savePassword:"حفظ كلمة المرور",
+      passwordTooShort:"يجب ألا تقل كلمة المرور عن 6 أحرف.", passwordUpdated:"تم تحديث كلمة المرور.",
+      editListing:"تعديل الإعلان", editListingTitle:"تعديل الإعلان",
+      allCities:"كل المدن", anyCondition:"أي حالة", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
       mySales:"مبيعاتي والعمولة", mySalesSub:"كل عملية بيع سجّلتها، والعمولة المستحقة 5% على كل منها.",
       totalSold:"إجمالي المبيعات", commissionOwed:"العمولة المستحقة", noSalesYet:"لم تسجّل أي مبيعات بعد.",
       paid:"مدفوعة", unpaid:"غير مدفوعة",
@@ -870,12 +898,24 @@
   }
 
   let currentCat = 'all';
+  let currentCity = 'all';
+  let currentCond = 'all';
+
   function applyFilters(){
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    const filtered = listings.filter(l=>
+    let filtered = listings.filter(l=>
       (currentCat==='all' || l.category===currentCat) &&
-      (!q || l.title.toLowerCase().includes(q))
+      (currentCity==='all' || l.city===currentCity) &&
+      (currentCond==='all' || l.condition===currentCond) &&
+      (!q || l.title.toLowerCase().includes(q) || (l.description||'').toLowerCase().includes(q))
     );
+
+    const sortEl = document.getElementById('sortSelect');
+    const sort = sortEl ? sortEl.value : 'new';
+    if(sort === 'low') filtered.sort((a,b)=> Number(a.price) - Number(b.price));
+    else if(sort === 'high') filtered.sort((a,b)=> Number(b.price) - Number(a.price));
+    else filtered.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+
     render(filtered);
   }
   function filterListings(){ applyFilters(); }
@@ -892,6 +932,22 @@
   });
   document.querySelectorAll('.mchip').forEach(chip=>{
     chip.addEventListener('click', ()=>selectCategory(chip.dataset.cat));
+  });
+
+  document.querySelectorAll('.cat-item[data-city]').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      currentCity = item.dataset.city;
+      document.querySelectorAll('.cat-item[data-city]').forEach(i=>i.classList.toggle('active', i===item));
+      applyFilters();
+    });
+  });
+
+  document.querySelectorAll('.cat-item[data-cond]').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      currentCond = item.dataset.cond;
+      document.querySelectorAll('.cat-item[data-cond]').forEach(i=>i.classList.toggle('active', i===item));
+      applyFilters();
+    });
   });
 
   loadListings();
@@ -938,18 +994,28 @@
     try{
       const photoUrls = await uploadPhotos();
 
-      const { error } = await db.from('listings').insert({
-        seller_id: currentUser.id,
+      const fields = {
         title: title,
         description: document.getElementById('sellDesc').value.trim(),
         category: document.getElementById('sellCategory').value,
         condition: document.getElementById('sellCondition').value,
         price: Number(price),
-        city: city,
-        photo_urls: photoUrls,
-        status: 'active'
-      });
+        city: city
+      };
+
+      let error;
+      if(editingListingId){
+        // Only replace photos if new ones were chosen
+        if(photoUrls.length) fields.photo_urls = photoUrls;
+        ({ error } = await db.from('listings').update(fields).eq('id', editingListingId));
+      } else {
+        ({ error } = await db.from('listings').insert({
+          ...fields, seller_id: currentUser.id, photo_urls: photoUrls, status: 'active'
+        }));
+      }
       if(error){ alert(error.message); return; }
+      editingListingId = null;
+      document.getElementById('sellPanelTitle').textContent = t('postListing2');
 
       document.getElementById('sellTitle').value = '';
       document.getElementById('sellPrice').value = '';
@@ -989,6 +1055,7 @@
     document.getElementById('tabSignin').classList.toggle('active', tab==='signin');
     document.getElementById('tabSignup').classList.toggle('active', tab==='signup');
     document.getElementById('signupExtra').style.display = tab==='signup' ? 'block' : 'none';
+    document.getElementById('forgotLink').style.display = tab==='signin' ? 'block' : 'none';
   }
   function pickRole(el){
     document.querySelectorAll('.role-opt').forEach(o=>o.classList.remove('active'));
@@ -1372,6 +1439,7 @@
       : ()=>{ document.getElementById('detailOverlay').classList.remove('open'); startConversation(l.id, l.seller_id, l.title); };
 
     document.getElementById('detailDelete').style.display = isMine ? 'block' : 'none';
+    document.getElementById('detailEdit').style.display = isMine ? 'block' : 'none';
     document.getElementById('detailReport').style.display = isMine ? 'none' : 'block';
     document.getElementById('detailOverlay').classList.add('open');
   }
@@ -1436,6 +1504,79 @@
     await db.from('reports').update({ status:'dismissed' }).eq('id', reportId);
     await loadAdminData();
   }
+
+
+  // ===== PASSWORD RESET =====
+  async function sendPasswordReset(){
+    const email = document.getElementById('authEmail').value.trim();
+    if(!email){ alert(t('enterEmailForReset')); return; }
+    const { error } = await db.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname
+    });
+    if(error){ alert(error.message); return; }
+    alert(t('resetEmailSent'));
+    document.getElementById('authOverlay').classList.remove('open');
+  }
+
+  async function updatePassword(){
+    const pw = document.getElementById('newPassword').value;
+    if(!pw || pw.length < 6){ alert(t('passwordTooShort')); return; }
+    const { error } = await db.auth.updateUser({ password: pw });
+    if(error){ alert(error.message); return; }
+    document.getElementById('resetOverlay').classList.remove('open');
+    document.getElementById('newPassword').value = '';
+    alert(t('passwordUpdated'));
+    await refreshCurrentUser();
+  }
+
+  // Supabase sends the user back with a recovery token — catch it and prompt
+  db.auth.onAuthStateChange((event)=>{
+    if(event === 'PASSWORD_RECOVERY'){
+      document.getElementById('resetOverlay').classList.add('open');
+    }
+  });
+
+  // ===== EDIT LISTING =====
+  let editingListingId = null;
+
+  function editListing(){
+    if(!detailListing) return;
+    editingListingId = detailListing.id;
+    document.getElementById('sellTitle').value = detailListing.title;
+    document.getElementById('sellPrice').value = detailListing.price;
+    document.getElementById('sellCity').value = detailListing.city;
+    document.getElementById('sellDesc').value = detailListing.description || '';
+    document.getElementById('sellCategory').value = detailListing.category;
+    document.getElementById('sellCondition').value = detailListing.condition;
+    document.getElementById('sellPanelTitle').textContent = t('editListingTitle');
+    document.getElementById('detailOverlay').classList.remove('open');
+    document.getElementById('sellOverlay').classList.add('open');
+  }
+
+  function resetSellPanel(){
+    editingListingId = null;
+    document.getElementById('sellPanelTitle').textContent = t('postListing2');
+    ['sellTitle','sellPrice','sellCity','sellDesc','sellPhotos'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.value = '';
+    });
+    document.getElementById('photoPreview').innerHTML = '';
+  }
+
+  // ===== UNREAD MESSAGE INDICATOR =====
+  let lastSeenMessageCount = 0;
+
+  async function checkUnreadMessages(){
+    if(!currentUser) return;
+    const { count } = await db.from('messages')
+      .select('id', { count:'exact', head:true })
+      .neq('sender_id', currentUser.id);
+    const dot = document.getElementById('msgDot');
+    if(count && count > lastSeenMessageCount && lastSeenMessageCount !== 0){
+      dot.style.display = 'block';
+    }
+    if(lastSeenMessageCount === 0) lastSeenMessageCount = count || 0;
+  }
+  setInterval(checkUnreadMessages, 30000);
 
   // ===== SUPPORT WIDGET =====
   function toggleSupport(){ document.getElementById('supportWindow').classList.toggle('open'); }
