@@ -281,6 +281,52 @@
   .support-input-row{ display:flex; border-top:1px solid var(--line); }
   .support-input-row input{ flex:1; border:0; padding:11px 12px; font-size:13px; font-family:inherit; outline:0; }
   .support-input-row button{ background:var(--ink); color:#fff; border:0; padding:0 16px; font-family:'Teko',sans-serif; letter-spacing:1px; text-transform:uppercase; }
+
+  /* ===== MOBILE CHIP BAR (replaces hidden sidebar on small screens) ===== */
+  .mobile-cats{ display:none; gap:8px; overflow-x:auto; padding:12px clamp(16px,3vw,32px) 4px; background:var(--paper); }
+  .mobile-cats::-webkit-scrollbar{ display:none; }
+  .mchip{
+    flex-shrink:0; font-family:'Teko',sans-serif; font-size:14px; letter-spacing:1px; text-transform:uppercase;
+    padding:8px 16px; border:1px solid var(--line); background:var(--card); color:var(--muted); white-space:nowrap;
+  }
+  .mchip.active{ background:var(--ink); color:var(--gold); border-color:var(--ink); font-weight:600; }
+
+  /* ===== RESPONSIVE BREAKPOINTS ===== */
+  @media (max-width:880px){
+    .sidebar{ display:none; }
+    .mobile-cats{ display:flex; }
+  }
+  @media (max-width:760px){
+    .topbar{ flex-wrap:wrap; gap:10px; }
+    .brand{ order:1; }
+    .lang-switch{ order:2; }
+    .account-wrap{ order:3; }
+    .msgBtnWrap, #msgBtn{ order:4; }
+    .post-btn{ order:5; }
+    .top-actions{ order:6; width:100%; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+    .search{ order:7; width:100%; max-width:100%; }
+    .top-actions .loc{ display:none; }
+    .trust-strip{ gap:14px; font-size:12px; }
+    .page-head{ align-items:flex-start; }
+    .how-row{ grid-template-columns:1fr; }
+    .grid{ grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
+  }
+  @media (max-width:560px){
+    .sell-overlay{ padding:0; align-items:stretch; }
+    .sell-panel, .admin-panel{ max-width:100%; min-height:100vh; border-top:0; }
+    .msg-panel{ max-width:100%; height:100vh; flex-direction:column; }
+    .msg-list{ width:100%; max-height:140px; border-right:0; border-bottom:1px solid var(--line); }
+    html[dir="rtl"] .msg-list{ border-left:0; }
+    .field-row{ grid-template-columns:1fr; }
+    .account-menu{ position:fixed; top:auto; bottom:0; left:0; right:0; width:100%; box-shadow:0 -8px 24px rgba(0,0,0,0.2); }
+    .grid{ grid-template-columns:1fr 1fr; }
+    .support-window{ width:calc(100vw - 24px); right:12px; }
+    html[dir="rtl"] .support-window{ left:12px; }
+  }
+  @media (max-width:380px){
+    .grid{ grid-template-columns:1fr; }
+    .admin-stats{ grid-template-columns:1fr 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -323,6 +369,15 @@
   <span><span class="dot"></span><b>5%</b><span data-i18n="commissionLine">commission per sale — no listing fees</span></span>
   <span><span class="dot"></span><span data-i18n="verifiedSellers">Verified sellers</span></span>
   <span><span class="dot"></span><span data-i18n="secureMsg">Secure buyer-seller messaging</span></span>
+</div>
+
+<div class="mobile-cats" id="mobileCats">
+  <div class="mchip active" data-cat="all" data-i18n="allListings">All Listings</div>
+  <div class="mchip" data-cat="dojo" data-i18n="dojoKits">Dojo Kits</div>
+  <div class="mchip" data-cat="elemental" data-i18n="elementalSets">Elemental Sets</div>
+  <div class="mchip" data-cat="rare" data-i18n="rareShards">Rare Shards</div>
+  <div class="mchip" data-cat="bundle" data-i18n="bundles">Bundles</div>
+  <div class="mchip" data-cat="parts" data-i18n="looseParts">Loose Parts</div>
 </div>
 
 <div class="shell">
@@ -618,13 +673,17 @@
   function filterListings(){ applyFilters(); }
   document.getElementById('searchInput').addEventListener('input', applyFilters);
 
+  function selectCategory(cat){
+    currentCat = cat;
+    document.querySelectorAll('.cat-item[data-cat]').forEach(i=>i.classList.toggle('active', i.dataset.cat===cat));
+    document.querySelectorAll('.mchip').forEach(i=>i.classList.toggle('active', i.dataset.cat===cat));
+    applyFilters();
+  }
   document.querySelectorAll('.cat-item[data-cat]').forEach(item=>{
-    item.addEventListener('click', ()=>{
-      document.querySelectorAll('.cat-item[data-cat]').forEach(i=>i.classList.remove('active'));
-      item.classList.add('active');
-      currentCat = item.dataset.cat;
-      applyFilters();
-    });
+    item.addEventListener('click', ()=>selectCategory(item.dataset.cat));
+  });
+  document.querySelectorAll('.mchip').forEach(chip=>{
+    chip.addEventListener('click', ()=>selectCategory(chip.dataset.cat));
   });
 
   render(listings);
