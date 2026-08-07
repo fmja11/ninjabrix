@@ -293,6 +293,21 @@
   .sale-row{ padding:12px 0; border-bottom:1px solid var(--line); font-size:13.5px; display:flex; justify-content:space-between; gap:10px; }
   .sale-row .sr-com{ color:var(--ember-d); font-weight:600; white-space:nowrap; }
 
+  .detail-gallery{ display:flex; gap:8px; overflow-x:auto; }
+  .detail-gallery img{ width:180px; height:140px; object-fit:cover; border:1px solid var(--line); flex-shrink:0; }
+  .detail-gallery .no-photo{ width:100%; height:140px; background:linear-gradient(160deg,#EFEBDF,#E2DCC9); display:flex; align-items:center; justify-content:center; color:var(--muted); }
+  .detail-price{ font-family:'Teko',sans-serif; font-size:30px; color:var(--ember-d); margin:6px 0; }
+  .detail-tags{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .detail-tags span{ font-family:'Teko',sans-serif; font-size:13px; letter-spacing:1px; text-transform:uppercase; background:#F3EEDD; border:1px solid var(--line); padding:4px 10px; color:var(--muted); }
+  .detail-desc{ font-size:14px; line-height:1.7; color:var(--text); margin-bottom:14px; white-space:pre-wrap; }
+  .detail-seller{ font-size:13px; color:var(--muted); padding:12px 0; border-top:1px solid var(--line); margin-bottom:14px; }
+  .detail-footer{ display:flex; justify-content:space-between; margin-top:14px; padding-top:12px; border-top:1px solid var(--line); }
+  .link-btn{ background:none; border:0; font-size:12.5px; color:var(--muted); text-decoration:underline; padding:0; }
+  .link-btn:hover{ color:var(--text); }
+  .link-btn.danger{ color:var(--ember-d); }
+  .btn-danger{ background:var(--ember-d); color:#fff; border:0; padding:11px 22px; font-family:'Teko',sans-serif; font-size:16px; letter-spacing:1px; text-transform:uppercase; font-weight:600; }
+  .listing{ cursor:pointer; }
+
   .contact-btn{
     margin-top:10px; width:100%; background:var(--ink); color:#EDE9DD; border:0; padding:9px;
     font-family:'Teko',sans-serif; font-size:15px; letter-spacing:1px; text-transform:uppercase;
@@ -393,6 +408,7 @@
           <a class="am-link" id="amAdminLink" href="#" onclick="openAdmin();return false;" style="display:none;" data-i18n="ownerDash">Owner Dashboard</a>
           <a class="am-link" href="#" onclick="openMessages();return false;" data-i18n="messages">Messages</a>
           <a class="am-link" href="#" onclick="openMySales();return false;" data-i18n="mySales">My Sales &amp; Commission</a>
+          <a class="am-link" href="#" onclick="openSettings();return false;" data-i18n="accountSettings">Account Settings</a>
           <a class="am-link" href="#" onclick="signOut();return false;" data-i18n="signOut">Sign Out</a>
         </div>
       </div>
@@ -503,6 +519,25 @@
   </div>
 </div>
 
+<div class="sell-overlay" id="detailOverlay">
+  <div class="sell-panel" style="max-width:620px;">
+    <div class="detail-gallery" id="detailGallery"></div>
+    <h2 id="detailTitle" style="margin-top:16px;"></h2>
+    <div class="detail-price" id="detailPrice"></div>
+    <div class="detail-tags" id="detailTags"></div>
+    <p class="detail-desc" id="detailDesc"></p>
+    <div class="detail-seller" id="detailSeller"></div>
+    <div class="sell-actions">
+      <button class="btn-cancel" onclick="document.getElementById('detailOverlay').classList.remove('open')" data-i18n="close">Close</button>
+      <button class="btn-submit" id="detailAction"></button>
+    </div>
+    <div class="detail-footer">
+      <button class="link-btn" id="detailReport" onclick="reportListing()" data-i18n="reportListing">Report this listing</button>
+      <button class="link-btn danger" id="detailDelete" onclick="deleteListing()" style="display:none;" data-i18n="deleteListing">Delete listing</button>
+    </div>
+  </div>
+</div>
+
 <div class="sell-overlay" id="soldOverlay">
   <div class="sell-panel">
     <h2 data-i18n="markSoldTitle">Mark as Sold</h2>
@@ -559,6 +594,21 @@
           <button onclick="sendMessage()" data-i18n="send">Send</button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="sell-overlay" id="settingsOverlay">
+  <div class="sell-panel">
+    <h2 data-i18n="accountSettings">Account Settings</h2>
+    <div class="sub" id="settingsEmail"></div>
+    <div class="admin-section" style="padding:18px 0; border-top:1px solid var(--line);">
+      <h4 data-i18n="dangerZone">Danger Zone</h4>
+      <p style="font-size:13px; color:var(--muted); line-height:1.6; margin:8px 0 14px;" data-i18n="deleteAccountWarn">Deleting your account removes your listings and profile permanently. This can't be undone.</p>
+      <button class="btn-danger" onclick="deleteAccount()" data-i18n="deleteAccount">Delete My Account</button>
+    </div>
+    <div class="sell-actions">
+      <button class="btn-cancel" onclick="document.getElementById('settingsOverlay').classList.remove('open')" data-i18n="close">Close</button>
     </div>
   </div>
 </div>
@@ -670,7 +720,15 @@
       markSold:"Mark as Sold", markSoldTitle:"Mark as Sold", finalPriceLbl:"Final sale price (SAR)",
       soldNotice:"Ninjabrix charges 5% of the final sale price. You'll be invoiced for it — payment is arranged with you directly.",
       confirmSale:"Confirm Sale", salePrice:"Sale price", ninjabrixFee:"Ninjabrix fee (5%)", youKeep:"You keep",
-      enterSalePrice:"Enter the final sale price.", checkEmail:"Check your email to confirm your account, then sign in.", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
+      enterSalePrice:"Enter the final sale price.", checkEmail:"Check your email to confirm your account, then sign in.",
+      noPhotos:"No photos", noDescription:"No description provided.", listedBy:"Listed by",
+      reportListing:"Report this listing", deleteListing:"Delete listing",
+      reportPrompt:"What's wrong with this listing?", reportThanks:"Thanks — we'll review this listing.",
+      confirmDeleteListing:"Remove this listing? It will no longer appear in the marketplace.",
+      accountSettings:"Account Settings", dangerZone:"Danger Zone", deleteAccount:"Delete My Account",
+      deleteAccountWarn:"Deleting your account removes your listings and profile permanently. This can't be undone.",
+      confirmDeleteAccount:"Permanently delete your account and all your listings?",
+      typeDeleteToConfirm:"Type DELETE to confirm.", accountDeleted:"Your account has been deleted.", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
       mySales:"My Sales & Commission", mySalesSub:"Every sale you've recorded, and the 5% owed on each.",
       totalSold:"Total sold", commissionOwed:"Commission owed", noSalesYet:"No sales recorded yet.",
       paid:"Paid", unpaid:"Unpaid",
@@ -715,7 +773,15 @@
       markSold:"تم البيع", markSoldTitle:"تسجيل عملية بيع", finalPriceLbl:"سعر البيع النهائي (ريال)",
       soldNotice:"تأخذ نينجابركس 5% من سعر البيع النهائي. ستصلك فاتورة بها ويتم الدفع بالتنسيق معك مباشرة.",
       confirmSale:"تأكيد البيع", salePrice:"سعر البيع", ninjabrixFee:"عمولة نينجابركس (5%)", youKeep:"تحصل على",
-      enterSalePrice:"أدخل سعر البيع النهائي.", checkEmail:"تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل الدخول.", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
+      enterSalePrice:"أدخل سعر البيع النهائي.", checkEmail:"تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل الدخول.",
+      noPhotos:"لا توجد صور", noDescription:"لا يوجد وصف.", listedBy:"نشره",
+      reportListing:"الإبلاغ عن هذا الإعلان", deleteListing:"حذف الإعلان",
+      reportPrompt:"ما المشكلة في هذا الإعلان؟", reportThanks:"شكراً — سنراجع هذا الإعلان.",
+      confirmDeleteListing:"إزالة هذا الإعلان؟ لن يظهر في السوق بعد الآن.",
+      accountSettings:"إعدادات الحساب", dangerZone:"منطقة الخطر", deleteAccount:"حذف حسابي",
+      deleteAccountWarn:"حذف حسابك يزيل إعلاناتك وملفك الشخصي نهائياً. لا يمкан التراجع عن هذا.",
+      confirmDeleteAccount:"حذف حسابك وجميع إعلاناتك نهائياً؟",
+      typeDeleteToConfirm:"اكتب DELETE للتأكيد.", accountDeleted:"تم حذف حسابك.", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
       mySales:"مبيعاتي والعمولة", mySalesSub:"كل عملية بيع سجّلتها، والعمولة المستحقة 5% على كل منها.",
       totalSold:"إجمالي المبيعات", commissionOwed:"العمولة المستحقة", noSalesYet:"لم تسجّل أي مبيعات بعد.",
       paid:"مدفوعة", unpaid:"غير مدفوعة",
@@ -762,6 +828,10 @@
           <div class="l-meta"><span class="city">${l.city}</span><span>${new Date(l.created_at).toLocaleDateString()}</span></div>
           <button class="contact-btn" data-listing="${l.id}" data-seller="${l.seller_id}" data-title="${l.title.replace(/"/g,'&quot;')}">${t('contactSeller')}</button>
         </div>`;
+      el.addEventListener('click', (e)=>{
+        if(e.target.closest('.contact-btn')) return;
+        openDetail(l);
+      });
       const btn = el.querySelector('.contact-btn');
       if(currentUser && currentUser.id === l.seller_id){
         btn.textContent = t('markSold');
@@ -1237,6 +1307,91 @@
         <div class="sr-com">${Number(s.commission_amount).toLocaleString()} SAR</div>
       </div>`;
     }).join('') : `<div class="admin-empty">${t('noSalesYet')}</div>`;
+  }
+
+
+  // ===== LISTING DETAIL, REPORTING, DELETION =====
+  let detailListing = null;
+  const condLabels = { new:'condNew', used:'condUsed', parts:'condParts' };
+  const catLabels = { dojo:'dojoKits', elemental:'elementalSets', rare:'rareShards', bundle:'bundles', parts:'looseParts' };
+
+  async function openDetail(l){
+    detailListing = l;
+    const gallery = document.getElementById('detailGallery');
+    gallery.innerHTML = (l.photo_urls && l.photo_urls.length)
+      ? l.photo_urls.map(u=>`<img src="${u}" alt="${escapeHtml(l.title)}" loading="lazy">`).join('')
+      : `<div class="no-photo">${t('noPhotos')}</div>`;
+
+    document.getElementById('detailTitle').textContent = l.title;
+    document.getElementById('detailPrice').textContent = Number(l.price).toLocaleString() + ' SAR';
+    document.getElementById('detailTags').innerHTML =
+      `<span>${t(catLabels[l.category] || l.category)}</span>` +
+      `<span>${t(condLabels[l.condition] || l.condition)}</span>` +
+      `<span>${escapeHtml(l.city)}</span>`;
+    document.getElementById('detailDesc').textContent = l.description || t('noDescription');
+
+    const { data: seller } = await db.from('profiles').select('full_name').eq('id', l.seller_id).maybeSingle();
+    document.getElementById('detailSeller').textContent =
+      t('listedBy') + ' ' + (seller ? seller.full_name : '—') + ' · ' + new Date(l.created_at).toLocaleDateString();
+
+    const action = document.getElementById('detailAction');
+    const isMine = currentUser && currentUser.id === l.seller_id;
+    action.textContent = isMine ? t('markSold') : t('contactSeller');
+    action.onclick = isMine
+      ? ()=>{ document.getElementById('detailOverlay').classList.remove('open'); openSoldPanel(l.id, l.title, l.price); }
+      : ()=>{ document.getElementById('detailOverlay').classList.remove('open'); startConversation(l.id, l.seller_id, l.title); };
+
+    document.getElementById('detailDelete').style.display = isMine ? 'block' : 'none';
+    document.getElementById('detailReport').style.display = isMine ? 'none' : 'block';
+    document.getElementById('detailOverlay').classList.add('open');
+  }
+
+  async function reportListing(){
+    if(!currentUser){ alert(t('mustSignIn')); return; }
+    if(!detailListing) return;
+    const reason = prompt(t('reportPrompt'));
+    if(!reason) return;
+    const { error } = await db.from('reports').insert({
+      listing_id: detailListing.id,
+      reporter_id: currentUser.id,
+      reason: reason
+    });
+    if(error){ alert(error.message); return; }
+    alert(t('reportThanks'));
+    document.getElementById('detailOverlay').classList.remove('open');
+  }
+
+  async function deleteListing(){
+    if(!detailListing || !currentUser) return;
+    if(!confirm(t('confirmDeleteListing'))) return;
+    const { error } = await db.from('listings').update({ status:'removed' }).eq('id', detailListing.id);
+    if(error){ alert(error.message); return; }
+    document.getElementById('detailOverlay').classList.remove('open');
+    await loadListings();
+  }
+
+  // ===== ACCOUNT SETTINGS =====
+  function openSettings(){
+    document.getElementById('accountMenu').classList.remove('open');
+    if(!currentUser){ alert(t('mustSignIn')); return; }
+    document.getElementById('settingsEmail').textContent = currentUser.email;
+    document.getElementById('settingsOverlay').classList.add('open');
+  }
+
+  async function deleteAccount(){
+    if(!currentUser) return;
+    if(!confirm(t('confirmDeleteAccount'))) return;
+    const typed = prompt(t('typeDeleteToConfirm'));
+    if(!typed || typed.trim().toUpperCase() !== 'DELETE') return;
+
+    const { error } = await db.rpc('delete_my_account');
+    if(error){ alert(error.message); return; }
+    await db.auth.signOut();
+    currentUser = null;
+    document.getElementById('settingsOverlay').classList.remove('open');
+    renderAccountState();
+    await loadListings();
+    alert(t('accountDeleted'));
   }
 
   // ===== SUPPORT WIDGET =====
