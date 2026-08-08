@@ -9,7 +9,10 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0B5FD4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Ninjabrix Marketplace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -444,30 +447,88 @@
 
   /* ================= RESPONSIVE ================= */
   @media (max-width:900px){
-    .msg-panel{ flex-direction:column; height:100vh; max-width:100%; border-radius:0; }
-    .msg-list{ width:100%; max-height:150px; border-inline-end:0; border-bottom:1px solid var(--line); }
+    .msg-panel{ flex-direction:column; height:100dvh; max-width:100%; border-radius:0; }
+    .msg-list{ width:100%; max-height:140px; border-inline-end:0; border-bottom:1px solid var(--line); }
     .admin-stats{ grid-template-columns:1fr 1fr; }
+    .foot-inner{ grid-template-columns:1fr; gap:28px; }
   }
+
+  /* --- Phones --- */
   @media (max-width:720px){
-    .topbar{ gap:10px; }
-    .brand-name{ font-size:19px; }
-    .search{ order:10; width:100%; flex-basis:100%; }
-    .top-actions{ gap:6px; }
-    .icon-btn{ padding:0 12px; }
-    .post-btn{ padding:0 16px; }
-  
-    .grid{ grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; }
+    /* Two tidy rows: brand + controls, then a full-width search */
+    .topbar{ gap:8px; padding:10px 12px; }
+    .brand{ flex:1; min-width:0; }
+    .brand svg{ width:30px; height:30px; }
+    .brand-name{ font-size:18px; }
+    .top-actions{ gap:6px; margin-inline-start:0; }
+    .search{ order:10; width:100%; flex-basis:100%; min-width:100%; }
+    .search input{ height:46px; font-size:16px; } /* 16px stops iOS zooming on focus */
+    .search button{ height:46px; padding:0 18px; }
+
+    .icon-btn{ padding:0 12px; font-size:15px; }
+    .post-btn{ padding:0 14px; font-size:15px; }
+    .lang-switch button{ padding:0 10px; font-size:14px; }
+
+    .band-title{ padding:11px 12px; }
+    .band-title span{ font-size:17px; }
+    .filters{ padding:12px; }
+    .filter-row{ gap:7px; }
+    .mchip, .cat-item{ height:42px; padding:0 15px; font-size:14.5px; }
+
+    main{ padding:16px 12px 70px; }
+    .grid{ grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:12px; }
+
+    /* Full-screen sheets instead of tiny centred boxes */
     .sell-overlay{ padding:0; align-items:stretch; }
-    .sell-panel, .admin-panel{ max-width:100%; min-height:100vh; border-radius:0; }
+    .sell-panel, .admin-panel{
+      max-width:100%; min-height:100dvh; border-radius:0;
+      padding:22px 16px calc(22px + env(safe-area-inset-bottom));
+    }
+    .admin-panel{ padding:0 0 env(safe-area-inset-bottom); }
+    .admin-head, .admin-section{ padding-inline:16px; }
     .field-row{ grid-template-columns:1fr; }
-    .account-menu{ position:fixed; inset:auto 0 0 0; width:100%; border-radius:14px 14px 0 0; }
-    .detail-gallery img{ width:170px; height:135px; }
+    .sell-actions{ position:sticky; bottom:0; background:var(--surface);
+      padding-top:12px; margin-top:14px; }
+
+    .account-menu{
+      position:fixed; inset:auto 0 0 0; width:100%;
+      border-radius:16px 16px 0 0; padding-bottom:calc(16px + env(safe-area-inset-bottom));
+    }
+    .am-link{ padding:15px 2px; }
+
+    .detail-gallery img{ width:64vw; height:46vw; }
+    .detail-price{ font-size:28px; }
+
+    .support-bubble{ width:54px; height:54px; bottom:16px; inset-inline-end:16px; }
+    .support-window{ inset:auto 12px calc(80px + env(safe-area-inset-bottom)) 12px; width:auto; }
+    .support-body{ height:44vh; }
+
+    .thread-msgs{ padding:14px; }
+    .tmsg{ max-width:84%; }
+    .thread-input input{ font-size:16px; }
+
+    footer{ padding:32px 16px calc(28px + env(safe-area-inset-bottom)); }
   }
-  @media (max-width:400px){
+
+  /* --- Small phones --- */
+  @media (max-width:420px){
     .grid{ grid-template-columns:1fr 1fr; gap:10px; }
     .l-price{ font-size:19px; }
-    .l-title{ font-size:15px; }
+    .l-title{ font-size:14.5px; }
+    .l-meta{ font-size:12.5px; }
+    .contact-btn{ margin:0 10px 10px; height:44px; font-size:15px; }
+    .l-body{ padding:11px; }
+    .admin-stats{ grid-template-columns:1fr; }
+    .brand-name{ font-size:16px; }
+    .icon-btn{ padding:0 10px; }
+    .band-title span{ font-size:16px; }
   }
+
+  /* Inputs must be >=16px or iOS zooms the whole page on focus */
+  @media (max-width:720px){
+    .field input, .field select, .field textarea{ font-size:16px; }
+  }
+
   @media (prefers-reduced-motion:reduce){
     *{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
   }
