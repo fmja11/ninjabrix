@@ -12,6 +12,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ninjabrix Marketplace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://zwliqmsvihfdkyaadnsi.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
@@ -1009,8 +1011,9 @@
   const grid = document.getElementById('grid');
   const emptyState = document.getElementById('emptyState');
   function render(items){
-    grid.innerHTML = '';
     emptyState.classList.toggle('show', items.length === 0);
+    // Build into a fragment so the browser lays out once instead of per card
+    const frag = document.createDocumentFragment();
     items.forEach(l=>{
       const el = document.createElement('div');
       el.className = 'listing';
@@ -1042,8 +1045,9 @@
       } else {
         btn.addEventListener('click', ()=> startConversation(l.id, l.seller_id, l.title));
       }
-      grid.appendChild(el);
+      frag.appendChild(el);
     });
+    grid.replaceChildren(frag);
   }
 
   async function loadListings(){
@@ -1495,7 +1499,9 @@
 
     // Poll for new messages while the thread is open
     if(messagePoller) clearInterval(messagePoller);
-    messagePoller = setInterval(loadMessages, 4000);
+    messagePoller = setInterval(function(){
+      if(document.visibilityState === 'visible') loadMessages();
+    }, 5000);
   }
 
   async function loadMessages(){
@@ -1627,7 +1633,10 @@
   const condLabels = { new:'condNew', used:'condUsed', parts:'condParts' };
   const catLabels = { sets:'completeSets', mechs:'mechs', vehicles:'vehicles', figures:'figures', bundle:'bundles', parts:'looseParts' };
 
-  async function openDetail(l){
+  // Cache seller names so repeat taps don't re-query the database
+  const sellerNameCache = {};
+
+  function openDetail(l){
     detailListing = l;
     const gallery = document.getElementById('detailGallery');
     gallery.innerHTML = (l.photo_urls && l.photo_urls.length)
@@ -1643,9 +1652,25 @@
       `<span>${escapeHtml(l.city)}</span>`;
     document.getElementById('detailDesc').textContent = l.description || t('noDescription');
 
-    const { data: seller } = await db.from('profiles').select('full_name').eq('id', l.seller_id).maybeSingle();
-    document.getElementById('detailSeller').textContent =
-      t('listedBy') + ' ' + (seller ? seller.full_name : '—') + ' · ' + new Date(l.created_at).toLocaleDateString();
+    // Show the date immediately; fill in the seller name when it arrives.
+    // Waiting on the network here is what made taps feel unresponsive.
+    const dateStr = new Date(l.created_at).toLocaleDateString();
+    const sellerEl = document.getElementById('detailSeller');
+    const cached = sellerNameCache[l.seller_id];
+    sellerEl.textContent = cached
+      ? t('listedBy') + ' ' + cached + ' · ' + dateStr
+      : dateStr;
+
+    if(!cached){
+      db.from('profiles').select('full_name').eq('id', l.seller_id).maybeSingle()
+        .then(({ data: seller })=>{
+          const name = seller ? seller.full_name : '—';
+          sellerNameCache[l.seller_id] = name;
+          if(detailListing && detailListing.id === l.id){
+            sellerEl.textContent = t('listedBy') + ' ' + name + ' · ' + dateStr;
+          }
+        });
+    }
 
     const action = document.getElementById('detailAction');
     const isMine = currentUser && currentUser.id === l.seller_id;
@@ -1808,7 +1833,9 @@
     }
     if(lastSeenMessageCount === 0) lastSeenMessageCount = count || 0;
   }
-  setInterval(checkUnreadMessages, 30000);
+  setInterval(function(){
+    if(document.visibilityState === 'visible') checkUnreadMessages();
+  }, 60000);
 
   async function setSuspended(userId, suspend){
     if(!confirm(suspend ? t('confirmSuspend') : t('confirmReinstate'))) return;
