@@ -465,9 +465,10 @@
 <div class="filters">
   <div class="filter-row">
     <button class="mchip active" data-cat="all" data-i18n="allListings">All</button>
-    <button class="mchip" data-cat="dojo" data-i18n="dojoKits">Dojo Kits</button>
-    <button class="mchip" data-cat="elemental" data-i18n="elementalSets">Elemental Sets</button>
-    <button class="mchip" data-cat="rare" data-i18n="rareShards">Rare Shards</button>
+    <button class="mchip" data-cat="sets" data-i18n="completeSets">Complete Sets</button>
+    <button class="mchip" data-cat="mechs" data-i18n="mechs">Mechs</button>
+    <button class="mchip" data-cat="vehicles" data-i18n="vehicles">Vehicles &amp; Dragons</button>
+    <button class="mchip" data-cat="figures" data-i18n="figures">Minifigures</button>
     <button class="mchip" data-cat="bundle" data-i18n="bundles">Bundles</button>
     <button class="mchip" data-cat="parts" data-i18n="looseParts">Loose Parts</button>
   </div>
@@ -501,7 +502,7 @@
     <div class="empty-state" id="emptyState">
       <div class="empty-glyph"></div>
       <h3 data-i18n="emptyH">No listings here yet</h3>
-      <p data-i18n="emptyP">Ninjabrix just opened its doors. Be the first to list an Ember set, a rare Gilt Shard, or a box of loose parts.</p>
+      <p data-i18n="emptyP">Nothing listed here yet. Post a set, a mech, or a box of spare parts and it will show up right here.</p>
       <button class="post-btn" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="postFirst">+ Post the First Listing</button>
     </div>
   </main>
@@ -540,7 +541,7 @@
     <div class="field"><label data-i18n="titleLbl">Title</label><input type="text" id="sellTitle" data-i18n-ph="titlePh"></div>
     <div class="field-row">
       <div class="field"><label data-i18n="categoryLbl">Category</label>
-        <select id="sellCategory"><option value="dojo" data-i18n="dojoKits">Dojo Kits</option><option value="elemental" data-i18n="elementalSets">Elemental Sets</option><option value="rare" data-i18n="rareShards">Rare Shards</option><option value="bundle" data-i18n="bundles">Bundles</option><option value="parts" data-i18n="looseParts">Loose Parts</option></select>
+        <select id="sellCategory"><option value="sets" data-i18n="completeSets">Complete Sets</option><option value="mechs" data-i18n="mechs">Mechs</option><option value="vehicles" data-i18n="vehicles">Vehicles &amp; Dragons</option><option value="figures" data-i18n="figures">Minifigures</option><option value="bundle" data-i18n="bundles">Bundles</option><option value="parts" data-i18n="looseParts">Loose Parts</option></select>
       </div>
       <div class="field"><label data-i18n="conditionLbl">Condition</label>
         <select id="sellCondition"><option value="new" data-i18n="condNew">New, sealed</option><option value="used" data-i18n="condUsed">Used, complete</option><option value="parts" data-i18n="condParts">Loose / spares</option></select>
@@ -750,18 +751,18 @@
       signInPrompt:"Sign in to post listings, message buyers, and track your sales.", ownerDash:"Owner Dashboard",
       myListings:"My Listings", signOut:"Sign Out", commissionLine:" commission per sale — no listing fees",
       verifiedSellers:"Verified sellers", secureMsg:"Secure buyer-seller messaging", categories:"Categories",
-      allListings:"All Listings", dojoKits:"Dojo Kits", elementalSets:"Elemental Sets", rareShards:"Rare Shards",
+      allListings:"All", completeSets:"Complete Sets", mechs:"Mechs", vehicles:"Vehicles & Dragons", figures:"Minifigures",
       bundles:"Bundles", looseParts:"Loose Parts", city:"City", condition:"Condition", condNew:"New, sealed",
       condUsed:"Used, complete", condParts:"Loose / spares", marketTitle:"Ninjabrix Marketplace",
       marketSub:"Buy and sell directly with collectors near you.", sortNew:"Newest first", sortLow:"Price: low to high",
       sortHigh:"Price: high to low", sortClose:"Closest to me", step1t:"List an item",
-      step1d:"Post a set, shard, or loose parts lot in under a minute. No listing fees, ever.", step2t:"Talk to a buyer",
+      step1d:"Post a set, mech, or parts lot in under a minute. No listing fees, ever.", step2t:"Talk to a buyer",
       step2d:"Messages stay on Ninjabrix. Agree on price and details directly with them.", step3t:"Get paid",
       step3d:"Ninjabrix takes a flat 5% commission when the sale closes. That's it.", emptyH:"No listings here yet",
-      emptyP:"Ninjabrix just opened its doors. Be the first to list an Ember set, a rare Gilt Shard, or a box of loose parts.",
+      emptyP:"Nothing listed here yet. Post a set, a mech, or a box of spare parts and it will show up right here.",
       footerLine:"Independent marketplace for ninja-brick collectors. Not affiliated with any toy or media brand.",
       postListing2:"Post a Listing", postSub:"Free to list. Ninjabrix takes 5% only when your item actually sells.",
-      titleLbl:"Title", titlePh:"e.g. Ember Forge — Full Dojo Set", categoryLbl:"Category", conditionLbl:"Condition",
+      titleLbl:"Title", titlePh:"e.g. Ninja Mech Battle Set, complete with figures", categoryLbl:"Category", conditionLbl:"Condition",
       priceLbl:"Price (SAR)", cityLbl:"City", descLbl:"Description", descPh:"Piece count, missing parts, box condition…",
       cancel:"Cancel", mustSignIn:"Please sign in before posting a listing.", fillRequired:"Please fill in the title, price, and city.", fullNameLbl:"Full Name",
       fullNamePh:"Your name", roleBuyer:"Buyer", roleSeller:"Seller", roleOwner:"Owner", emailLbl:"Email",
@@ -774,7 +775,7 @@
       payoutQueue:"Payout Queue", noPayouts:"No commission payouts owed yet.", close:"Close",
       supportTitle:"Ninjabrix Support", supportSub:"Usually replies instantly",
       supportGreeting:"Hi! I'm the Ninjabrix support bot. Ask me about commission, posting a listing, or how buying works here.",
-      send:"Send", searchPh:"Search dojo sets, shards, parts…", supportPh:"Type a question…",
+      send:"Send", searchPh:"Search sets, mechs, minifigures, parts…", supportPh:"Type a question…",
       newUser:"New User", enterEmail:"Enter both your email and password to continue.",
       contactSeller:"Contact Seller", mustSignInMsg:"Please sign in to message a seller.",
       photosLbl:"Photos (up to 4)", uploading:"Uploading…",
@@ -819,7 +820,7 @@
       signInPrompt:"سجّل الدخول لنشر الإعلانات، مراسلة المشترين، ومتابعة مبيعاتك.", ownerDash:"لوحة المالك",
       myListings:"إعلاناتي", signOut:"تسجيل الخروج", commissionLine:" عمولة على كل عملية بيع — بدون رسوم نشر",
       verifiedSellers:"بائعون موثوقون", secureMsg:"مراسلة آمنة بين المشتري والبائع", categories:"الأقسام",
-      allListings:"كل الإعلانات", dojoKits:"مجموعات الدوجو", elementalSets:"مجموعات العناصر", rareShards:"شظايا نادرة",
+      allListings:"الكل", completeSets:"مجموعات كاملة", mechs:"روبوتات", vehicles:"مركبات وتنانين", figures:"شخصيات",
       bundles:"باقات", looseParts:"قطع منفصلة", city:"المدينة", condition:"الحالة", condNew:"جديد، مغلق",
       condUsed:"مستعمل، كامل", condParts:"قطع متفرقة", marketTitle:"سوق نينجابركس",
       marketSub:"بيع وشراء مباشر مع الهواة القريبين منك.", sortNew:"الأحدث أولاً", sortLow:"السعر: من الأقل للأعلى",
@@ -827,10 +828,10 @@
       step1d:"انشر مجموعة أو شظية أو قطع متفرقة في أقل من دقيقة. بدون رسوم نشر أبداً.", step2t:"تحدث مع المشتري",
       step2d:"تبقى الرسائل داخل نينجابركس. اتفقوا على السعر والتفاصيل مباشرة.", step3t:"استلم أموالك",
       step3d:"تأخذ نينجابركس عمولة ثابتة 5% عند إتمام البيع. هذا كل شيء.", emptyH:"لا توجد إعلانات هنا بعد",
-      emptyP:"نينجابركس فتح أبوابه للتو. كن أول من ينشر مجموعة Ember أو شظية Gilt نادرة أو صندوق قطع متفرقة.",
+      emptyP:"لا توجد إعلانات هنا بعد. انشر مجموعة أو روبوت أو صندوق قطع متفرقة وسيظهر هنا مباشرة.",
       footerLine:"سوق مستقل لهواة قطع نينجا-بريكس. غير مرتبط بأي علامة ألعاب أو إعلامية.",
       postListing2:"أضف إعلان", postSub:"النشر مجاني. تأخذ نينجابركس 5% فقط عند بيع القطعة فعلاً.",
-      titleLbl:"العنوان", titlePh:"مثال: Ember Forge — مجموعة دوجو كاملة", categoryLbl:"القسم", conditionLbl:"الحالة",
+      titleLbl:"العنوان", titlePh:"مثال: مجموعة روبوت نينجا كاملة مع الشخصيات", categoryLbl:"القسم", conditionLbl:"الحالة",
       priceLbl:"السعر (ريال)", cityLbl:"المدينة", descLbl:"الوصف", descPh:"عدد القطع، الأجزاء الناقصة، حالة العلبة…",
       cancel:"إلغاء", mustSignIn:"الرجاء تسجيل الدخول قبل نشر إعلان.", fillRequired:"الرجاء تعبئة العنوان والسعر والمدينة.", fullNameLbl:"الاسم الكامل",
       fullNamePh:"اسمك", roleBuyer:"مشتري", roleSeller:"بائع", roleOwner:"مالك", emailLbl:"البريد الإلكتروني",
@@ -900,7 +901,7 @@
 
   // ===== MARKETPLACE (real data from Supabase) =====
   let listings = [];
-  const tones = { dojo:"var(--ember-d)", elemental:"var(--jade)", rare:"var(--gold)", bundle:"var(--jade)", parts:"#8A8272" };
+  const tones = { sets:"var(--brick-blue)", mechs:"var(--brick-red)", vehicles:"var(--brick-green)", figures:"var(--brick-yellow)", bundle:"var(--brick-blue)", parts:"var(--muted)" };
 
   const grid = document.getElementById('grid');
   const emptyState = document.getElementById('emptyState');
@@ -1461,7 +1462,7 @@
   // ===== LISTING DETAIL, REPORTING, DELETION =====
   let detailListing = null;
   const condLabels = { new:'condNew', used:'condUsed', parts:'condParts' };
-  const catLabels = { dojo:'dojoKits', elemental:'elementalSets', rare:'rareShards', bundle:'bundles', parts:'looseParts' };
+  const catLabels = { sets:'completeSets', mechs:'mechs', vehicles:'vehicles', figures:'figures', bundle:'bundles', parts:'looseParts' };
 
   async function openDetail(l){
     detailListing = l;
