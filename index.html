@@ -764,7 +764,7 @@
       postListing2:"Post a Listing", postSub:"Free to list. Ninjabrix takes 5% only when your item actually sells.",
       titleLbl:"Title", titlePh:"e.g. Ninja Mech Battle Set, complete with figures", categoryLbl:"Category", conditionLbl:"Condition",
       priceLbl:"Price (SAR)", cityLbl:"City", descLbl:"Description", descPh:"Piece count, missing parts, box condition…",
-      cancel:"Cancel", mustSignIn:"Please sign in before posting a listing.", fillRequired:"Please fill in the title, price, and city.", fullNameLbl:"Full Name",
+      cancel:"Cancel", mustSignIn:"Please sign in before posting a listing.", photoTooBig:"That photo is too large - pick one under 12MB.", tooManyListings:"Daily listing limit reached. Try again tomorrow.", fillRequired:"Please fill in the title, price, and city.", fullNameLbl:"Full Name",
       fullNamePh:"Your name", roleBuyer:"Buyer", roleSeller:"Seller", roleOwner:"Owner", emailLbl:"Email",
       passwordLbl:"Password", continueBtn:"Continue",
       conversations:"Conversations", noConvos:"No conversations yet.", nothingHere:"Nothing here yet",
@@ -833,7 +833,7 @@
       postListing2:"أضف إعلان", postSub:"النشر مجاني. تأخذ نينجابركس 5% فقط عند بيع القطعة فعلاً.",
       titleLbl:"العنوان", titlePh:"مثال: مجموعة روبوت نينجا كاملة مع الشخصيات", categoryLbl:"القسم", conditionLbl:"الحالة",
       priceLbl:"السعر (ريال)", cityLbl:"المدينة", descLbl:"الوصف", descPh:"عدد القطع، الأجزاء الناقصة، حالة العلبة…",
-      cancel:"إلغاء", mustSignIn:"الرجاء تسجيل الدخول قبل نشر إعلان.", fillRequired:"الرجاء تعبئة العنوان والسعر والمدينة.", fullNameLbl:"الاسم الكامل",
+      cancel:"إلغاء", mustSignIn:"الرجاء تسجيل الدخول قبل نشر إعلان.", photoTooBig:"هذه الصورة كبيرة جداً - اختر صورة أقل من 12 ميجابايت.", tooManyListings:"وصلت إلى الحد اليومي للإعلانات. حاول غداً.", fillRequired:"الرجاء تعبئة العنوان والسعر والمدينة.", fullNameLbl:"الاسم الكامل",
       fullNamePh:"اسمك", roleBuyer:"مشتري", roleSeller:"بائع", roleOwner:"مالك", emailLbl:"البريد الإلكتروني",
       passwordLbl:"كلمة المرور", continueBtn:"متابعة",
       conversations:"المحادثات", noConvos:"لا توجد محادثات بعد.", nothingHere:"لا يوجد شيء هنا بعد",
@@ -1016,14 +1016,42 @@
     });
   }
 
+  // Phone cameras produce 3-8MB photos. Resizing to 1400px and re-encoding as
+  // JPEG brings that to roughly 200-400KB with no visible quality loss on a
+  // listing card, which keeps storage costs and load times down.
+  function compressImage(file, maxDim, quality){
+    maxDim = maxDim || 1400; quality = quality || 0.82;
+    return new Promise(function(resolve){
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function(){
+        URL.revokeObjectURL(url);
+        var width = img.width, height = img.height;
+        if(width > maxDim || height > maxDim){
+          var scale = maxDim / Math.max(width, height);
+          width = Math.round(width * scale);
+          height = Math.round(height * scale);
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        canvas.toBlob(function(blob){ resolve(blob || file); }, 'image/jpeg', quality);
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    });
+  }
+
   async function uploadPhotos(){
     const files = Array.from(document.getElementById('sellPhotos').files).slice(0,4);
     if(files.length === 0) return [];
     const urls = [];
     for(const file of files){
-      const ext = file.name.split('.').pop();
-      const path = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-      const { error } = await db.storage.from('listing-photos').upload(path, file);
+      if(file.size > 12 * 1024 * 1024){ alert(t('photoTooBig')); continue; }
+      const compressed = await compressImage(file);
+      const path = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.jpg`;
+      const { error } = await db.storage.from('listing-photos')
+        .upload(path, compressed, { contentType:'image/jpeg' });
       if(error){ console.error('Upload failed:', error.message); continue; }
       const { data } = db.storage.from('listing-photos').getPublicUrl(path);
       urls.push(data.publicUrl);
