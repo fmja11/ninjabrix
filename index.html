@@ -179,6 +179,25 @@
   .l-title{ font-size:16px; line-height:1.35; color:var(--ink-2); }
   .l-meta{ font-size:14px; color:var(--muted); display:flex; justify-content:space-between;
     gap:8px; margin-top:auto; padding-top:10px; }
+  .suspend-banner{
+    background:var(--brick-red); color:#fff; padding:14px clamp(12px,3vw,28px);
+    font-size:16px; text-align:center;
+  }
+  .suspend-banner strong{ display:block; font-size:17px; margin-bottom:2px; }
+  .owed-notice{
+    background:#FFF4E0; border:2px solid var(--brick-yellow); border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:16px;
+  }
+  .owed-notice strong{ display:block; margin-bottom:4px; }
+  .owed-notice p{ font-size:15px; color:var(--ink-2); }
+  .owed-row{ padding:12px 0; border-bottom:1px solid var(--line); display:flex;
+    justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+  .owed-row .amt{ font-weight:800; color:var(--brick-red); }
+  .btn-suspend{ background:var(--brick-red); color:#fff; border:0; padding:8px 14px;
+    border-radius:8px; font-weight:700; font-size:14px; }
+  .btn-reinstate{ background:var(--brick-green); color:#fff; border:0; padding:8px 14px;
+    border-radius:8px; font-weight:700; font-size:14px; }
+
   .contact-btn{
     margin:0 14px 14px; background:var(--brick-blue); color:#fff; border:0;
     height:var(--tap); border-radius:var(--radius); font-weight:700; font-size:16px;
@@ -495,6 +514,11 @@
   </select>
 </div>
 
+<div class="suspend-banner" id="suspendBanner" style="display:none;">
+  <strong data-i18n="accountSuspended">Your account is suspended.</strong>
+  <span data-i18n="suspendedWhy">You have unpaid commission. Email support@ninjabrix.com to settle it and restore your account.</span>
+</div>
+
 <div class="shell">
 
   <main id="mainContent">
@@ -679,6 +703,10 @@
       <div class="admin-stat"><div class="val" id="mySalesTotal">—</div><div class="lbl" data-i18n="totalSold">Total sold</div></div>
       <div class="admin-stat"><div class="val" id="myCommissionOwed">—</div><div class="lbl" data-i18n="commissionOwed">Commission owed</div></div>
     </div>
+    <div class="owed-notice" id="owedNotice" style="display:none;">
+      <strong data-i18n="commissionDue">Commission due</strong>
+      <p data-i18n="commissionDueBody">Send what you owe to Ninjabrix to keep your account active. Email support@ninjabrix.com to arrange payment.</p>
+    </div>
     <div id="mySalesList"></div>
     <div class="sell-actions" style="margin-top:16px;">
       <button class="btn-cancel" onclick="document.getElementById('mySalesOverlay').classList.remove('open')" data-i18n="close">Close</button>
@@ -709,6 +737,10 @@
     <div class="admin-section">
       <h4 data-i18n="openReports">Reported Listings</h4>
       <div class="admin-empty" id="adminReports" data-i18n="noReports">No open reports.</div>
+    </div>
+    <div class="admin-section">
+      <h4 data-i18n="unpaidCommission">Unpaid Commission</h4>
+      <div class="admin-empty" id="adminOwed" data-i18n="noneOwed">Nobody owes commission.</div>
     </div>
     <div class="admin-section">
       <h4 data-i18n="payoutQueue">Payout Queue</h4>
@@ -792,7 +824,16 @@
       confirmDeleteAccount:"Permanently delete your account and all your listings?",
       typeDeleteToConfirm:"Type DELETE to confirm.", accountDeleted:"Your account has been deleted.",
       privacyPolicy:"Privacy Policy", termsOfService:"Terms of Service",
-      categoriesTitle:"Categories", listingsTitle:"Listings", needHelp:"Need help?",
+      categoriesTitle:"Categories", listingsTitle:"Listings",
+      accountSuspended:"Your account is suspended.",
+      suspendedWhy:"You have unpaid commission. Email support@ninjabrix.com to settle it and restore your account.",
+      commissionDue:"Commission due",
+      commissionDueBody:"Send what you owe to Ninjabrix to keep your account active. Email support@ninjabrix.com to arrange payment.",
+      unpaidCommission:"Unpaid Commission", noneOwed:"Nobody owes commission.",
+      unpaidSales:"unpaid sales", daysOverdue:"days overdue", suspendedLabel:"SUSPENDED",
+      suspend:"Suspend", reinstate:"Reinstate",
+      confirmSuspend:"Suspend this account? Their listings will be hidden and they cannot post until reinstated.",
+      confirmReinstate:"Reinstate this account? Their listings will become visible again.", needHelp:"Need help?",
       helpBlurb:"Questions about a listing, your account, or commission — email us and a real person will reply.",
       openReports:"Reported Listings", noReports:"No open reports.",
       removeListing:"Remove listing", dismissReport:"Dismiss",
@@ -861,7 +902,16 @@
       confirmDeleteAccount:"حذف حسابك وجميع إعلاناتك نهائياً؟",
       typeDeleteToConfirm:"اكتب DELETE للتأكيد.", accountDeleted:"تم حذف حسابك.",
       privacyPolicy:"سياسة الخصوصية", termsOfService:"شروط الاستخدام",
-      categoriesTitle:"الأقسام", listingsTitle:"الإعلانات", needHelp:"تحتاج مساعدة؟",
+      categoriesTitle:"الأقسام", listingsTitle:"الإعلانات",
+      accountSuspended:"حسابك موقوف.",
+      suspendedWhy:"لديك عمولة غير مدفوعة. راسل support@ninjabrix.com لتسويتها واستعادة حسابك.",
+      commissionDue:"عمولة مستحقة",
+      commissionDueBody:"أرسل المبلغ المستحق إلى نينجابركس للحفاظ على حسابك نشطاً. راسل support@ninjabrix.com لترتيب الدفع.",
+      unpaidCommission:"عمولات غير مدفوعة", noneOwed:"لا أحد عليه عمولة.",
+      unpaidSales:"مبيعات غير مدفوعة", daysOverdue:"يوم تأخير", suspendedLabel:"موقوف",
+      suspend:"إيقاف", reinstate:"إعادة تفعيل",
+      confirmSuspend:"إيقاف هذا الحساب؟ ستُخفى إعلاناته ولن يتمكن من النشر حتى إعادة التفعيل.",
+      confirmReinstate:"إعادة تفعيل هذا الحساب؟ ستظهر إعلاناته مرة أخرى.", needHelp:"تحتاج مساعدة؟",
       helpBlurb:"أسئلة حول إعلان أو حسابك أو العمولة — راسلنا وسيرد عليك شخص حقيقي.",
       openReports:"الإعلانات المُبلّغ عنها", noReports:"لا توجد بلاغات مفتوحة.",
       removeListing:"إزالة الإعلان", dismissReport:"تجاهل",
@@ -1193,8 +1243,10 @@
       id: session.user.id,
       email: session.user.email,
       name: profile ? profile.full_name : session.user.email.split('@')[0],
-      role: profile ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : 'Buyer'
+      role: profile ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : 'Buyer',
+      suspended: profile ? !!profile.suspended : false
     };
+    document.getElementById('suspendBanner').style.display = currentUser.suspended ? 'block' : 'none';
     renderAccountState();
   }
 
@@ -1271,6 +1323,30 @@
     pendingEl.innerHTML = pending.length
       ? pending.map(l=>`<div style="padding:6px 0;border-bottom:1px solid var(--line);font-size:13px;">${l.title} <span style="color:var(--muted);">— ${Number(l.price).toLocaleString()} SAR, ${l.city}</span></div>`).join('')
       : t('nothingReview');
+
+    // Who owes commission, and how overdue
+    const { data: owedRows } = await db.from('commission_owed')
+      .select('*')
+      .order('days_overdue', { ascending:false });
+
+    const owedEl = document.getElementById('adminOwed');
+    owedEl.innerHTML = (owedRows && owedRows.length)
+      ? owedRows.map(r=>`<div class="owed-row">
+          <div>
+            <div style="font-weight:700;">${escapeHtml(r.full_name || '—')}</div>
+            <div style="color:var(--muted);font-size:14px;">
+              ${r.unpaid_sales} ${t('unpaidSales')} · ${r.days_overdue} ${t('daysOverdue')}
+              ${r.suspended ? ' · <strong style="color:var(--brick-red);">'+t('suspendedLabel')+'</strong>' : ''}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="amt">${Number(r.total_owed).toLocaleString()} SAR</span>
+            ${r.suspended
+              ? `<button class="btn-reinstate" onclick="setSuspended('${r.seller_id}',false)">${t('reinstate')}</button>`
+              : `<button class="btn-suspend" onclick="setSuspended('${r.seller_id}',true)">${t('suspend')}</button>`}
+          </div>
+        </div>`).join('')
+      : t('noneOwed');
 
     const owed = sales.filter(s=> s.status === 'pending');
     const payoutsEl = document.getElementById('adminPayouts');
@@ -1473,6 +1549,7 @@
 
     document.getElementById('mySalesTotal').textContent = totalSold.toLocaleString() + ' SAR';
     document.getElementById('myCommissionOwed').textContent = owed.toLocaleString() + ' SAR';
+    document.getElementById('owedNotice').style.display = owed > 0 ? 'block' : 'none';
 
     const listEl = document.getElementById('mySalesList');
     listEl.innerHTML = sales.length ? sales.map(s=>{
@@ -1673,6 +1750,18 @@
     if(lastSeenMessageCount === 0) lastSeenMessageCount = count || 0;
   }
   setInterval(checkUnreadMessages, 30000);
+
+  async function setSuspended(userId, suspend){
+    if(!confirm(suspend ? t('confirmSuspend') : t('confirmReinstate'))) return;
+    const { error } = await db.from('profiles').update({
+      suspended: suspend,
+      suspended_reason: suspend ? 'Unpaid commission' : null,
+      suspended_at: suspend ? new Date().toISOString() : null
+    }).eq('id', userId);
+    if(error){ alert(error.message); return; }
+    await loadAdminData();
+    await loadListings();
+  }
 
   // ===== SUPPORT WIDGET =====
   function toggleSupport(){ document.getElementById('supportWindow').classList.toggle('open'); }
