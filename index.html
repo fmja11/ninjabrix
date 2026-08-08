@@ -1087,9 +1087,9 @@
 
   function selectCategory(cat){
     currentCat = cat;
-    document.querySelectorAll('.cat-item[data-cat]').forEach(i=>i.classList.toggle('active', i.dataset.cat===cat));
     document.querySelectorAll('.mchip').forEach(i=>i.classList.toggle('active', i.dataset.cat===cat));
-    applyFilters();
+    // Paint the pressed state first, then re-render the grid
+    requestAnimationFrame(()=> applyFilters());
   }
   document.querySelectorAll('.cat-item[data-cat]').forEach(item=>{
     item.addEventListener('click', ()=>selectCategory(item.dataset.cat));
@@ -1102,7 +1102,7 @@
     item.addEventListener('click', ()=>{
       currentCity = item.dataset.city;
       document.querySelectorAll('.cat-item[data-city]').forEach(i=>i.classList.toggle('active', i===item));
-      applyFilters();
+      requestAnimationFrame(()=> applyFilters());
     });
   });
 
@@ -1110,11 +1110,12 @@
     item.addEventListener('click', ()=>{
       currentCond = item.dataset.cond;
       document.querySelectorAll('.cat-item[data-cond]').forEach(i=>i.classList.toggle('active', i===item));
-      applyFilters();
+      requestAnimationFrame(()=> applyFilters());
     });
   });
 
-  loadListings();
+  // Let the page paint before hitting the network
+  requestAnimationFrame(()=> loadListings());
 
   // ===== POST A LISTING (saves to Supabase) =====
   function previewPhotos(){
@@ -1232,10 +1233,13 @@
   let pickedRole = 'Buyer';
 
   function toggleAccountMenu(){ document.getElementById('accountMenu').classList.toggle('open'); }
+  // Cached refs: this fires on every tap, so it must not query the DOM each time
+  const accountWrapEl = document.querySelector('.account-wrap');
+  const accountMenuEl = document.getElementById('accountMenu');
   document.addEventListener('click', (e)=>{
-    const wrap = document.querySelector('.account-wrap');
-    if(wrap && !wrap.contains(e.target)) document.getElementById('accountMenu').classList.remove('open');
-  });
+    if(!accountMenuEl.classList.contains('open')) return;
+    if(!accountWrapEl.contains(e.target)) accountMenuEl.classList.remove('open');
+  }, { passive:true });
 
   function openAuth(tab){
     document.getElementById('accountMenu').classList.remove('open');
@@ -1885,8 +1889,9 @@
     document.body.style.overflow = '';
   }
 
+  const lightboxEl = document.getElementById('lightbox');
   document.addEventListener('keydown', (e)=>{
-    if(!document.getElementById('lightbox').classList.contains('open')) return;
+    if(!lightboxEl.classList.contains('open')) return;
     if(e.key === 'Escape') closeLightbox();
     if(e.key === 'ArrowRight') lightboxStep(1);
     if(e.key === 'ArrowLeft') lightboxStep(-1);
