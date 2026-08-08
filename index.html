@@ -101,26 +101,27 @@
   .loc{ display:none; }
 
   /* ================= FILTER BAR ================= */
-  .filters{ background:linear-gradient(180deg,#FFFFFF,#F7F9FC); border-bottom:1px solid var(--line);
-    padding:10px clamp(12px,3vw,28px); position:sticky; top:68px; z-index:50; }
-  .filter-row{ display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none;
-    justify-content:center; }
-  /* when the row overflows on small screens, fall back to left-aligned scrolling */
-  @media (max-width:820px){ .filter-row{ justify-content:flex-start; } }
+  .filters{ background:var(--brick-yellow); border-bottom:3px solid #E0A000;
+    padding:14px clamp(12px,3vw,28px); }
+  .filter-row{ display:flex; gap:9px; overflow-x:auto; scrollbar-width:none;
+    justify-content:center; padding:2px 0; }
+  .filter-row::-webkit-scrollbar{ display:none; }
+  .filter-row + .filter-row{ margin-top:9px; }
+  @media (max-width:900px){ .filter-row{ justify-content:flex-start; } }
   .filter-row::-webkit-scrollbar{ display:none; }
   .filter-row + .filter-row{ margin-top:8px; }
-  .filter-label{
+  .filter-label{ display:none;
     flex-shrink:0; align-self:center; font-size:13px; font-weight:700; color:var(--muted);
     text-transform:uppercase; letter-spacing:.5px; margin-inline-end:4px;
   }
   .mchip, .cat-item{
-    flex-shrink:0; border:2px solid var(--line); background:var(--surface); color:var(--ink-2);
-    height:42px; padding:0 16px; border-radius:999px; font-weight:600; font-size:15px;
+    flex-shrink:0; border:2px solid rgba(20,23,28,.18); background:rgba(255,255,255,.75);
+    color:var(--ink); height:44px; padding:0 18px; border-radius:999px;
+    font-weight:700; font-size:15px;
     display:inline-flex; align-items:center; white-space:nowrap; cursor:pointer;
   }
-  .mchip:hover, .cat-item:hover{ border-color:var(--ink-2); }
-  .mchip.active{ background:var(--brick-blue); border-color:var(--brick-blue); color:#fff; }
-  .cat-item.active{ background:var(--ink); border-color:var(--ink); color:#fff; }
+  .mchip:hover, .cat-item:hover{ background:#fff; border-color:var(--ink); }
+  .mchip.active, .cat-item.active{ background:var(--ink); border-color:var(--ink); color:#fff; }
   .sidebar{ display:none; }
   .shell{ display:block; }
 
@@ -133,8 +134,9 @@
   .page-head h1::before{ content:''; width:7px; height:26px; border-radius:3px;
     background:linear-gradient(180deg,var(--brick-blue) 0 50%, var(--brick-yellow) 50% 100%); flex-shrink:0; }
   .page-head p{ display:none; }
-  .sort{ border:2px solid var(--line); background:var(--surface); color:var(--ink);
-    height:44px; padding:0 14px; border-radius:var(--radius); font-weight:600; }
+  .sort{ border:2px solid rgba(20,23,28,.18); background:rgba(255,255,255,.75); color:var(--ink);
+    height:44px; padding:0 16px; border-radius:999px; font-weight:700; }
+  .sort:hover{ background:#fff; border-color:var(--ink); }
   .hero-banner, .how-row{ display:none; }
 
   /* ================= LISTING GRID ================= */
@@ -374,7 +376,7 @@
     .top-actions{ gap:6px; }
     .icon-btn{ padding:0 12px; }
     .post-btn{ padding:0 16px; }
-    .filters{ top:126px; }
+  
     .grid{ grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; }
     .sell-overlay{ padding:0; align-items:stretch; }
     .sell-panel, .admin-panel{ max-width:100%; min-height:100vh; border-radius:0; }
@@ -446,7 +448,6 @@
 
 <div class="filters">
   <div class="filter-row">
-    <span class="filter-label" data-i18n="categories">Type</span>
     <button class="mchip active" data-cat="all" data-i18n="allListings">All</button>
     <button class="mchip" data-cat="dojo" data-i18n="dojoKits">Dojo Kits</button>
     <button class="mchip" data-cat="elemental" data-i18n="elementalSets">Elemental Sets</button>
@@ -455,17 +456,24 @@
     <button class="mchip" data-cat="parts" data-i18n="looseParts">Loose Parts</button>
   </div>
   <div class="filter-row">
-    <span class="filter-label" data-i18n="city">City</span>
     <button class="cat-item active" data-city="all" data-i18n="allCities">All Cities</button>
     <button class="cat-item" data-city="Dammam">Dammam</button>
     <button class="cat-item" data-city="Khobar">Khobar</button>
     <button class="cat-item" data-city="Riyadh">Riyadh</button>
     <button class="cat-item" data-city="Jeddah">Jeddah</button>
-    <span class="filter-label" style="margin-inline-start:14px;" data-i18n="condition">Condition</span>
-    <button class="cat-item active" data-cond="all" data-i18n="anyCondition">Any</button>
+  </div>
+  <div class="filter-row">
+    <button class="cat-item active" data-cond="all" data-i18n="anyCondition">Any Condition</button>
     <button class="cat-item" data-cond="new" data-i18n="condNew">New, sealed</button>
     <button class="cat-item" data-cond="used" data-i18n="condUsed">Used, complete</button>
     <button class="cat-item" data-cond="parts" data-i18n="condParts">Loose / spares</button>
+  </div>
+  <div class="filter-row">
+    <select class="sort" id="sortSelect" onchange="applyFilters()" aria-label="Sort listings">
+      <option value="new" data-i18n="sortNew">Newest first</option>
+      <option value="low" data-i18n="sortLow">Price: low to high</option>
+      <option value="high" data-i18n="sortHigh">Price: high to low</option>
+    </select>
   </div>
 </div>
 
@@ -477,11 +485,6 @@
         <h1 data-i18n="marketTitle">Ninjabrix Marketplace</h1>
         <p data-i18n="marketSub">Buy and sell directly with collectors near you.</p>
       </div>
-      <select class="sort" id="sortSelect" onchange="applyFilters()">
-        <option value="new" data-i18n="sortNew">Newest first</option>
-        <option value="low" data-i18n="sortLow">Price: low to high</option>
-        <option value="high" data-i18n="sortHigh">Price: high to low</option>
-      </select>
     </div>
     <div class="grid" id="grid"></div>
     <div class="empty-state" id="emptyState">
