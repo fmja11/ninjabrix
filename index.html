@@ -887,6 +887,20 @@
   </div>
 </div>
 
+<div class="sell-overlay" id="dialogOverlay">
+  <div class="sell-panel" style="max-width:420px;">
+    <h2 id="dialogTitle"></h2>
+    <p id="dialogBody" style="font-size:16px;line-height:1.6;color:var(--ink-2);margin:8px 0 18px;"></p>
+    <div class="field" id="dialogInputWrap" style="display:none;">
+      <input type="text" id="dialogInput">
+    </div>
+    <div class="sell-actions">
+      <button class="btn-cancel" id="dialogCancel">Cancel</button>
+      <button class="btn-submit" id="dialogOk">OK</button>
+    </div>
+  </div>
+</div>
+
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
   <button class="lb-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
   <button class="lb-nav lb-prev" onclick="lightboxStep(-1, event)" aria-label="Previous photo">&#8249;</button>
@@ -981,6 +995,7 @@
       openReports:"Reported Listings", noReports:"No open reports.",
       removeListing:"Remove listing", dismissReport:"Dismiss",
       confirmRemoveReported:"Remove this listing from the marketplace?",
+      confirmBtn:"Confirm", sendReport:"Send report", reportPlaceholder:"Tell us what's wrong",
       forgotPassword:"Forgot your password?", enterEmailForReset:"Enter your email above first, then tap reset.",
       resetEmailSent:"Check your email for a password reset link.",
       setNewPassword:"Set a New Password", setNewPasswordSub:"Choose a new password for your account.",
@@ -1059,6 +1074,7 @@
       openReports:"الإعلانات المُبلّغ عنها", noReports:"لا توجد بلاغات مفتوحة.",
       removeListing:"إزالة الإعلان", dismissReport:"تجاهل",
       confirmRemoveReported:"إزالة هذا الإعلان من السوق؟",
+      confirmBtn:"تأكيد", sendReport:"إرسال البلاغ", reportPlaceholder:"وضّح لنا ما المشكلة",
       forgotPassword:"نسيت كلمة المرور؟", enterEmailForReset:"أدخل بريدك الإلكتروني أعلاه أولاً، ثم اضغط إعادة التعيين.",
       resetEmailSent:"تحقق من بريدك الإلكتروني للحصول على رابط إعادة تعيين كلمة المرور.",
       setNewPassword:"تعيين كلمة مرور جديدة", setNewPasswordSub:"اختر كلمة مرور جديدة لحسابك.",
@@ -1171,7 +1187,11 @@
     render(filtered);
   }
   function filterListings(){ applyFilters(); }
-  document.getElementById('searchInput').addEventListener('input', applyFilters);
+  let searchTimer = null;
+  document.getElementById('searchInput').addEventListener('input', ()=>{
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applyFilters, 220);
+  });
 
   function selectCategory(cat){
     currentCat = cat;
@@ -1779,8 +1799,9 @@
   async function reportListing(){
     if(!currentUser){ alert(t('mustSignIn')); return; }
     if(!detailListing) return;
-    const reason = prompt(t('reportPrompt'));
-    if(!reason) return;
+    const reason = await showDialog({ title:t('reportListing'), body:t('reportPrompt'),
+                                      input:{ placeholder:t('reportPlaceholder') }, okLabel:t('sendReport') });
+    if(!reason || !reason.trim()) return;
     const { error } = await db.from('reports').insert({
       listing_id: detailListing.id,
       reporter_id: currentUser.id,
@@ -1793,7 +1814,9 @@
 
   async function deleteListing(){
     if(!detailListing || !currentUser) return;
-    if(!confirm(t('confirmDeleteListing'))) return;
+    const ok = await showDialog({ title:t('deleteListing'), body:t('confirmDeleteListing'),
+                                  okLabel:t('deleteListing'), danger:true });
+    if(!ok) return;
     const { error } = await db.from('listings').update({ status:'removed' }).eq('id', detailListing.id);
     if(error){ alert(error.message); return; }
     document.getElementById('detailOverlay').classList.remove('open');
@@ -1810,8 +1833,11 @@
 
   async function deleteAccount(){
     if(!currentUser) return;
-    if(!confirm(t('confirmDeleteAccount'))) return;
-    const typed = prompt(t('typeDeleteToConfirm'));
+    const ok = await showDialog({ title:t('deleteAccount'), body:t('confirmDeleteAccount'),
+                                  okLabel:t('continueBtn'), danger:true });
+    if(!ok) return;
+    const typed = await showDialog({ title:t('deleteAccount'), body:t('typeDeleteToConfirm'),
+                                     input:{ placeholder:'DELETE' }, okLabel:t('deleteAccount'), danger:true });
     if(!typed || typed.trim().toUpperCase() !== 'DELETE') return;
 
     const { error } = await db.rpc('delete_my_account');
@@ -1825,7 +1851,9 @@
   }
 
   async function removeReportedListing(listingId, reportId){
-    if(!confirm(t('confirmRemoveReported'))) return;
+    const ok = await showDialog({ title:t('removeListing'), body:t('confirmRemoveReported'),
+                                  okLabel:t('removeListing'), danger:true });
+    if(!ok) return;
     if(listingId){ await db.from('listings').update({ status:'removed' }).eq('id', listingId); }
     await db.from('reports').update({ status:'actioned' }).eq('id', reportId);
     await loadAdminData();
@@ -1929,7 +1957,11 @@
   }, 60000);
 
   async function setSuspended(userId, suspend){
-    if(!confirm(suspend ? t('confirmSuspend') : t('confirmReinstate'))) return;
+    const ok = await showDialog({
+      title: suspend ? t('suspend') : t('reinstate'),
+      body: suspend ? t('confirmSuspend') : t('confirmReinstate'),
+      okLabel: suspend ? t('suspend') : t('reinstate'), danger: suspend });
+    if(!ok) return;
     const { error } = await db.from('profiles').update({
       suspended: suspend,
       suspended_reason: suspend ? 'Unpaid commission' : null,
@@ -1938,6 +1970,45 @@
     if(error){ alert(error.message); return; }
     await loadAdminData();
     await loadListings();
+  }
+
+  // ===== DIALOGS =====
+  // Native confirm()/prompt() block the main thread until the user responds,
+  // which tanks interaction responsiveness. These are non-blocking.
+  function showDialog({ title, body, input, okLabel, danger }){
+    return new Promise((resolve)=>{
+      const overlay = document.getElementById('dialogOverlay');
+      const inputWrap = document.getElementById('dialogInputWrap');
+      const inputEl = document.getElementById('dialogInput');
+      const okBtn = document.getElementById('dialogOk');
+      const cancelBtn = document.getElementById('dialogCancel');
+
+      document.getElementById('dialogTitle').textContent = title || '';
+      document.getElementById('dialogBody').textContent = body || '';
+      okBtn.textContent = okLabel || t('confirmBtn');
+      cancelBtn.textContent = t('cancel');
+      okBtn.style.background = danger ? 'var(--brick-red)' : 'var(--brick-blue)';
+
+      if(input){
+        inputWrap.style.display = 'block';
+        inputEl.value = '';
+        inputEl.placeholder = input.placeholder || '';
+      } else {
+        inputWrap.style.display = 'none';
+      }
+
+      overlay.classList.add('open');
+      setTimeout(()=>{ (input ? inputEl : okBtn).focus(); }, 60);
+
+      function cleanup(result){
+        overlay.classList.remove('open');
+        okBtn.onclick = null; cancelBtn.onclick = null; inputEl.onkeydown = null;
+        resolve(result);
+      }
+      okBtn.onclick = ()=> cleanup(input ? (inputEl.value || '') : true);
+      cancelBtn.onclick = ()=> cleanup(input ? null : false);
+      inputEl.onkeydown = (e)=>{ if(e.key === 'Enter') okBtn.click(); };
+    });
   }
 
   // ===== PHOTO LIGHTBOX =====
