@@ -120,6 +120,22 @@
   .loc{ display:none; }
 
   /* ================= FILTER BAR ================= */
+  .intro-strip{
+    background:var(--surface); border-bottom:1px solid var(--line);
+    padding:18px clamp(12px,3vw,28px) 20px; text-align:center;
+  }
+  .intro-main{
+    font-family:'Archivo Black','Archivo',sans-serif; font-size:clamp(17px,2.4vw,21px);
+    color:var(--ink); letter-spacing:-0.3px; margin-bottom:6px;
+  }
+  .intro-sub{ font-size:15px; color:var(--muted); }
+  .intro-sub .dot-sep{ color:var(--line); padding:0 8px; }
+  @media (max-width:520px){
+    .intro-strip{ padding:15px 12px 16px; }
+    .intro-sub{ font-size:14px; line-height:1.9; }
+    .intro-sub .dot-sep{ padding:0 5px; }
+  }
+
   .band-title{
     background:var(--brick-yellow); border-top:3px solid #E0A000; border-bottom:3px solid #E0A000;
     padding:13px clamp(12px,3vw,28px);
@@ -131,7 +147,23 @@
   }
   .band-title .sort{ position:absolute; inset-inline-end:clamp(12px,3vw,28px); }
   @media (max-width:640px){
-    .band-title{ flex-direction:column; gap:10px; }
+    .intro-strip{
+    background:var(--surface); border-bottom:1px solid var(--line);
+    padding:18px clamp(12px,3vw,28px) 20px; text-align:center;
+  }
+  .intro-main{
+    font-family:'Archivo Black','Archivo',sans-serif; font-size:clamp(17px,2.4vw,21px);
+    color:var(--ink); letter-spacing:-0.3px; margin-bottom:6px;
+  }
+  .intro-sub{ font-size:15px; color:var(--muted); }
+  .intro-sub .dot-sep{ color:var(--line); padding:0 8px; }
+  @media (max-width:520px){
+    .intro-strip{ padding:15px 12px 16px; }
+    .intro-sub{ font-size:14px; line-height:1.9; }
+    .intro-sub .dot-sep{ padding:0 5px; }
+  }
+
+  .band-title{ flex-direction:column; gap:10px; }
     .band-title .sort{ position:static; width:100%; max-width:280px; }
   }
 
@@ -506,7 +538,23 @@
     .post-btn{ padding:0 14px; font-size:15px; }
     .lang-switch button{ padding:0 10px; font-size:14px; }
 
-    .band-title{ padding:11px 12px; }
+    .intro-strip{
+    background:var(--surface); border-bottom:1px solid var(--line);
+    padding:18px clamp(12px,3vw,28px) 20px; text-align:center;
+  }
+  .intro-main{
+    font-family:'Archivo Black','Archivo',sans-serif; font-size:clamp(17px,2.4vw,21px);
+    color:var(--ink); letter-spacing:-0.3px; margin-bottom:6px;
+  }
+  .intro-sub{ font-size:15px; color:var(--muted); }
+  .intro-sub .dot-sep{ color:var(--line); padding:0 8px; }
+  @media (max-width:520px){
+    .intro-strip{ padding:15px 12px 16px; }
+    .intro-sub{ font-size:14px; line-height:1.9; }
+    .intro-sub .dot-sep{ padding:0 5px; }
+  }
+
+  .band-title{ padding:11px 12px; }
     .band-title span{ font-size:17px; }
     .filters{ padding:12px; }
     .filter-row{ gap:7px; }
@@ -621,6 +669,17 @@
   <span><span class="dot"></span><b>5%</b><span data-i18n="commissionLine">commission per sale — no listing fees</span></span>
   <span><span class="dot"></span><span data-i18n="verifiedSellers">Verified sellers</span></span>
   <span><span class="dot"></span><span data-i18n="secureMsg">Secure buyer-seller messaging</span></span>
+</div>
+
+<div class="intro-strip">
+  <p class="intro-main" data-i18n="introMain">Buy and sell collectible brick sets across Saudi Arabia.</p>
+  <p class="intro-sub">
+    <span data-i18n="introFree">Listing is free</span>
+    <span class="dot-sep">&middot;</span>
+    <span data-i18n="introDirect">Message sellers directly</span>
+    <span class="dot-sep">&middot;</span>
+    <span data-i18n="introFee">5% only when it sells</span>
+  </p>
 </div>
 
 <div class="band-title"><span data-i18n="categoriesTitle">Categories</span></div>
@@ -1004,6 +1063,9 @@
       typeDeleteToConfirm:"Type DELETE to confirm.", accountDeleted:"Your account has been deleted.",
       privacyPolicy:"Privacy Policy", termsOfService:"Terms of Service",
       categoriesTitle:"Categories", listingsTitle:"Listings",
+      introMain:"Buy and sell collectible brick sets across Saudi Arabia.",
+      introFree:"Listing is free", introDirect:"Message sellers directly",
+      introFee:"5% only when it sells",
       accountSuspended:"Your account is suspended.",
       suspendedWhy:"You have unpaid commission. Email support@ninjabrix.com to settle it and restore your account.",
       commissionDue:"Commission due",
@@ -1083,6 +1145,9 @@
       typeDeleteToConfirm:"اكتب DELETE للتأكيد.", accountDeleted:"تم حذف حسابك.",
       privacyPolicy:"سياسة الخصوصية", termsOfService:"شروط الاستخدام",
       categoriesTitle:"الأقسام", listingsTitle:"الإعلانات",
+      introMain:"بيع واشترِ مجموعات البريك القابلة للجمع في جميع أنحاء السعودية.",
+      introFree:"النشر مجاني", introDirect:"راسل البائعين مباشرة",
+      introFee:"عمولة 5% عند البيع فقط",
       accountSuspended:"حسابك موقوف.",
       suspendedWhy:"لديك عمولة غير مدفوعة. راسل support@ninjabrix.com لتسويتها واستعادة حسابك.",
       commissionDue:"عمولة مستحقة",
