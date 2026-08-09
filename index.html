@@ -382,7 +382,17 @@
   .thread-item.active{ background:#EAF2FE; }
   .thread-item .tt{ font-weight:700; margin-bottom:2px; font-size:16px; }
   .thread-item .tw{ font-size:14px; color:var(--muted); }
-  .thread-head{ padding:16px 20px; border-bottom:1px solid var(--line); font-weight:700; }
+  .msg-list-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .msg-close{ background:transparent; border:0; color:var(--muted); font-size:30px; line-height:1;
+    width:40px; height:40px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .msg-close:hover{ color:var(--ink); }
+  .thread-head{ padding:14px 16px; border-bottom:1px solid var(--line); font-weight:700;
+    display:flex; align-items:center; gap:8px; }
+  .thread-head span{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .thread-back{ display:none; background:transparent; border:0; color:var(--ink); font-size:32px;
+    line-height:1; width:40px; height:40px; align-items:center; justify-content:center; flex-shrink:0; }
+  html[dir="rtl"] .thread-back{ transform:scaleX(-1); }
+  .thread-close{ display:none; }
   .thread-msgs{ flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px; }
   .tmsg{ max-width:76%; padding:11px 15px; border-radius:16px; font-size:16px; line-height:1.5; }
   .tmsg.mine{ background:var(--brick-blue); color:#fff; align-self:flex-end; border-bottom-right-radius:5px; }
@@ -470,7 +480,12 @@
   /* ================= RESPONSIVE ================= */
   @media (max-width:900px){
     .msg-panel{ flex-direction:column; height:100dvh; max-width:100%; border-radius:0; }
-    .msg-list{ width:100%; max-height:140px; border-inline-end:0; border-bottom:1px solid var(--line); }
+    /* Show the list OR the thread, never both squeezed together */
+    .msg-list{ width:100%; max-height:none; flex:1; border-inline-end:0; }
+    .msg-panel.viewing-thread .msg-list{ display:none; }
+    .msg-panel:not(.viewing-thread) .msg-thread-area{ display:none; }
+    .thread-back{ display:flex; }
+    .thread-close{ display:flex; }
     .admin-stats{ grid-template-columns:1fr 1fr; }
     .foot-inner{ grid-template-columns:1fr; gap:28px; }
   }
@@ -794,7 +809,10 @@
 <div class="sell-overlay" id="messagesOverlay">
   <div class="msg-panel">
     <div class="msg-list">
-      <div class="msg-list-head" data-i18n="conversations">Conversations</div>
+      <div class="msg-list-head">
+        <span data-i18n="conversations">Conversations</span>
+        <button class="msg-close" onclick="closeMessages()" aria-label="Close messages">&times;</button>
+      </div>
       <div id="threadList"><div class="admin-empty" style="padding:16px;" data-i18n="noConvos">No conversations yet.</div></div>
     </div>
     <div class="msg-thread-area" id="threadArea">
@@ -804,7 +822,11 @@
         <p data-i18n="msgEmptyP">When a buyer messages you about a listing, the conversation will show up here.</p>
       </div>
       <div id="threadView" style="display:none; flex-direction:column; height:100%;">
-        <div class="thread-head" id="threadTitle"></div>
+        <div class="thread-head">
+          <button class="thread-back" onclick="backToThreadList()" aria-label="Back to conversations">&#8249;</button>
+          <span id="threadTitle"></span>
+          <button class="msg-close thread-close" onclick="closeMessages()" aria-label="Close messages">&times;</button>
+        </div>
         <div class="thread-msgs" id="threadMsgs"></div>
         <div class="thread-input">
           <input type="text" id="threadInput" data-i18n-ph="typeMessage" onkeydown="if(event.key==='Enter')sendMessage()">
@@ -1447,6 +1469,7 @@
 
   function openMessages(){
     document.getElementById('accountMenu').classList.remove('open');
+    document.querySelector('.msg-panel').classList.remove('viewing-thread');
     document.getElementById('messagesOverlay').classList.add('open');
     loadConversations();
   }
@@ -1600,8 +1623,22 @@
     });
   }
 
+  function backToThreadList(){
+    document.querySelector('.msg-panel').classList.remove('viewing-thread');
+    activeConversation = null;
+    if(messagePoller){ clearInterval(messagePoller); messagePoller = null; }
+  }
+
+  function closeMessages(){
+    document.getElementById('messagesOverlay').classList.remove('open');
+    document.querySelector('.msg-panel').classList.remove('viewing-thread');
+    activeConversation = null;
+    if(messagePoller){ clearInterval(messagePoller); messagePoller = null; }
+  }
+
   async function openThread(convoId, title){
     activeConversation = convoId;
+    document.querySelector('.msg-panel').classList.add('viewing-thread');
     document.getElementById('threadPlaceholder').style.display = 'none';
     document.getElementById('threadView').style.display = 'flex';
     document.getElementById('threadTitle').textContent = title;
@@ -2046,6 +2083,14 @@
     document.getElementById('lightbox').classList.remove('open');
     document.body.style.overflow = '';
   }
+
+  const messagesOverlayEl = document.getElementById('messagesOverlay');
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && messagesOverlayEl.classList.contains('open')
+       && !document.getElementById('lightbox').classList.contains('open')){
+      closeMessages(); return;
+    }
+  });
 
   const lightboxEl = document.getElementById('lightbox');
   document.addEventListener('keydown', (e)=>{
