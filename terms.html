@@ -5,29 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0B5FD4">
 <title>Terms of Service — Ninjabrix</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Teko:wght@400;600&family=Work+Sans:wght@400;600&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Archivo+Black&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --ink:#1B1F27; --paper:#EDE9DD; --card:#FBF9F3; --line:#DCD6C4; --text:#211E17; --muted:#77705F; --ember:#B8452F; }
+  :root{ --ink:#14171C; --paper:#EEF2F8; --card:#FFFFFF; --line:#DCE0E7; --text:#14171C; --muted:#6B7280; --ember:#0B5FD4; }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{ font-family:'Work Sans',sans-serif; background:var(--paper); color:var(--text); }
+  body{ font-family:'Archivo',system-ui,sans-serif; background:var(--paper); color:var(--text); }
   body.lang-ar, body.lang-ar *{ font-family:'Cairo',sans-serif !important; }
-  .topbar{ background:var(--ink); color:#EDE9DD; padding:14px clamp(16px,3vw,32px); border-bottom:3px solid var(--ember); display:flex; justify-content:space-between; align-items:center; }
-  .brand{ font-family:'Cinzel',serif; font-weight:700; font-size:20px; display:flex; align-items:center; gap:8px; }
-  .brand .mark{ width:11px;height:11px;background:var(--ember);transform:rotate(45deg); }
+  .topbar{ background:#FFFFFF; color:var(--ink); padding:14px clamp(16px,3vw,32px); border-bottom:1px solid var(--line); box-shadow:inset 0 3px 0 var(--ember); display:flex; justify-content:space-between; align-items:center; }
+  .brand{ font-family:'Archivo Black','Archivo',sans-serif; font-weight:900; font-size:20px; display:flex; align-items:center; gap:8px; }
+  
   .brand a{ color:inherit; text-decoration:none; }
-  .lang-switch{ display:flex; border:1px solid #333A47; font-family:'Teko',sans-serif; font-size:14px; }
+  .lang-switch{ display:flex; border:1px solid #333A47; border-radius:8px; overflow:hidden; font-size:14px; }
   .lang-switch button{ background:transparent;border:0;color:#8A91A0;padding:7px 12px;cursor:pointer;text-transform:uppercase; }
-  .lang-switch button.active{ background:#B5872F;color:#1B1710;font-weight:600; }
+  .lang-switch button.active{ background:#FFB300;color:#14171C;font-weight:700; }
   main{ max-width:760px; margin:0 auto; padding:48px clamp(16px,4vw,32px) 80px; }
-  h1{ font-family:'Cinzel',serif; font-size:30px; margin-bottom:8px; }
+  h1{ font-family:'Archivo Black','Archivo',sans-serif; font-size:30px; margin-bottom:8px; }
   .updated{ color:var(--muted); font-size:13px; margin-bottom:32px; }
-  h2{ font-family:'Teko',sans-serif; font-size:22px; letter-spacing:1px; text-transform:uppercase; margin:32px 0 10px; }
+  h2{ font-family:'Archivo Black','Archivo',sans-serif; font-size:20px; letter-spacing:-0.3px; margin:32px 0 10px; }
   p, li{ font-size:15px; line-height:1.75; margin-bottom:12px; }
   ul{ padding-inline-start:22px; }
   a{ color:var(--ember); }
   .callout{ background:var(--card); border:1px solid var(--line); border-inline-start:3px solid var(--ember); padding:16px 18px; margin:18px 0; }
   .callout p:last-child{ margin-bottom:0; }
-  footer{ background:var(--ink); color:#8A91A0; padding:28px clamp(16px,3vw,32px); font-size:12.5px; text-align:center; }
+  footer{ background:var(--ink); color:#AEB6C3; border-top:4px solid var(--ember); padding:28px clamp(16px,3vw,32px); font-size:12.5px; text-align:center; }
   footer a{ color:#EDE9DD; }
 
   @media (max-width:720px){
@@ -52,7 +54,7 @@
 </head>
 <body>
 <div class="topbar">
-  <div class="brand"><span class="mark"></span><a href="/">NINJABRIX</a></div>
+  <div class="brand"><img src="/logo.png" width="30" height="30" alt="" style="border-radius:6px;margin-inline-end:9px;vertical-align:middle;"><a href="/">NINJABRIX</a></div>
   <div class="lang-switch">
     <button id="enBtn" onclick="setLang('en')" class="active">EN</button>
     <button id="arBtn" onclick="setLang('ar')">AR</button>
