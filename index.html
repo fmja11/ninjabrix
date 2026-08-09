@@ -42,8 +42,15 @@
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
   html{ -webkit-text-size-adjust:100%; }
+  /* Fallback metrics close to Archivo so text doesn't reflow when the
+     webfont finishes loading */
+  @font-face{
+    font-family:'Archivo-fallback';
+    src:local('Helvetica Neue'), local('Arial');
+    size-adjust:98%; ascent-override:92%; descent-override:24%; line-gap-override:0%;
+  }
   body{
-    font-family:'Archivo', system-ui, -apple-system, sans-serif;
+    font-family:'Archivo', 'Archivo-fallback', system-ui, -apple-system, sans-serif;
     font-size:17px; line-height:1.55;
     background:var(--bg); color:var(--ink);
     -webkit-font-smoothing:antialiased;
@@ -167,6 +174,21 @@
 
   /* ================= LISTING GRID ================= */
   .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:16px; }
+  /* Placeholder cards hold the grid's height while listings load, so the
+     footer doesn't get pushed down when real content arrives. */
+  .skeleton{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    overflow:hidden; }
+  .sk-thumb{ aspect-ratio:1/1; background:#E4E8EE; }
+  .sk-body{ padding:14px; }
+  .sk-line{ height:13px; background:#E4E8EE; border-radius:4px; margin-bottom:9px; }
+  .sk-line.sk-price{ height:20px; width:55%; margin-bottom:12px; }
+  .sk-line.sk-short{ width:60%; margin-bottom:0; }
+  .skeleton .sk-thumb, .skeleton .sk-line{ animation:skPulse 1.4s ease-in-out infinite; }
+  @keyframes skPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.55; } }
+
+  /* Keeps the page height stable between empty, loading, and loaded states */
+  main{ min-height:60vh; }
+
   .listing{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
     overflow:hidden; display:flex; flex-direction:column; cursor:pointer;
@@ -629,7 +651,12 @@
 <div class="shell">
 
   <main id="mainContent">
-    <div class="grid" id="grid"></div>
+    <div class="grid" id="grid">
+      <div class="skeleton"><div class="sk-thumb"></div><div class="sk-body"><div class="sk-line sk-price"></div><div class="sk-line"></div><div class="sk-line sk-short"></div></div></div>
+      <div class="skeleton"><div class="sk-thumb"></div><div class="sk-body"><div class="sk-line sk-price"></div><div class="sk-line"></div><div class="sk-line sk-short"></div></div></div>
+      <div class="skeleton"><div class="sk-thumb"></div><div class="sk-body"><div class="sk-line sk-price"></div><div class="sk-line"></div><div class="sk-line sk-short"></div></div></div>
+      <div class="skeleton"><div class="sk-thumb"></div><div class="sk-body"><div class="sk-line sk-price"></div><div class="sk-line"></div><div class="sk-line sk-short"></div></div></div>
+    </div>
     <div class="empty-state" id="emptyState">
       <div class="empty-glyph"></div>
       <h3 data-i18n="emptyH">No listings here yet</h3>
@@ -1175,8 +1202,7 @@
     });
   });
 
-  // Let the page paint before hitting the network
-  requestAnimationFrame(()=> loadListings());
+  loadListings();
 
   // ===== POST A LISTING (saves to Supabase) =====
   function previewPhotos(){
