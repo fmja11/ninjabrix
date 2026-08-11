@@ -398,6 +398,28 @@
   .detail-footer{ display:flex; gap:18px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
 
   /* commission */
+  .order-tabs{ display:flex; gap:0; margin-bottom:18px; border-bottom:2px solid var(--line); }
+  .order-tab{ flex:1; padding:13px; background:none; border:0; font-weight:700; color:var(--muted);
+    border-bottom:3px solid transparent; margin-bottom:-2px; }
+  .order-tab.active{ color:var(--ink); border-bottom-color:var(--brick-blue); }
+
+  .order-card{ border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
+  .order-card .oc-top{ display:flex; justify-content:space-between; gap:12px; margin-bottom:10px; }
+  .order-card .oc-title{ font-weight:700; font-size:16px; }
+  .order-card .oc-amt{ font-family:'Archivo Black','Archivo',sans-serif; font-size:19px;
+    color:var(--brick-blue-d); white-space:nowrap; }
+  .oc-status{ display:inline-block; font-size:13px; font-weight:700; padding:5px 12px;
+    border-radius:999px; margin-bottom:10px; }
+  .oc-status.held{ background:#FFF4E0; color:#8A6200; }
+  .oc-status.shipped{ background:#EAF2FE; color:var(--brick-blue-d); }
+  .oc-status.released{ background:#E4F6EE; color:#007043; }
+  .oc-status.refunded{ background:#FDECEA; color:var(--brick-red); }
+  .oc-note{ font-size:14.5px; color:var(--ink-2); line-height:1.55; margin-bottom:12px; }
+  .oc-actions{ display:flex; gap:9px; flex-wrap:wrap; }
+  .oc-btn{ background:var(--brick-blue); color:#fff; border:0; padding:11px 18px;
+    border-radius:8px; font-weight:700; font-size:15px; }
+  .oc-btn.secondary{ background:transparent; border:2px solid var(--line); color:var(--ink-2); }
+
   .commission-preview{ background:var(--bg); border:1px solid var(--line); border-radius:var(--radius);
     padding:16px; margin-bottom:18px; display:none; }
   .commission-preview.show{ display:block; }
@@ -665,6 +687,7 @@
           <div class="am-user"><div class="am-avatar" id="amAvatar">N</div><div><div class="am-name" id="amName">—</div><div class="am-role" id="amRole">Buyer</div></div></div>
           <a class="am-link" id="amAdminLink" href="#" onclick="openAdmin();return false;" style="display:none;" data-i18n="ownerDash">Owner Dashboard</a>
           <a class="am-link" href="#" onclick="openMessages();return false;" data-i18n="messages">Messages</a>
+          <a class="am-link" href="#" onclick="openOrders();return false;" data-i18n="myOrders">My Orders</a>
           <a class="am-link" href="#" onclick="openMySales();return false;" data-i18n="mySales">My Sales &amp; Commission</a>
           <a class="am-link" href="#" onclick="openSettings();return false;" data-i18n="accountSettings">Account Settings</a>
           <a class="am-link" href="#" onclick="signOut();return false;" data-i18n="signOut">Sign Out</a>
@@ -916,6 +939,21 @@
   </div>
 </div>
 
+<div class="sell-overlay" id="ordersOverlay">
+  <div class="sell-panel" style="max-width:640px;">
+    <h2 data-i18n="myOrders">My Orders</h2>
+    <div class="sub" data-i18n="myOrdersSub">Everything you're buying or selling, and what happens next.</div>
+    <div class="order-tabs">
+      <button class="order-tab active" id="tabBuying" onclick="switchOrderTab('buying')" data-i18n="buying">Buying</button>
+      <button class="order-tab" id="tabSelling" onclick="switchOrderTab('selling')" data-i18n="selling">Selling</button>
+    </div>
+    <div id="ordersList"></div>
+    <div class="sell-actions" style="margin-top:16px;">
+      <button class="btn-cancel" onclick="document.getElementById('ordersOverlay').classList.remove('open')" data-i18n="close">Close</button>
+    </div>
+  </div>
+</div>
+
 <div class="sell-overlay" id="mySalesOverlay">
   <div class="sell-panel">
     <h2 data-i18n="mySales">My Sales &amp; Commission</h2>
@@ -1072,7 +1110,22 @@
       introFree:"Listing is free", introDirect:"Message sellers directly",
       introFee:"3% only when it sells",
       contractNotice:"This sale is a contract between you and the seller. Ninjabrix provides the platform only and is not a party to the transaction.",
-      soldBy:"Sold by",
+      soldBy:"Sold by", loading:"Loading…",
+      myOrders:"My Orders", myOrdersSub:"Everything you're buying or selling, and what happens next.",
+      buying:"Buying", selling:"Selling", noOrders:"Nothing here yet.",
+      statusAwaitingShip:"Awaiting shipment", statusShipped:"Shipped", statusComplete:"Complete", statusCancelled:"Cancelled",
+      markShipped:"Mark as shipped", confirmReceipt:"Confirm receipt", reportProblem:"Report a problem",
+      noteSellerToShip:"Payment received and held safely. Ship by {date} to release your money — if you don't, the order is cancelled and the buyer refunded.",
+      noteSellerShipped:"Marked as shipped. Your money is released as soon as the buyer confirms, or automatically on {date}.",
+      noteSellerReleased:"Released. This payout is on its way to you.",
+      noteBuyerWaitingShip:"Your payment is held safely by Ninjabrix. The seller has been notified to ship. Nothing is released to them until you confirm.",
+      noteBuyerConfirm:"The seller marked this as shipped. Confirm once it arrives to release payment, or it releases automatically on {date}. If something's wrong, report a problem instead.",
+      noteBuyerReleased:"Complete. Payment has been released to the seller.",
+      noteRefunded:"Cancelled — the seller didn't ship in time. The payment is being refunded.",
+      confirmShipped:"Confirm you've sent this item. The buyer will be asked to confirm receipt.",
+      confirmReceiptBody:"Confirm the item arrived as described. This releases payment to the seller and can't be undone.",
+      disputeBody:"Tell us what went wrong. Payment stays frozen while we look into it.",
+      disputePlaceholder:"What's the problem?", disputeRaised:"Reported. Payment is frozen while we review this.",
       accountSuspended:"Your account is suspended.",
       suspendedWhy:"You have unpaid commission. Email support@ninjabrix.com to settle it and restore your account.",
       commissionDue:"Commission due",
@@ -1156,7 +1209,22 @@
       introFree:"النشر مجاني", introDirect:"راسل البائعين مباشرة",
       introFee:"عمولة 3% عند البيع فقط",
       contractNotice:"هذا البيع عقد بينك وبين البائع. توفّر نينجابركس المنصة فقط وليست طرفاً في المعاملة.",
-      soldBy:"البائع",
+      soldBy:"البائع", loading:"جاري التحميل…",
+      myOrders:"طلباتي", myOrdersSub:"كل ما تشتريه أو تبيعه، وما الخطوة التالية.",
+      buying:"شراء", selling:"بيع", noOrders:"لا يوجد شيء هنا بعد.",
+      statusAwaitingShip:"بانتظار الشحن", statusShipped:"تم الشحن", statusComplete:"مكتمل", statusCancelled:"ملغى",
+      markShipped:"تم الشحن", confirmReceipt:"تأكيد الاستلام", reportProblem:"الإبلاغ عن مشكلة",
+      noteSellerToShip:"تم استلام المبلغ وحفظه بأمان. أرسل القطعة قبل {date} لتحرير أموالك — وإلا يُلغى الطلب ويُعاد المبلغ للمشتري.",
+      noteSellerShipped:"تم تسجيل الشحن. تُحرَّر أموالك فور تأكيد المشتري، أو تلقائياً في {date}.",
+      noteSellerReleased:"تم التحرير. مبلغك في طريقه إليك.",
+      noteBuyerWaitingShip:"مبلغك محفوظ بأمان لدى نينجابركس. تم إبلاغ البائع بالشحن، ولا يُحرَّر له شيء حتى تؤكد الاستلام.",
+      noteBuyerConfirm:"سجّل البائع أنه شحن القطعة. أكّد الاستلام عند وصولها لتحرير المبلغ، أو سيُحرَّر تلقائياً في {date}. إن كان هناك خطأ، أبلغ عن مشكلة بدلاً من ذلك.",
+      noteBuyerReleased:"مكتمل. تم تحرير المبلغ للبائع.",
+      noteRefunded:"ملغى — لم يشحن البائع في الوقت المحدد. تتم إعادة المبلغ.",
+      confirmShipped:"أكّد أنك أرسلت القطعة. سيُطلب من المشتري تأكيد الاستلام.",
+      confirmReceiptBody:"أكّد وصول القطعة كما هو موصوف. هذا يحرّر المبلغ للبائع ولا يمكن التراجع عنه.",
+      disputeBody:"أخبرنا بما حدث. يبقى المبلغ مجمّداً أثناء المراجعة.",
+      disputePlaceholder:"ما المشكلة؟", disputeRaised:"تم الإبلاغ. المبلغ مجمّد أثناء المراجعة.",
       accountSuspended:"حسابك موقوف.",
       suspendedWhy:"لديك عمولة غير مدفوعة. راسل support@ninjabrix.com لتسويتها واستعادة حسابك.",
       commissionDue:"عمولة مستحقة",
@@ -2192,6 +2260,121 @@
       if(Math.abs(dx) > 55) lightboxStep(dx > 0 ? -1 : 1);
     }, {passive:true});
   })();
+
+
+  // ===== ORDERS & ESCROW =====
+  let orderTab = 'buying';
+
+  function openOrders(){
+    document.getElementById('accountMenu').classList.remove('open');
+    if(!currentUser){ alert(t('mustSignIn')); return; }
+    document.getElementById('ordersOverlay').classList.add('open');
+    loadOrders();
+  }
+
+  function switchOrderTab(tab){
+    orderTab = tab;
+    document.getElementById('tabBuying').classList.toggle('active', tab==='buying');
+    document.getElementById('tabSelling').classList.toggle('active', tab==='selling');
+    loadOrders();
+  }
+
+  function fmtDate(d){ return d ? new Date(d).toLocaleDateString() : '—'; }
+
+  // Plain-language explanation of where the money is and what unlocks it.
+  // Uncertainty is what makes sellers nervous, so this is deliberately explicit.
+  function escrowNote(row, selling){
+    if(row.payout_status === 'released')
+      return selling ? t('noteSellerReleased') : t('noteBuyerReleased');
+    if(row.payout_status === 'refunded')
+      return t('noteRefunded');
+    if(!row.shipped_at)
+      return selling
+        ? t('noteSellerToShip').replace('{date}', fmtDate(row.ship_due_at))
+        : t('noteBuyerWaitingShip');
+    return selling
+      ? t('noteSellerShipped').replace('{date}', fmtDate(row.auto_release_at))
+      : t('noteBuyerConfirm').replace('{date}', fmtDate(row.auto_release_at));
+  }
+
+  function statusClass(row){
+    if(row.payout_status === 'released') return 'released';
+    if(row.payout_status === 'refunded') return 'refunded';
+    return row.shipped_at ? 'shipped' : 'held';
+  }
+
+  function statusLabel(row){
+    if(row.payout_status === 'released') return t('statusComplete');
+    if(row.payout_status === 'refunded') return t('statusCancelled');
+    return row.shipped_at ? t('statusShipped') : t('statusAwaitingShip');
+  }
+
+  async function loadOrders(){
+    const listEl = document.getElementById('ordersList');
+    listEl.innerHTML = `<div class="admin-empty">${t('loading')}</div>`;
+
+    const selling = orderTab === 'selling';
+    let query = db.from('my_pending_shipments').select('*').order('ship_due_at', { ascending:true });
+    if(selling){
+      query = query.eq('seller_id', currentUser.id);
+    } else {
+      const { data: myOrders } = await db.from('orders').select('id').eq('buyer_id', currentUser.id);
+      const ids = (myOrders || []).map(o=>o.id);
+      if(!ids.length){ listEl.innerHTML = `<div class="admin-empty">${t('noOrders')}</div>`; return; }
+      query = query.in('order_id', ids);
+    }
+
+    const { data, error } = await query;
+    if(error){ listEl.innerHTML = `<div class="admin-empty">${escapeHtml(error.message)}</div>`; return; }
+    if(!data || !data.length){ listEl.innerHTML = `<div class="admin-empty">${t('noOrders')}</div>`; return; }
+
+    listEl.innerHTML = data.map(row=>{
+      const amount = selling ? row.vendor_payout : row.gross_amount;
+      const canShip    = selling && !row.shipped_at && row.payout_status === 'held';
+      const canConfirm = !selling && row.shipped_at && row.payout_status === 'held';
+      return `<div class="order-card">
+        <div class="oc-top">
+          <div class="oc-title">${escapeHtml(row.title)}</div>
+          <div class="oc-amt">${Number(amount).toLocaleString()} SAR</div>
+        </div>
+        <div class="oc-status ${statusClass(row)}">${statusLabel(row)}</div>
+        <div class="oc-note">${escrowNote(row, selling)}</div>
+        <div class="oc-actions">
+          ${canShip ? `<button class="oc-btn" onclick="markShipped('${row.order_id}')">${t('markShipped')}</button>` : ''}
+          ${canConfirm ? `<button class="oc-btn" onclick="confirmReceipt('${row.order_id}')">${t('confirmReceipt')}</button>` : ''}
+          ${(canConfirm || canShip) ? `<button class="oc-btn secondary" onclick="raiseDispute('${row.order_id}')">${t('reportProblem')}</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function markShipped(orderId){
+    const ok = await showDialog({ title:t('markShipped'), body:t('confirmShipped'), okLabel:t('markShipped') });
+    if(!ok) return;
+    const { error } = await db.rpc('mark_shipped', { p_order_id: orderId });
+    if(error){ alert(error.message); return; }
+    loadOrders();
+  }
+
+  async function confirmReceipt(orderId){
+    const ok = await showDialog({ title:t('confirmReceipt'), body:t('confirmReceiptBody'), okLabel:t('confirmReceipt') });
+    if(!ok) return;
+    const { error } = await db.rpc('confirm_receipt', { p_order_id: orderId });
+    if(error){ alert(error.message); return; }
+    loadOrders();
+  }
+
+  async function raiseDispute(orderId){
+    const reason = await showDialog({ title:t('reportProblem'), body:t('disputeBody'),
+                                      input:{ placeholder:t('disputePlaceholder') }, okLabel:t('sendReport') });
+    if(!reason || !reason.trim()) return;
+    const { error } = await db.from('disputes').insert({
+      order_id: orderId, raised_by: currentUser.id, reason: reason.trim()
+    });
+    if(error){ alert(error.message); return; }
+    alert(t('disputeRaised'));
+    loadOrders();
+  }
 
   // ===== SUPPORT WIDGET =====
   function toggleSupport(){ document.getElementById('supportWindow').classList.toggle('open'); }
