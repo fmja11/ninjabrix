@@ -248,6 +248,11 @@
   .l-body{ padding:14px; display:flex; flex-direction:column; gap:4px; flex:1; }
   .l-price{ font-family:'Archivo Black','Archivo',sans-serif; font-size:22px; letter-spacing:-0.5px; color:var(--brick-blue-d); }
   .l-title{ font-size:16px; line-height:1.35; color:var(--ink-2); }
+  .l-seller{ font-size:13.5px; color:var(--brick-blue-d); font-weight:600;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .contract-notice{ background:var(--bg); border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px 14px; font-size:14px; color:var(--ink-2); line-height:1.55; margin-bottom:14px; }
+
   .l-meta{ font-size:14px; color:var(--muted); display:flex; justify-content:space-between;
     gap:8px; margin-top:auto; padding-top:10px; }
   .suspend-banner{
@@ -677,7 +682,7 @@
     <span class="dot-sep">&middot;</span>
     <span data-i18n="introDirect">Message sellers directly</span>
     <span class="dot-sep">&middot;</span>
-    <span data-i18n="introFee">5% only when it sells</span>
+    <span data-i18n="introFee">3% only when it sells</span>
   </p>
 </div>
 
@@ -769,7 +774,7 @@
 <div class="sell-overlay" id="sellOverlay">
   <div class="sell-panel">
     <h2 id="sellPanelTitle" data-i18n="postListing2">Post a Listing</h2>
-    <div class="sub" data-i18n="postSub">Free to list. Ninjabrix takes 5% only when your item actually sells.</div>
+    <div class="sub" data-i18n="postSub">Free to list. Ninjabrix takes 3% only when your item actually sells.</div>
     <div class="field"><label data-i18n="titleLbl">Title</label><input type="text" id="sellTitle" data-i18n-ph="titlePh"></div>
     <div class="field-row">
       <div class="field"><label data-i18n="categoryLbl">Category</label>
@@ -815,6 +820,7 @@
     <div class="detail-tags" id="detailTags"></div>
     <p class="detail-desc" id="detailDesc"></p>
     <div class="detail-seller" id="detailSeller"></div>
+    <div class="contract-notice" data-i18n="contractNotice">This sale is a contract between you and the seller. Ninjabrix provides the platform only and is not a party to the transaction.</div>
     <div class="sell-actions">
       <button class="btn-cancel" onclick="document.getElementById('detailOverlay').classList.remove('open')" data-i18n="close">Close</button>
       <button class="btn-submit" id="detailAction"></button>
@@ -831,7 +837,7 @@
   <div class="sell-panel">
     <h2 data-i18n="markSoldTitle">Mark as Sold</h2>
     <div class="sub" id="soldListingName"></div>
-    <div class="notice" data-i18n="soldNotice">Ninjabrix charges 5% of the final sale price. You'll be invoiced for it — payment is arranged with you directly.</div>
+    <div class="notice" data-i18n="soldNotice">Ninjabrix charges 3% of the final sale price. You'll be invoiced for it — payment is arranged with you directly.</div>
     <div class="field"><label data-i18n="finalPriceLbl">Final sale price (SAR)</label><input type="number" id="soldPrice" placeholder="0" oninput="updateCommissionPreview()"></div>
     <div class="commission-preview" id="commissionPreview"></div>
     <div class="sell-actions">
@@ -913,7 +919,7 @@
 <div class="sell-overlay" id="mySalesOverlay">
   <div class="sell-panel">
     <h2 data-i18n="mySales">My Sales &amp; Commission</h2>
-    <div class="sub" data-i18n="mySalesSub">Every sale you've recorded, and the 5% owed on each.</div>
+    <div class="sub" data-i18n="mySalesSub">Every sale you've recorded, and the 3% owed on each.</div>
     <div class="admin-stats" style="margin-bottom:18px;">
       <div class="admin-stat"><div class="val" id="mySalesTotal">—</div><div class="lbl" data-i18n="totalSold">Total sold</div></div>
       <div class="admin-stat"><div class="val" id="myCommissionOwed">—</div><div class="lbl" data-i18n="commissionOwed">Commission owed</div></div>
@@ -1027,10 +1033,10 @@
       sortHigh:"Price: high to low", sortClose:"Closest to me", step1t:"List an item",
       step1d:"Post a set, mech, or parts lot in under a minute. No listing fees, ever.", step2t:"Talk to a buyer",
       step2d:"Messages stay on Ninjabrix. Agree on price and details directly with them.", step3t:"Get paid",
-      step3d:"Ninjabrix takes a flat 5% commission when the sale closes. That's it.", emptyH:"No listings here yet",
+      step3d:"Ninjabrix takes a flat 3% commission when the sale closes. That's it.", emptyH:"No listings here yet",
       emptyP:"Nothing listed here yet. Post a set, a mech, or a box of spare parts and it will show up right here.",
       footerLine:"Independent marketplace for ninja-brick collectors. Not affiliated with any toy or media brand.",
-      postListing2:"Post a Listing", postSub:"Free to list. Ninjabrix takes 5% only when your item actually sells.",
+      postListing2:"Post a Listing", postSub:"Free to list. Ninjabrix takes 3% only when your item actually sells.",
       titleLbl:"Title", titlePh:"e.g. Ninja Mech Battle Set, complete with figures", categoryLbl:"Category", conditionLbl:"Condition",
       priceLbl:"Price (SAR)", cityLbl:"City", descLbl:"Description", descPh:"Piece count, missing parts, box condition…",
       cancel:"Cancel", mustSignIn:"Please sign in before posting a listing.", photoTooBig:"That photo is too large - pick one under 12MB.", tooManyListings:"Daily listing limit reached. Try again tomorrow.", fillRequired:"Please fill in the title, price, and city.", fullNameLbl:"Full Name",
@@ -1049,8 +1055,8 @@
       contactSeller:"Contact Seller", mustSignInMsg:"Please sign in to message a seller.",
       photosLbl:"Photos (up to 4)", uploading:"Uploading…",
       markSold:"Mark as Sold", markSoldTitle:"Mark as Sold", finalPriceLbl:"Final sale price (SAR)",
-      soldNotice:"Ninjabrix charges 5% of the final sale price. You'll be invoiced for it — payment is arranged with you directly.",
-      confirmSale:"Confirm Sale", salePrice:"Sale price", ninjabrixFee:"Ninjabrix fee (5%)", youKeep:"You keep",
+      soldNotice:"Ninjabrix charges 3% of the final sale price. You'll be invoiced for it — payment is arranged with you directly.",
+      confirmSale:"Confirm Sale", salePrice:"Sale price", ninjabrixFee:"Ninjabrix fee (3%)", youKeep:"You keep",
       enterSalePrice:"Enter the final sale price.", checkEmail:"Check your email to confirm your account, then sign in.",
       noPhotos:"No photos", noDescription:"No description provided.", listedBy:"Listed by",
       reportListing:"Report this listing", deleteListing:"Delete listing",
@@ -1064,7 +1070,9 @@
       categoriesTitle:"Categories", listingsTitle:"Listings",
       introMain:"Buy and sell collectible brick sets across Saudi Arabia.",
       introFree:"Listing is free", introDirect:"Message sellers directly",
-      introFee:"5% only when it sells",
+      introFee:"3% only when it sells",
+      contractNotice:"This sale is a contract between you and the seller. Ninjabrix provides the platform only and is not a party to the transaction.",
+      soldBy:"Sold by",
       accountSuspended:"Your account is suspended.",
       suspendedWhy:"You have unpaid commission. Email support@ninjabrix.com to settle it and restore your account.",
       commissionDue:"Commission due",
@@ -1088,8 +1096,8 @@
       allCities:"All Cities", anyCondition:"Any Condition",
       skipToContent:"Skip to listings",
       heroHeadline:"Buy and sell collectible brick sets across Saudi Arabia",
-      heroSub:"Free to list. Message sellers directly. 5% only when it sells.", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
-      mySales:"My Sales & Commission", mySalesSub:"Every sale you've recorded, and the 5% owed on each.",
+      heroSub:"Free to list. Message sellers directly. 3% only when it sells.", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
+      mySales:"My Sales & Commission", mySalesSub:"Every sale you've recorded, and the 3% owed on each.",
       totalSold:"Total sold", commissionOwed:"Commission owed", noSalesYet:"No sales recorded yet.",
       paid:"Paid", unpaid:"Unpaid",
       cantMessageSelf:"This is your own listing.", typeMessage:"Type a message…",
@@ -1109,10 +1117,10 @@
       sortHigh:"السعر: من الأعلى للأقل", sortClose:"الأقرب لي", step1t:"أضف إعلان",
       step1d:"انشر مجموعة أو شظية أو قطع متفرقة في أقل من دقيقة. بدون رسوم نشر أبداً.", step2t:"تحدث مع المشتري",
       step2d:"تبقى الرسائل داخل نينجابركس. اتفقوا على السعر والتفاصيل مباشرة.", step3t:"استلم أموالك",
-      step3d:"تأخذ نينجابركس عمولة ثابتة 5% عند إتمام البيع. هذا كل شيء.", emptyH:"لا توجد إعلانات هنا بعد",
+      step3d:"تأخذ نينجابركس عمولة ثابتة 3% عند إتمام البيع. هذا كل شيء.", emptyH:"لا توجد إعلانات هنا بعد",
       emptyP:"لا توجد إعلانات هنا بعد. انشر مجموعة أو روبوت أو صندوق قطع متفرقة وسيظهر هنا مباشرة.",
       footerLine:"سوق مستقل لهواة قطع نينجا-بريكس. غير مرتبط بأي علامة ألعاب أو إعلامية.",
-      postListing2:"أضف إعلان", postSub:"النشر مجاني. تأخذ نينجابركس 5% فقط عند بيع القطعة فعلاً.",
+      postListing2:"أضف إعلان", postSub:"النشر مجاني. تأخذ نينجابركس 3% فقط عند بيع القطعة فعلاً.",
       titleLbl:"العنوان", titlePh:"مثال: مجموعة روبوت نينجا كاملة مع الشخصيات", categoryLbl:"القسم", conditionLbl:"الحالة",
       priceLbl:"السعر (ريال)", cityLbl:"المدينة", descLbl:"الوصف", descPh:"عدد القطع، الأجزاء الناقصة، حالة العلبة…",
       cancel:"إلغاء", mustSignIn:"الرجاء تسجيل الدخول قبل نشر إعلان.", photoTooBig:"هذه الصورة كبيرة جداً - اختر صورة أقل من 12 ميجابايت.", tooManyListings:"وصلت إلى الحد اليومي للإعلانات. حاول غداً.", fillRequired:"الرجاء تعبئة العنوان والسعر والمدينة.", fullNameLbl:"الاسم الكامل",
@@ -1131,8 +1139,8 @@
       contactSeller:"تواصل مع البائع", mustSignInMsg:"الرجاء تسجيل الدخول لمراسلة البائع.",
       photosLbl:"الصور (حتى ٤)", uploading:"جاري الرفع…",
       markSold:"تم البيع", markSoldTitle:"تسجيل عملية بيع", finalPriceLbl:"سعر البيع النهائي (ريال)",
-      soldNotice:"تأخذ نينجابركس 5% من سعر البيع النهائي. ستصلك فاتورة بها ويتم الدفع بالتنسيق معك مباشرة.",
-      confirmSale:"تأكيد البيع", salePrice:"سعر البيع", ninjabrixFee:"عمولة نينجابركس (5%)", youKeep:"تحصل على",
+      soldNotice:"تأخذ نينجابركس 3% من سعر البيع النهائي. ستصلك فاتورة بها ويتم الدفع بالتنسيق معك مباشرة.",
+      confirmSale:"تأكيد البيع", salePrice:"سعر البيع", ninjabrixFee:"عمولة نينجابركس (3%)", youKeep:"تحصل على",
       enterSalePrice:"أدخل سعر البيع النهائي.", checkEmail:"تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل الدخول.",
       noPhotos:"لا توجد صور", noDescription:"لا يوجد وصف.", listedBy:"نشره",
       reportListing:"الإبلاغ عن هذا الإعلان", deleteListing:"حذف الإعلان",
@@ -1146,7 +1154,9 @@
       categoriesTitle:"الأقسام", listingsTitle:"الإعلانات",
       introMain:"بيع واشترِ مجموعات البريك القابلة للجمع في جميع أنحاء السعودية.",
       introFree:"النشر مجاني", introDirect:"راسل البائعين مباشرة",
-      introFee:"عمولة 5% عند البيع فقط",
+      introFee:"عمولة 3% عند البيع فقط",
+      contractNotice:"هذا البيع عقد بينك وبين البائع. توفّر نينجابركس المنصة فقط وليست طرفاً في المعاملة.",
+      soldBy:"البائع",
       accountSuspended:"حسابك موقوف.",
       suspendedWhy:"لديك عمولة غير مدفوعة. راسل support@ninjabrix.com لتسويتها واستعادة حسابك.",
       commissionDue:"عمولة مستحقة",
@@ -1170,8 +1180,8 @@
       allCities:"كل المدن", anyCondition:"أي حالة",
       skipToContent:"تخطي إلى الإعلانات",
       heroHeadline:"بيع واشترِ مجموعات البريك القابلة للجمع في جميع أنحاء السعودية",
-      heroSub:"النشر مجاني. راسل البائعين مباشرة. عمولة 5% عند البيع فقط.", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
-      mySales:"مبيعاتي والعمولة", mySalesSub:"كل عملية بيع سجّلتها، والعمولة المستحقة 5% على كل منها.",
+      heroSub:"النشر مجاني. راسل البائعين مباشرة. عمولة 3% عند البيع فقط.", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
+      mySales:"مبيعاتي والعمولة", mySalesSub:"كل عملية بيع سجّلتها، والعمولة المستحقة 3% على كل منها.",
       totalSold:"إجمالي المبيعات", commissionOwed:"العمولة المستحقة", noSalesYet:"لم تسجّل أي مبيعات بعد.",
       paid:"مدفوعة", unpaid:"غير مدفوعة",
       cantMessageSelf:"هذا إعلانك أنت.", typeMessage:"اكتب رسالة…",
@@ -1195,6 +1205,8 @@
   }
 
   // ===== MARKETPLACE (real data from Supabase) =====
+  // Seller names, cached. Shown on every listing (ZATCA identification rule).
+  const sellerNameCache = {};
   let listings = [];
   const tones = { sets:"var(--brick-blue)", mechs:"var(--brick-red)", vehicles:"var(--brick-green)", figures:"var(--brick-yellow)", bundle:"var(--brick-blue)", parts:"var(--muted)" };
 
@@ -1215,6 +1227,7 @@
         <div class="l-body">
           <div class="l-title">${l.title}</div>
           <div class="l-price">${Number(l.price).toLocaleString()} SAR</div>
+          <div class="l-seller" data-seller="${l.seller_id}">${sellerNameCache[l.seller_id] ? escapeHtml(sellerNameCache[l.seller_id]) : '…'}</div>
           <div class="l-meta"><span class="city">${l.city}</span><span>${new Date(l.created_at).toLocaleDateString()}</span></div>
           <button class="contact-btn" data-listing="${l.id}" data-seller="${l.seller_id}" data-title="${l.title.replace(/"/g,'&quot;')}">${t('contactSeller')}</button>
         </div>`;
@@ -1248,6 +1261,14 @@
       .order('created_at', { ascending:false });
     if(error){ console.error('Failed to load listings:', error.message); return; }
     listings = data || [];
+
+    // ZATCA requires the seller to be clearly identified on every listing.
+    // Fetch all names in one query rather than one per card.
+    const ids = [...new Set(listings.map(l=>l.seller_id))].filter(id=> !sellerNameCache[id]);
+    if(ids.length){
+      const { data: sellers } = await db.from('profiles').select('id, full_name').in('id', ids);
+      (sellers || []).forEach(sl=>{ sellerNameCache[sl.id] = sl.full_name; });
+    }
     applyFilters();
   }
 
@@ -1768,8 +1789,8 @@
     const price = Number(document.getElementById('soldPrice').value) || 0;
     const box = document.getElementById('commissionPreview');
     if(price <= 0){ box.classList.remove('show'); return; }
-    const commission = Math.round(price * 0.05 * 100) / 100;
-    const payout = Math.round(price * 0.95 * 100) / 100;
+    const commission = Math.round(price * 0.03 * 100) / 100;
+    const payout = Math.round(price * 0.97 * 100) / 100;
     box.innerHTML = `
       <div class="row"><span>${t('salePrice')}</span><span>${price.toLocaleString()} SAR</span></div>
       <div class="row"><span>${t('ninjabrixFee')}</span><span>-${commission.toLocaleString()} SAR</span></div>
@@ -1844,9 +1865,6 @@
   let detailListing = null;
   const condLabels = { new:'condNew', used:'condUsed', parts:'condParts' };
   const catLabels = { sets:'completeSets', mechs:'mechs', vehicles:'vehicles', figures:'figures', bundle:'bundles', parts:'looseParts' };
-
-  // Cache seller names so repeat taps don't re-query the database
-  const sellerNameCache = {};
 
   function openDetail(l){
     detailListing = l;
@@ -2179,13 +2197,13 @@
   function toggleSupport(){ document.getElementById('supportWindow').classList.toggle('open'); }
   const supportReplies = {
     en: [
-      { k: ['commission','fee','percent','5%'], a: "Ninjabrix takes a flat 5% commission only when a sale actually closes. Listing an item is always free." },
+      { k: ['commission','fee','percent','3%','5%'], a: "Ninjabrix takes a flat 3% commission only when a sale actually closes. Listing an item is always free." },
       { k: ['list','post','sell'], a: "Tap '+ Post a Listing' in the top bar, fill in the item details and price, and it'll appear in the marketplace right away." },
       { k: ['owner','admin','dashboard'], a: "Owner accounts get access to a dashboard with commission totals, sellers, and pending reviews — owner access is granted by the Ninjabrix team." },
       { k: ['account','sign up','login','sign in'], a: "You can create an account from the Sign In menu in the top right — pick Buyer, Seller, or Owner." },
     ],
     ar: [
-      { k: ['عمولة','رسوم','نسبة','5%'], a: "تأخذ نينجابركس عمولة ثابتة 5% فقط عند إتمام البيع فعلياً. نشر الإعلان مجاني دائماً." },
+      { k: ['عمولة','رسوم','نسبة','3%','5%'], a: "تأخذ نينجابركس عمولة ثابتة 3% فقط عند إتمام البيع فعلياً. نشر الإعلان مجاني دائماً." },
       { k: ['نشر','إعلان','بيع'], a: "اضغط على '+ أضف إعلان' في الأعلى، أدخل تفاصيل القطعة والسعر، وسيظهر إعلانك في السوق فوراً." },
       { k: ['مالك','إدارة','لوحة'], a: "حسابات المالك تحصل على لوحة تحكم تعرض إجمالي العمولات والبائعين والمراجعات المعلقة — يتم منح صلاحية المالك من قبل فريق نينجابركس." },
       { k: ['حساب','تسجيل','دخول'], a: "يمكنك إنشاء حساب من قائمة تسجيل الدخول أعلى يمين الصفحة — اختر مشتري أو بائع أو مالك." },
