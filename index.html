@@ -246,8 +246,12 @@
   .badge.used{ background:var(--ink-2); color:#fff; }
   .badge.rare{ background:var(--brick-yellow); color:var(--ink); }
   .l-body{ padding:14px; display:flex; flex-direction:column; gap:4px; flex:1; }
-  .l-price{ font-family:'Archivo Black','Archivo',sans-serif; font-size:22px; letter-spacing:-0.5px; color:var(--brick-blue-d); }
-  .l-title{ font-size:16px; line-height:1.35; color:var(--ink-2); }
+  .l-price{ font-family:'Archivo Black','Archivo',sans-serif; font-size:21px; letter-spacing:-0.5px; color:var(--brick-blue-d); margin-top:2px; }
+  .l-title{
+    font-family:'Archivo','system-ui',sans-serif; font-size:17px; font-weight:700;
+    line-height:1.3; color:var(--ink); letter-spacing:-0.2px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
   .l-setinfo{
     display:inline-flex; align-items:center; gap:7px; align-self:flex-start;
     background:var(--bg); border:1.5px solid var(--line); border-radius:7px;
@@ -395,6 +399,14 @@
   .detail-gallery img{ width:220px; height:170px; object-fit:cover; border-radius:8px; flex-shrink:0; }
   .detail-gallery .no-photo{ width:100%; height:170px; background:#E8EBF0; border-radius:8px;
     display:flex; align-items:center; justify-content:center; color:var(--muted); }
+  .detail-setline{
+    display:inline-flex; align-items:center; gap:9px;
+    background:var(--bg); border:1.5px solid var(--line); border-radius:8px;
+    padding:7px 14px; font-size:17px; font-weight:800; color:var(--ink);
+    margin:10px 0 4px;
+  }
+  .detail-setline .ls-year{ color:var(--brick-blue-d); }
+  .detail-setline .ls-sep{ width:1px; height:16px; background:var(--line); }
   .detail-price{ font-family:'Archivo Black','Archivo',sans-serif; font-size:32px;
     letter-spacing:-1px; margin:8px 0; }
   .detail-tags{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
@@ -863,6 +875,7 @@
   <div class="sell-panel" style="max-width:620px;">
     <div class="detail-gallery" id="detailGallery"></div>
     <h2 id="detailTitle" style="margin-top:16px;"></h2>
+    <div class="detail-setline" id="detailSetLine"></div>
     <div class="detail-price" id="detailPrice"></div>
     <div class="detail-tags" id="detailTags"></div>
     <p class="detail-desc" id="detailDesc"></p>
@@ -1321,9 +1334,9 @@
           ${l.photo_urls && l.photo_urls.length ? `<img src="${l.photo_urls[0]}" alt="${escapeHtml(l.title)}" loading="lazy">` : '<div class="glyph-tile"><span></span><span></span><span></span><span></span></div>'}
         </div>
         <div class="l-body">
-          <div class="l-title">${l.title}</div>
-          <div class="l-price">${Number(l.price).toLocaleString()} SAR</div>
+          <div class="l-title">${escapeHtml(l.title)}</div>
           ${l.release_year || l.set_number ? `<div class="l-setinfo">${l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : ''}${l.set_number && l.release_year ? '<span class="ls-sep"></span>' : ''}${l.release_year ? `<span class="ls-year">${l.release_year}</span>` : ''}</div>` : ''}
+          <div class="l-price">${Number(l.price).toLocaleString()} SAR</div>
           <div class="l-seller" data-seller="${l.seller_id}">${sellerNameCache[l.seller_id] ? escapeHtml(sellerNameCache[l.seller_id]) : '…'}</div>
           <div class="l-meta"><span class="city">${l.city}</span><span>${new Date(l.created_at).toLocaleDateString()}</span></div>
           <button class="contact-btn" data-listing="${l.id}" data-seller="${l.seller_id}" data-title="${l.title.replace(/"/g,'&quot;')}">${t('contactSeller')}</button>
@@ -2000,13 +2013,18 @@
     lightboxPhotos = l.photo_urls || [];
 
     document.getElementById('detailTitle').textContent = l.title;
+    const setLine = document.getElementById('detailSetLine');
+    setLine.innerHTML =
+      (l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : '') +
+      (l.set_number && l.release_year ? '<span class="ls-sep"></span>' : '') +
+      (l.release_year ? `<span class="ls-year">${l.release_year}</span>` : '');
+    setLine.style.display = (l.set_number || l.release_year) ? 'inline-flex' : 'none';
+
     document.getElementById('detailPrice').textContent = Number(l.price).toLocaleString() + ' SAR';
     document.getElementById('detailTags').innerHTML =
       `<span>${t(catLabels[l.category] || l.category)}</span>` +
       `<span>${t(condLabels[l.condition] || l.condition)}</span>` +
-      `<span>${escapeHtml(l.city)}</span>` +
-      (l.release_year ? `<span class="tag-strong">${t('releasedIn')} ${l.release_year}</span>` : '') +
-      (l.set_number ? `<span class="tag-strong">#${escapeHtml(l.set_number)}</span>` : '');
+      `<span>${escapeHtml(l.city)}</span>`;
     document.getElementById('detailDesc').textContent = l.description || t('noDescription');
 
     // Show the date immediately; fill in the seller name when it arrives.
