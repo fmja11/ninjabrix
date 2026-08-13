@@ -248,6 +248,7 @@
   .l-body{ padding:14px; display:flex; flex-direction:column; gap:4px; flex:1; }
   .l-price{ font-family:'Archivo Black','Archivo',sans-serif; font-size:22px; letter-spacing:-0.5px; color:var(--brick-blue-d); }
   .l-title{ font-size:16px; line-height:1.35; color:var(--ink-2); }
+  .l-setinfo{ font-size:13px; color:var(--muted); font-weight:600; }
   .l-seller{ font-size:13.5px; color:var(--brick-blue-d); font-weight:600;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .contract-notice{ background:var(--bg); border:1px solid var(--line); border-radius:var(--radius);
@@ -729,6 +730,14 @@
     <button class="cat-item" data-city="Jeddah">Jeddah</button>
   </div>
   <div class="filter-row">
+    <button class="cat-item active" data-year="all" data-i18n="anyYear">Any Year</button>
+    <button class="cat-item" data-year="2024">2024+</button>
+    <button class="cat-item" data-year="2020">2020–2023</button>
+    <button class="cat-item" data-year="2015">2015–2019</button>
+    <button class="cat-item" data-year="2010">2010–2014</button>
+    <button class="cat-item" data-year="older" data-i18n="olderThan2010">Before 2010</button>
+  </div>
+  <div class="filter-row">
     <button class="cat-item active" data-cond="all" data-i18n="anyCondition">Any Condition</button>
     <button class="cat-item" data-cond="new" data-i18n="condNew">New, sealed</button>
     <button class="cat-item" data-cond="used" data-i18n="condUsed">Used, complete</button>
@@ -810,6 +819,12 @@
     <div class="field-row">
       <div class="field"><label data-i18n="priceLbl">Price (SAR)</label><input type="number" id="sellPrice" placeholder="0"></div>
       <div class="field"><label data-i18n="cityLbl">City</label><input type="text" id="sellCity" placeholder="Dammam"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label data-i18n="releaseYearLbl">Release year</label>
+        <input type="number" id="sellYear" min="1950" max="2030" placeholder="e.g. 2019"></div>
+      <div class="field"><label data-i18n="setNumberLbl">Set number</label>
+        <input type="text" id="sellSetNumber" data-i18n-ph="setNumberPh"></div>
     </div>
     <div class="field"><label data-i18n="descLbl">Description</label><textarea id="sellDesc" data-i18n-ph="descPh"></textarea></div>
     <div class="field">
@@ -1146,7 +1161,9 @@
       newPasswordLbl:"New password", savePassword:"Save Password",
       passwordTooShort:"Password must be at least 6 characters.", passwordUpdated:"Your password has been updated.",
       editListing:"Edit listing", editListingTitle:"Edit Listing",
-      allCities:"All Cities", anyCondition:"Any Condition",
+      allCities:"All Cities", anyCondition:"Any Condition", anyYear:"Any Year", olderThan2010:"Before 2010",
+      releaseYearLbl:"Release year", setNumberLbl:"Set number", setNumberPh:"e.g. 71741",
+      releasedIn:"Released", sortYear:"Newest sets first",
       skipToContent:"Skip to listings",
       heroHeadline:"Buy and sell collectible brick sets across Saudi Arabia",
       heroSub:"Free to list. Message sellers directly. 3% only when it sells.", saleRecorded:"Sale recorded. Your commission is now listed under My Sales.",
@@ -1245,7 +1262,9 @@
       newPasswordLbl:"كلمة المرور الجديدة", savePassword:"حفظ كلمة المرور",
       passwordTooShort:"يجب ألا تقل كلمة المرور عن 6 أحرف.", passwordUpdated:"تم تحديث كلمة المرور.",
       editListing:"تعديل الإعلان", editListingTitle:"تعديل الإعلان",
-      allCities:"كل المدن", anyCondition:"أي حالة",
+      allCities:"كل المدن", anyCondition:"أي حالة", anyYear:"أي سنة", olderThan2010:"قبل 2010",
+      releaseYearLbl:"سنة الإصدار", setNumberLbl:"رقم المجموعة", setNumberPh:"مثال: 71741",
+      releasedIn:"صدرت", sortYear:"الأحدث إصداراً",
       skipToContent:"تخطي إلى الإعلانات",
       heroHeadline:"بيع واشترِ مجموعات البريك القابلة للجمع في جميع أنحاء السعودية",
       heroSub:"النشر مجاني. راسل البائعين مباشرة. عمولة 3% عند البيع فقط.", saleRecorded:"تم تسجيل البيع. عمولتك مدرجة الآن في مبيعاتي.",
@@ -1295,6 +1314,7 @@
         <div class="l-body">
           <div class="l-title">${l.title}</div>
           <div class="l-price">${Number(l.price).toLocaleString()} SAR</div>
+          ${l.release_year || l.set_number ? `<div class="l-setinfo">${l.set_number ? '#'+escapeHtml(l.set_number) : ''}${l.set_number && l.release_year ? ' · ' : ''}${l.release_year || ''}</div>` : ''}
           <div class="l-seller" data-seller="${l.seller_id}">${sellerNameCache[l.seller_id] ? escapeHtml(sellerNameCache[l.seller_id]) : '…'}</div>
           <div class="l-meta"><span class="city">${l.city}</span><span>${new Date(l.created_at).toLocaleDateString()}</span></div>
           <button class="contact-btn" data-listing="${l.id}" data-seller="${l.seller_id}" data-title="${l.title.replace(/"/g,'&quot;')}">${t('contactSeller')}</button>
@@ -1343,6 +1363,19 @@
   let currentCat = 'all';
   let currentCity = 'all';
   let currentCond = 'all';
+  let currentYear = 'all';
+
+  function matchesYear(l){
+    if(currentYear === 'all') return true;
+    const y = l.release_year;
+    if(!y) return false;
+    if(currentYear === 'older') return y < 2010;
+    if(currentYear === '2024')  return y >= 2024;
+    if(currentYear === '2020')  return y >= 2020 && y <= 2023;
+    if(currentYear === '2015')  return y >= 2015 && y <= 2019;
+    if(currentYear === '2010')  return y >= 2010 && y <= 2014;
+    return true;
+  }
 
   function applyFilters(){
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -1350,13 +1383,17 @@
       (currentCat==='all' || l.category===currentCat) &&
       (currentCity==='all' || l.city===currentCity) &&
       (currentCond==='all' || l.condition===currentCond) &&
-      (!q || l.title.toLowerCase().includes(q) || (l.description||'').toLowerCase().includes(q))
+      matchesYear(l) &&
+      (!q || l.title.toLowerCase().includes(q)
+          || (l.description||'').toLowerCase().includes(q)
+          || (l.set_number||'').toLowerCase().includes(q))
     );
 
     const sortEl = document.getElementById('sortSelect');
     const sort = sortEl ? sortEl.value : 'new';
     if(sort === 'low') filtered.sort((a,b)=> Number(a.price) - Number(b.price));
     else if(sort === 'high') filtered.sort((a,b)=> Number(b.price) - Number(a.price));
+    else if(sort === 'year') filtered.sort((a,b)=> (b.release_year || 0) - (a.release_year || 0));
     else filtered.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
 
     render(filtered);
@@ -1385,6 +1422,14 @@
     item.addEventListener('click', ()=>{
       currentCity = item.dataset.city;
       document.querySelectorAll('.cat-item[data-city]').forEach(i=>i.classList.toggle('active', i===item));
+      requestAnimationFrame(()=> applyFilters());
+    });
+  });
+
+  document.querySelectorAll('.cat-item[data-year]').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      currentYear = item.dataset.year;
+      document.querySelectorAll('.cat-item[data-year]').forEach(i=>i.classList.toggle('active', i===item));
       requestAnimationFrame(()=> applyFilters());
     });
   });
@@ -1469,13 +1514,16 @@
     try{
       const photoUrls = await uploadPhotos();
 
+      const yearVal = document.getElementById('sellYear').value;
       const fields = {
         title: title,
         description: document.getElementById('sellDesc').value.trim(),
         category: document.getElementById('sellCategory').value,
         condition: document.getElementById('sellCondition').value,
         price: Number(price),
-        city: city
+        city: city,
+        release_year: yearVal ? Number(yearVal) : null,
+        set_number: document.getElementById('sellSetNumber').value.trim() || null
       };
 
       let error;
@@ -1947,7 +1995,9 @@
     document.getElementById('detailTags').innerHTML =
       `<span>${t(catLabels[l.category] || l.category)}</span>` +
       `<span>${t(condLabels[l.condition] || l.condition)}</span>` +
-      `<span>${escapeHtml(l.city)}</span>`;
+      `<span>${escapeHtml(l.city)}</span>` +
+      (l.release_year ? `<span>${t('releasedIn')} ${l.release_year}</span>` : '') +
+      (l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : '');
     document.getElementById('detailDesc').textContent = l.description || t('noDescription');
 
     // Show the date immediately; fill in the seller name when it arrives.
@@ -2111,6 +2161,8 @@
     document.getElementById('sellDesc').value = detailListing.description || '';
     document.getElementById('sellCategory').value = detailListing.category;
     document.getElementById('sellCondition').value = detailListing.condition;
+    document.getElementById('sellYear').value = detailListing.release_year || '';
+    document.getElementById('sellSetNumber').value = detailListing.set_number || '';
     document.getElementById('sellPanelTitle').textContent = t('editListingTitle');
     document.getElementById('detailOverlay').classList.remove('open');
     document.getElementById('sellOverlay').classList.add('open');
@@ -2119,7 +2171,7 @@
   function resetSellPanel(){
     editingListingId = null;
     document.getElementById('sellPanelTitle').textContent = t('postListing2');
-    ['sellTitle','sellPrice','sellCity','sellDesc','sellPhotos'].forEach(id=>{
+    ['sellTitle','sellPrice','sellCity','sellDesc','sellPhotos','sellYear','sellSetNumber'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.value = '';
     });
     document.getElementById('photoPreview').innerHTML = '';
