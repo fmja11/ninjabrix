@@ -1387,6 +1387,14 @@
     renderAccountState();
   }
 
+  // Escapes user-supplied text before it goes into innerHTML.
+  // Defined early because listing rendering depends on it.
+  function escapeHtml(str){
+    return String(str == null ? '' : str).replace(/[&<>"']/g, c=>({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+
   // ===== MARKETPLACE (real data from Supabase) =====
   // Seller names, cached. Shown on every listing (ZATCA identification rule).
   const sellerNameCache = {};
@@ -2032,6 +2040,99 @@
     document.getElementById('photoPreview').innerHTML = '';
   }
 
+
+
+  // ===== DIALOGS =====
+  // Non-blocking replacements for confirm()/prompt(), which freeze the
+  // page while open and wreck interaction responsiveness.
+  function showDialog({ title, body, input, okLabel, danger }){
+    return new Promise((resolve)=>{
+      const overlay   = document.getElementById('dialogOverlay');
+      const inputWrap = document.getElementById('dialogInputWrap');
+      const inputEl   = document.getElementById('dialogInput');
+      const okBtn     = document.getElementById('dialogOk');
+      const cancelBtn = document.getElementById('dialogCancel');
+
+      document.getElementById('dialogTitle').textContent = title || '';
+      document.getElementById('dialogBody').textContent  = body  || '';
+      okBtn.textContent     = okLabel || t('confirmBtn');
+      cancelBtn.textContent = t('cancel');
+      okBtn.style.background = danger ? 'var(--brick-red)' : 'var(--brick-blue)';
+
+      if(input){
+        inputWrap.style.display = 'block';
+        inputEl.value = '';
+        inputEl.placeholder = input.placeholder || '';
+      } else {
+        inputWrap.style.display = 'none';
+      }
+
+      overlay.classList.add('open');
+      setTimeout(()=>{ (input ? inputEl : okBtn).focus(); }, 60);
+
+      function cleanup(result){
+        overlay.classList.remove('open');
+        okBtn.onclick = null; cancelBtn.onclick = null; inputEl.onkeydown = null;
+        resolve(result);
+      }
+      okBtn.onclick     = ()=> cleanup(input ? (inputEl.value || '') : true);
+      cancelBtn.onclick = ()=> cleanup(input ? null : false);
+      inputEl.onkeydown = (e)=>{ if(e.key === 'Enter') okBtn.click(); };
+    });
+  }
+
+  // ===== PHOTO LIGHTBOX =====
+  let lightboxPhotos = [];
+  let lightboxIndex  = 0;
+
+  function openLightbox(index){
+    if(!lightboxPhotos.length) return;
+    lightboxIndex = index;
+    showLightboxPhoto();
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function showLightboxPhoto(){
+    document.getElementById('lightboxImg').src = lightboxPhotos[lightboxIndex];
+    const count = document.getElementById('lightboxCount');
+    count.textContent = lightboxPhotos.length > 1
+      ? (lightboxIndex + 1) + ' / ' + lightboxPhotos.length : '';
+    const multi = lightboxPhotos.length > 1;
+    document.querySelector('.lb-prev').style.display = multi ? 'flex' : 'none';
+    document.querySelector('.lb-next').style.display = multi ? 'flex' : 'none';
+  }
+
+  function lightboxStep(dir, e){
+    if(e) e.stopPropagation();
+    if(!lightboxPhotos.length) return;
+    lightboxIndex = (lightboxIndex + dir + lightboxPhotos.length) % lightboxPhotos.length;
+    showLightboxPhoto();
+  }
+
+  function closeLightbox(e){
+    if(e && e.target && e.target.tagName === 'IMG') return;
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  const lightboxEl = document.getElementById('lightbox');
+  document.addEventListener('keydown', (e)=>{
+    if(!lightboxEl.classList.contains('open')) return;
+    if(e.key === 'Escape')     closeLightbox();
+    if(e.key === 'ArrowRight') lightboxStep(1);
+    if(e.key === 'ArrowLeft')  lightboxStep(-1);
+  });
+
+  (function(){
+    let startX = 0;
+    const lb = document.getElementById('lightbox');
+    lb.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, {passive:true});
+    lb.addEventListener('touchend', e=>{
+      const dx = e.changedTouches[0].clientX - startX;
+      if(Math.abs(dx) > 55) lightboxStep(dx > 0 ? -1 : 1);
+    }, {passive:true});
+  })();
 
   // ===== CART =====
   // Kept in memory only. A page refresh clears it, which is acceptable
