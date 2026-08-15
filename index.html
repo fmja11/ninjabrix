@@ -151,8 +151,8 @@
     letter-spacing:.5px; text-transform:uppercase; color:var(--ink);
   }
   .band-title .sort{ position:absolute; inset-inline-end:clamp(12px,3vw,28px); }
-  @media (max-width:640px){
-    .intro-strip{
+
+  .intro-strip{
     background:var(--surface); border-bottom:1px solid var(--line);
     padding:18px clamp(12px,3vw,28px) 20px; text-align:center;
   }
@@ -162,14 +162,15 @@
   }
   .intro-sub{ font-size:15px; color:var(--muted); }
   .intro-sub .dot-sep{ color:var(--line); padding:0 8px; }
+
+  @media (max-width:640px){
+    .band-title{ flex-direction:column; gap:10px; }
+    .band-title .sort{ position:static; width:100%; max-width:280px; }
+  }
   @media (max-width:520px){
     .intro-strip{ padding:15px 12px 16px; }
     .intro-sub{ font-size:14px; line-height:1.9; }
     .intro-sub .dot-sep{ padding:0 5px; }
-  }
-
-  .band-title{ flex-direction:column; gap:10px; }
-    .band-title .sort{ position:static; width:100%; max-width:280px; }
   }
 
   .filters{ background:var(--surface); border-bottom:1px solid var(--line);
@@ -869,7 +870,7 @@
 <div class="sell-overlay" id="sellOverlay">
   <div class="sell-panel">
     <h2 id="sellPanelTitle" data-i18n="postListing2">Post a Listing</h2>
-    <div class="sub" data-i18n="postSub">Free to list. Ninjabrix takes 3% only when your item actually sells.</div>
+    <div class="sub" data-i18n="postSub">Add a set to your shop. Buyers see it straight away.</div>
     <div class="field"><label data-i18n="titleLbl">Title</label><input type="text" id="sellTitle" data-i18n-ph="titlePh"></div>
     <div class="field-row">
       <div class="field"><label data-i18n="categoryLbl">Category</label>
@@ -1132,7 +1133,7 @@
       step3d:"Ninjabrix takes a flat 3% commission when the sale closes. That's it.", emptyH:"No listings here yet",
       emptyP:"Nothing listed here yet. Post a set, a mech, or a box of spare parts and it will show up right here.",
       footerLine:"Independent marketplace for ninja-brick collectors. Not affiliated with any toy or media brand.",
-      postListing2:"Post a Listing", postSub:"Free to list. Ninjabrix takes 3% only when your item actually sells.",
+      postListing2:"Add Product", postSub:"Add a set to your shop. Buyers see it straight away.",
       titleLbl:"Title", titlePh:"e.g. Ninja Mech Battle Set, complete with figures", categoryLbl:"Category", conditionLbl:"Condition",
       priceLbl:"Price (SAR)", cityLbl:"City", descLbl:"Description", descPh:"Piece count, missing parts, box condition…",
       cancel:"Cancel", mustSignIn:"Please sign in before posting a listing.", photoTooBig:"That photo is too large - pick one under 12MB.", tooManyListings:"Daily listing limit reached. Try again tomorrow.", fillRequired:"Please fill in the title, price, and city.", fullNameLbl:"Full Name",
@@ -1259,7 +1260,7 @@
       step3d:"تأخذ نينجابركس عمولة ثابتة 3% عند إتمام البيع. هذا كل شيء.", emptyH:"لا توجد إعلانات هنا بعد",
       emptyP:"لا توجد إعلانات هنا بعد. انشر مجموعة أو روبوت أو صندوق قطع متفرقة وسيظهر هنا مباشرة.",
       footerLine:"سوق مستقل لهواة قطع نينجا-بريكس. غير مرتبط بأي علامة ألعاب أو إعلامية.",
-      postListing2:"أضف إعلان", postSub:"النشر مجاني. تأخذ نينجابركس 3% فقط عند بيع القطعة فعلاً.",
+      postListing2:"إضافة منتج", postSub:"أضف مجموعة إلى متجرك. سيراها المشترون فوراً.",
       titleLbl:"العنوان", titlePh:"مثال: مجموعة روبوت نينجا كاملة مع الشخصيات", categoryLbl:"القسم", conditionLbl:"الحالة",
       priceLbl:"السعر (ريال)", cityLbl:"المدينة", descLbl:"الوصف", descPh:"عدد القطع، الأجزاء الناقصة، حالة العلبة…",
       cancel:"إلغاء", mustSignIn:"الرجاء تسجيل الدخول قبل نشر إعلان.", photoTooBig:"هذه الصورة كبيرة جداً - اختر صورة أقل من 12 ميجابايت.", tooManyListings:"وصلت إلى الحد اليومي للإعلانات. حاول غداً.", fillRequired:"الرجاء تعبئة العنوان والسعر والمدينة.", fullNameLbl:"الاسم الكامل",
