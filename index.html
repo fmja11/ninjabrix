@@ -445,6 +445,40 @@
     border-radius:8px; font-weight:700; font-size:15px; }
   .oc-btn.secondary{ background:transparent; border:2px solid var(--line); color:var(--ink-2); }
 
+  /* ===== CART ===== */
+  .cart-btn{ position:relative; }
+  .cart-count{ display:none; align-items:center; justify-content:center;
+    min-width:22px; height:22px; padding:0 6px; margin-inline-start:8px;
+    background:var(--brick-red); color:#fff; border-radius:999px;
+    font-size:13px; font-weight:800; }
+  .cart-row{ display:flex; align-items:center; gap:12px; padding:12px 0;
+    border-bottom:1px solid var(--line); }
+  .cart-thumb{ width:60px; height:60px; border-radius:8px; background:#E8EBF0;
+    overflow:hidden; flex-shrink:0; }
+  .cart-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .cart-info{ flex:1; min-width:0; }
+  .cart-title{ font-weight:700; font-size:15.5px; line-height:1.3; }
+  .cart-set{ font-size:13.5px; color:var(--muted); font-weight:600; margin-top:2px; }
+  .cart-price{ font-family:'Archivo Black','Archivo',sans-serif; font-size:17px;
+    color:var(--brick-blue-d); white-space:nowrap; }
+  .cart-remove{ background:none; border:0; color:var(--muted); font-size:26px;
+    line-height:1; width:34px; height:34px; flex-shrink:0; }
+  .cart-remove:hover{ color:var(--brick-red); }
+  .cart-summary{ margin-top:18px; padding-top:16px; border-top:2px solid var(--line); }
+  .cs-row{ display:flex; justify-content:space-between; padding:5px 0; font-size:16px; }
+  .cs-row.total{ font-family:'Archivo Black','Archivo',sans-serif; font-size:21px;
+    margin-top:8px; padding-top:12px; border-top:1px solid var(--line); }
+  .cs-note{ font-size:14px; color:var(--muted); margin-top:10px; line-height:1.5; }
+  .sold-tag{ color:var(--brick-red); font-weight:700; }
+  .contact-btn:disabled{ background:var(--line); color:var(--muted); cursor:not-allowed; }
+
+  /* ===== TOAST ===== */
+  .toast{ position:fixed; left:50%; bottom:26px; transform:translate(-50%,20px);
+    background:var(--ink); color:#fff; padding:14px 24px; border-radius:10px;
+    font-weight:700; z-index:300; opacity:0; pointer-events:none;
+    transition:opacity .2s, transform .2s; box-shadow:0 8px 26px rgba(0,0,0,.28); }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+
   .commission-preview{ background:var(--bg); border:1px solid var(--line); border-radius:var(--radius);
     padding:16px; margin-bottom:18px; display:none; }
   .commission-preview.show{ display:block; }
@@ -559,6 +593,8 @@
   .foot-meta .brand{ margin-bottom:12px; }
   .foot-meta .brand-name{ font-size:18px; color:#fff; }
   .foot-meta p{ max-width:400px; margin-bottom:12px; }
+  .fair-play{ font-size:13px; line-height:1.6; color:#8C94A3; max-width:520px;
+    margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,.10); }
   .foot-links{ display:flex; gap:20px; flex-wrap:wrap; }
   .foot-links a{ color:#E4E8EE; text-decoration:underline; }
   .foot-links a:hover{ color:#fff; }
@@ -701,7 +737,9 @@
       <button id="langEnBtn" onclick="setLang('en')">EN</button>
       <button id="langArBtn" onclick="setLang('ar')">AR</button>
     </div>
-    <button class="icon-btn" id="msgBtn" onclick="openMessages()" aria-label="Messages"><span data-i18n="messages">Messages</span><span class="badge-dot" id="msgDot" style="display:none;"></span></button>
+    <button class="icon-btn cart-btn" onclick="openCart()" aria-label="Cart">
+      <span data-i18n="cart">Cart</span><span class="cart-count" id="cartCount">0</span>
+    </button>
     <div class="account-wrap">
       <button class="icon-btn" id="acctBtn" onclick="toggleAccountMenu()" data-i18n="signIn">Sign In</button>
       <div class="account-menu" id="accountMenu">
@@ -713,26 +751,24 @@
         <div class="am-signed-in" id="amSignedIn" style="display:none;">
           <div class="am-user"><div class="am-avatar" id="amAvatar">N</div><div><div class="am-name" id="amName">—</div><div class="am-role" id="amRole">Buyer</div></div></div>
           <a class="am-link" id="amAdminLink" href="#" onclick="openAdmin();return false;" style="display:none;" data-i18n="ownerDash">Owner Dashboard</a>
-          <a class="am-link" href="#" onclick="openMessages();return false;" data-i18n="messages">Messages</a>
-          <a class="am-link" href="#" onclick="openOrders();return false;" data-i18n="myOrders">My Orders</a>
-          <a class="am-link" href="#" onclick="openMySales();return false;" data-i18n="mySales">My Sales &amp; Commission</a>
+          <a class="am-link" href="#" onclick="openMyOrders();return false;" data-i18n="myOrders">My Orders</a>
           <a class="am-link" href="#" onclick="openSettings();return false;" data-i18n="accountSettings">Account Settings</a>
           <a class="am-link" href="#" onclick="signOut();return false;" data-i18n="signOut">Sign Out</a>
         </div>
       </div>
     </div>
-    <button class="post-btn" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="postListing">+ Post a Listing</button>
+    <button class="post-btn" id="addProductBtn" style="display:none;" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="addProduct">+ Add Product</button>
   </div>
 </div>
 
 <div class="intro-strip">
-  <p class="intro-main" data-i18n="introMain">Buy and sell collectible brick sets across Saudi Arabia.</p>
+  <p class="intro-main" data-i18n="introMain">Genuine brick sets, shipped across Saudi Arabia.</p>
   <p class="intro-sub">
-    <span data-i18n="introFree">Listing is free</span>
+    <span data-i18n="introFree">Ships nationwide</span>
     <span class="dot-sep">&middot;</span>
-    <span data-i18n="introDirect">Message sellers directly</span>
+    <span data-i18n="introDirect">Or meet in person</span>
     <span class="dot-sep">&middot;</span>
-    <span data-i18n="introFee">3% only when it sells</span>
+    <span data-i18n="introFee">Every set checked before it ships</span>
   </p>
 </div>
 
@@ -797,7 +833,7 @@
       <div class="empty-glyph"></div>
       <h3 data-i18n="emptyH">No listings here yet</h3>
       <p data-i18n="emptyP">Nothing listed here yet. Post a set, a mech, or a box of spare parts and it will show up right here.</p>
-      <button class="post-btn" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="postFirst">+ Post the First Listing</button>
+      <button class="post-btn" id="addFirstBtn" style="display:none;" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="addProduct">+ Add Product</button>
     </div>
   </main>
 </div>
@@ -819,7 +855,8 @@
       <rect x="2" y="4" width="11" height="6" rx="3" fill="#14171C"/>
       <rect x="27" y="4" width="11" height="6" rx="3" fill="#14171C"/>
     </svg></span><span class="brand-name">NINJABRIX</span></div>
-      <p data-i18n="footerLine">Independent marketplace for brick collectors. Not affiliated with any toy or media brand.</p>
+      <p data-i18n="footerLine">Independent shop selling genuine pre-owned and new brick sets across Saudi Arabia.</p>
+      <p class="fair-play" data-i18n="fairPlay">Ninjabrix is an independent reseller of genuine LEGO&reg; products and is not affiliated with, authorized, or endorsed by the LEGO Group. LEGO&reg; is a trademark of the LEGO Group.</p>
       <p class="foot-links">
         <a href="/privacy.html" data-i18n="privacyPolicy">Privacy Policy</a>
         <a href="/terms.html" data-i18n="termsOfService">Terms of Service</a>
@@ -876,6 +913,81 @@
   </div>
 </div>
 
+<div class="sell-overlay" id="cartOverlay">
+  <div class="sell-panel" style="max-width:560px;">
+    <h2 data-i18n="yourCart">Your Cart</h2>
+    <div id="cartItems"></div>
+    <div class="cart-summary" id="cartSummary" style="display:none;">
+      <div class="cs-row"><span data-i18n="itemsTotal">Items</span><span id="cartItemsTotal">0 SAR</span></div>
+      <div class="cs-row total"><span data-i18n="total">Total</span><span id="cartTotal">0 SAR</span></div>
+      <p class="cs-note" data-i18n="shippingNote">Delivery is chosen at checkout. Shipping cost is confirmed before you pay.</p>
+    </div>
+    <div class="sell-actions">
+      <button class="btn-cancel" onclick="document.getElementById('cartOverlay').classList.remove('open')" data-i18n="keepShopping">Keep shopping</button>
+      <button class="btn-submit" id="cartCheckoutBtn" onclick="openCheckout()" data-i18n="checkout">Checkout</button>
+    </div>
+  </div>
+</div>
+
+<div class="sell-overlay" id="checkoutOverlay">
+  <div class="sell-panel" style="max-width:560px;">
+    <h2 data-i18n="checkout">Checkout</h2>
+    <div class="sub" id="checkoutSummary"></div>
+
+    <div class="field"><label data-i18n="yourNameLbl">Your name</label><input type="text" id="coName"></div>
+    <div class="field-row">
+      <div class="field"><label data-i18n="phoneLbl">Phone</label><input type="tel" id="coPhone" placeholder="05…"></div>
+      <div class="field"><label data-i18n="emailOptLbl">Email (optional)</label><input type="email" id="coEmail"></div>
+    </div>
+
+    <div class="field">
+      <label data-i18n="deliveryLbl">Delivery</label>
+      <div class="role-pick">
+        <div class="role-opt active" data-delivery="shipping" onclick="pickDelivery(this)" data-i18n="deliveryShip">Ship to me</div>
+        <div class="role-opt" data-delivery="meetup" onclick="pickDelivery(this)" data-i18n="deliveryMeet">Meet in person</div>
+      </div>
+    </div>
+
+    <div id="shippingFields">
+      <div class="field"><label data-i18n="addressLbl">Address</label><input type="text" id="coAddress" data-i18n-ph="addressPh"></div>
+      <div class="field-row">
+        <div class="field"><label data-i18n="cityLbl">City</label><input type="text" id="coCity" placeholder="Dammam"></div>
+        <div class="field"><label data-i18n="postalLbl">Postal code</label><input type="text" id="coPostal"></div>
+      </div>
+    </div>
+
+    <div id="meetupFields" style="display:none;">
+      <div class="field"><label data-i18n="meetupLbl">Preferred area or time</label><input type="text" id="coMeetup" data-i18n-ph="meetupPh"></div>
+    </div>
+
+    <div class="field">
+      <label data-i18n="paymentLbl">Payment</label>
+      <div class="role-pick">
+        <div class="role-opt active" data-payment="transfer" onclick="pickPayment(this)" data-i18n="payTransfer">Bank / STC Pay</div>
+        <div class="role-opt" data-payment="cash" onclick="pickPayment(this)" data-i18n="payCash">Cash on meetup</div>
+      </div>
+    </div>
+
+    <div class="field"><label data-i18n="noteLbl">Note (optional)</label><textarea id="coNote" rows="2"></textarea></div>
+    <div class="notice" data-i18n="paymentNotice">Place your order and I'll message you with payment details and confirm delivery. Nothing is charged automatically.</div>
+
+    <div class="sell-actions">
+      <button class="btn-cancel" onclick="document.getElementById('checkoutOverlay').classList.remove('open')" data-i18n="cancel">Cancel</button>
+      <button class="btn-submit" id="placeOrderBtn" onclick="placeOrder()" data-i18n="placeOrder">Place order</button>
+    </div>
+  </div>
+</div>
+
+<div class="sell-overlay" id="myOrdersOverlay">
+  <div class="sell-panel" style="max-width:600px;">
+    <h2 data-i18n="myOrders">My Orders</h2>
+    <div id="myOrdersList"></div>
+    <div class="sell-actions" style="margin-top:16px;">
+      <button class="btn-cancel" onclick="document.getElementById('myOrdersOverlay').classList.remove('open')" data-i18n="close">Close</button>
+    </div>
+  </div>
+</div>
+
 <div class="sell-overlay" id="detailOverlay">
   <div class="sell-panel" style="max-width:620px;">
     <div class="detail-gallery" id="detailGallery"></div>
@@ -885,7 +997,6 @@
     <div class="detail-tags" id="detailTags"></div>
     <p class="detail-desc" id="detailDesc"></p>
     <div class="detail-seller" id="detailSeller"></div>
-    <div class="contract-notice" data-i18n="contractNotice">This sale is a contract between you and the seller. Ninjabrix provides the platform only and is not a party to the transaction.</div>
     <div class="sell-actions">
       <button class="btn-cancel" onclick="document.getElementById('detailOverlay').classList.remove('open')" data-i18n="close">Close</button>
       <button class="btn-submit" id="detailAction"></button>
@@ -894,20 +1005,6 @@
       <button class="link-btn" id="detailReport" onclick="reportListing()" data-i18n="reportListing">Report this listing</button>
       <button class="link-btn" id="detailEdit" onclick="editListing()" style="display:none;" data-i18n="editListing">Edit listing</button>
       <button class="link-btn danger" id="detailDelete" onclick="deleteListing()" style="display:none;" data-i18n="deleteListing">Delete listing</button>
-    </div>
-  </div>
-</div>
-
-<div class="sell-overlay" id="soldOverlay">
-  <div class="sell-panel">
-    <h2 data-i18n="markSoldTitle">Mark as Sold</h2>
-    <div class="sub" id="soldListingName"></div>
-    <div class="notice" data-i18n="soldNotice">Ninjabrix charges 3% of the final sale price. You'll be invoiced for it — payment is arranged with you directly.</div>
-    <div class="field"><label data-i18n="finalPriceLbl">Final sale price (SAR)</label><input type="number" id="soldPrice" placeholder="0" oninput="updateCommissionPreview()"></div>
-    <div class="commission-preview" id="commissionPreview"></div>
-    <div class="sell-actions">
-      <button class="btn-cancel" onclick="document.getElementById('soldOverlay').classList.remove('open')" data-i18n="cancel">Cancel</button>
-      <button class="btn-submit" onclick="confirmSold()" data-i18n="confirmSale">Confirm Sale</button>
     </div>
   </div>
 </div>
@@ -935,37 +1032,6 @@
   </div>
 </div>
 
-<div class="sell-overlay" id="messagesOverlay">
-  <div class="msg-panel">
-    <div class="msg-list">
-      <div class="msg-list-head">
-        <span data-i18n="conversations">Conversations</span>
-        <button class="msg-close" onclick="closeMessages()" aria-label="Close messages">&times;</button>
-      </div>
-      <div id="threadList"><div class="admin-empty" style="padding:16px;" data-i18n="noConvos">No conversations yet.</div></div>
-    </div>
-    <div class="msg-thread-area" id="threadArea">
-      <div class="msg-empty" id="threadPlaceholder">
-        <div class="empty-glyph"></div>
-        <h3 data-i18n="nothingHere">Nothing here yet</h3>
-        <p data-i18n="msgEmptyP">When a buyer messages you about a listing, the conversation will show up here.</p>
-      </div>
-      <div id="threadView" style="display:none; flex-direction:column; height:100%;">
-        <div class="thread-head">
-          <button class="thread-back" onclick="backToThreadList()" aria-label="Back to conversations">&#8249;</button>
-          <span id="threadTitle"></span>
-          <button class="msg-close thread-close" onclick="closeMessages()" aria-label="Close messages">&times;</button>
-        </div>
-        <div class="thread-msgs" id="threadMsgs"></div>
-        <div class="thread-input">
-          <input type="text" id="threadInput" data-i18n-ph="typeMessage" onkeydown="if(event.key==='Enter')sendMessage()">
-          <button onclick="sendMessage()" data-i18n="send">Send</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="sell-overlay" id="settingsOverlay">
   <div class="sell-panel">
     <h2 data-i18n="accountSettings">Account Settings</h2>
@@ -981,40 +1047,6 @@
   </div>
 </div>
 
-<div class="sell-overlay" id="ordersOverlay">
-  <div class="sell-panel" style="max-width:640px;">
-    <h2 data-i18n="myOrders">My Orders</h2>
-    <div class="sub" data-i18n="myOrdersSub">Everything you're buying or selling, and what happens next.</div>
-    <div class="order-tabs">
-      <button class="order-tab active" id="tabBuying" onclick="switchOrderTab('buying')" data-i18n="buying">Buying</button>
-      <button class="order-tab" id="tabSelling" onclick="switchOrderTab('selling')" data-i18n="selling">Selling</button>
-    </div>
-    <div id="ordersList"></div>
-    <div class="sell-actions" style="margin-top:16px;">
-      <button class="btn-cancel" onclick="document.getElementById('ordersOverlay').classList.remove('open')" data-i18n="close">Close</button>
-    </div>
-  </div>
-</div>
-
-<div class="sell-overlay" id="mySalesOverlay">
-  <div class="sell-panel">
-    <h2 data-i18n="mySales">My Sales &amp; Commission</h2>
-    <div class="sub" data-i18n="mySalesSub">Every sale you've recorded, and the 3% owed on each.</div>
-    <div class="admin-stats" style="margin-bottom:18px;">
-      <div class="admin-stat"><div class="val" id="mySalesTotal">—</div><div class="lbl" data-i18n="totalSold">Total sold</div></div>
-      <div class="admin-stat"><div class="val" id="myCommissionOwed">—</div><div class="lbl" data-i18n="commissionOwed">Commission owed</div></div>
-    </div>
-    <div class="owed-notice" id="owedNotice" style="display:none;">
-      <strong data-i18n="commissionDue">Commission due</strong>
-      <p data-i18n="commissionDueBody">Send what you owe to Ninjabrix to keep your account active. Email support@ninjabrix.com to arrange payment.</p>
-    </div>
-    <div id="mySalesList"></div>
-    <div class="sell-actions" style="margin-top:16px;">
-      <button class="btn-cancel" onclick="document.getElementById('mySalesOverlay').classList.remove('open')" data-i18n="close">Close</button>
-    </div>
-  </div>
-</div>
-
 <div class="sell-overlay" id="adminOverlay">
   <div class="admin-panel">
     <div class="admin-head">
@@ -1022,30 +1054,14 @@
       <span class="role-tag" data-i18n="ownerAccess">Owner Access</span>
     </div>
     <div class="admin-stats">
-      <div class="admin-stat"><div class="val" id="statCommission">—</div><div class="lbl" data-i18n="commCollected">Commission collected</div></div>
-      <div class="admin-stat"><div class="val" id="statListings">—</div><div class="lbl" data-i18n="activeListings">Active listings</div></div>
-      <div class="admin-stat"><div class="val" id="statSellers">—</div><div class="lbl" data-i18n="regSellers">Registered sellers</div></div>
-      <div class="admin-stat"><div class="val" id="statSales">—</div><div class="lbl" data-i18n="completedSales">Completed sales</div></div>
+      <div class="admin-stat"><div class="val" id="statCommission">—</div><div class="lbl" data-i18n="revenueLbl">Revenue</div></div>
+      <div class="admin-stat"><div class="val" id="statListings">—</div><div class="lbl" data-i18n="productsLbl">Products for sale</div></div>
+      <div class="admin-stat"><div class="val" id="statSellers">—</div><div class="lbl" data-i18n="openOrdersLbl">Open orders</div></div>
+      <div class="admin-stat"><div class="val" id="statSales">—</div><div class="lbl" data-i18n="completedLbl">Completed</div></div>
     </div>
     <div class="admin-section">
-      <h4 data-i18n="recentSignups">Recent Signups</h4>
-      <div class="admin-empty" id="adminSignups" data-i18n="noSignups">No one has signed up yet.</div>
-    </div>
-    <div class="admin-section">
-      <h4 data-i18n="pendingReview">Listings Pending Review</h4>
-      <div class="admin-empty" id="adminPending" data-i18n="nothingReview">Nothing to review.</div>
-    </div>
-    <div class="admin-section">
-      <h4 data-i18n="openReports">Reported Listings</h4>
-      <div class="admin-empty" id="adminReports" data-i18n="noReports">No open reports.</div>
-    </div>
-    <div class="admin-section">
-      <h4 data-i18n="unpaidCommission">Unpaid Commission</h4>
-      <div class="admin-empty" id="adminOwed" data-i18n="noneOwed">Nobody owes commission.</div>
-    </div>
-    <div class="admin-section">
-      <h4 data-i18n="payoutQueue">Payout Queue</h4>
-      <div class="admin-empty" id="adminPayouts" data-i18n="noPayouts">No commission payouts owed yet.</div>
+      <h4 data-i18n="openOrders">Open Orders</h4>
+      <div class="admin-empty" id="adminOrders" data-i18n="noOpenOrders">No open orders.</div>
     </div>
     <div class="sell-actions" style="padding:0 26px 24px;">
       <button class="btn-cancel" onclick="document.getElementById('adminOverlay').classList.remove('open')" data-i18n="close">Close</button>
@@ -1148,11 +1164,37 @@
       typeDeleteToConfirm:"Type DELETE to confirm.", accountDeleted:"Your account has been deleted.",
       privacyPolicy:"Privacy Policy", termsOfService:"Terms of Service",
       categoriesTitle:"Categories", listingsTitle:"Listings",
-      introMain:"Buy and sell collectible brick sets across Saudi Arabia.",
-      introFree:"Listing is free", introDirect:"Message sellers directly",
-      introFee:"3% only when it sells",
+      introMain:"Genuine brick sets, shipped across Saudi Arabia.",
+      introFree:"Ships nationwide", introDirect:"Or meet in person",
+      introFee:"Every set checked before it ships",
       contractNotice:"This sale is a contract between you and the seller. Ninjabrix provides the platform only and is not a party to the transaction.",
       soldBy:"Sold by", loading:"Loading…",
+      cart:"Cart", addToCart:"Add to Cart",
+      signInNeeded:"Sign in to continue",
+      signInNeededBody:"You need an account to order. It only takes a moment, and it lets you track your order afterwards.", soldOut:"Sold", inStock:"In stock",
+      addedToCart:"Added to cart", alreadyInCart:"Already in your cart", cartEmpty:"Your cart is empty.",
+      yourCart:"Your Cart", itemsTotal:"Items", total:"Total", keepShopping:"Keep shopping",
+      checkout:"Checkout", shippingNote:"Delivery is chosen at checkout. Shipping cost is confirmed before you pay.",
+      yourNameLbl:"Your name", phoneLbl:"Phone", emailOptLbl:"Email (optional)",
+      deliveryLbl:"Delivery", deliveryShip:"Ship to me", deliveryMeet:"Meet in person",
+      addressLbl:"Address", addressPh:"Street, building, district", postalLbl:"Postal code",
+      meetupLbl:"Preferred area or time", meetupPh:"e.g. Dammam, weekend afternoons",
+      paymentLbl:"Payment", payTransfer:"Bank / STC Pay", payCash:"Cash on meetup",
+      noteLbl:"Note (optional)", placeOrder:"Place order", placing:"Placing…",
+      paymentNotice:"Place your order and I'll message you with payment details and confirm delivery. Nothing is charged automatically.",
+      namePhoneRequired:"Please enter your name and phone number.", addressRequired:"Please enter your delivery address.",
+      orderPlaced:"Order placed", orderPlacedBody:"Thanks! I'll contact you shortly with payment details and to confirm delivery.",
+      noOrdersYet:"No orders yet.", itemsWord:"items",
+      shippingTo:"Shipping to", meetupOrder:"Meetup", shipTo:"Ship to", meetup:"Meetup",
+      addProduct:"+ Add Product", openOrders:"Open Orders", noOpenOrders:"No open orders.",
+      revenueLbl:"Revenue", productsLbl:"Products for sale", openOrdersLbl:"Open orders", completedLbl:"Completed",
+      markPaid:"Mark paid", markPreparing:"Preparing", markShippedShop:"Mark shipped",
+      markReady:"Ready for pickup", markComplete:"Complete", cancelOrder:"Cancel",
+      confirmCancelOrder:"Cancel this order? The items go back on sale.",
+      st_awaiting_payment:"Awaiting payment", st_paid:"Paid", st_preparing:"Preparing",
+      st_shipped:"Shipped", st_ready_for_pickup:"Ready for pickup",
+      st_completed:"Completed", st_cancelled:"Cancelled",
+      fairPlay:"Ninjabrix is an independent reseller of genuine LEGO\u00AE products and is not affiliated with, authorized, or endorsed by the LEGO Group.",
       myOrders:"My Orders", myOrdersSub:"Everything you're buying or selling, and what happens next.",
       buying:"Buying", selling:"Selling", noOrders:"Nothing here yet.",
       statusAwaitingShip:"Awaiting shipment", statusShipped:"Shipped", statusComplete:"Complete", statusCancelled:"Cancelled",
@@ -1249,11 +1291,37 @@
       typeDeleteToConfirm:"اكتب DELETE للتأكيد.", accountDeleted:"تم حذف حسابك.",
       privacyPolicy:"سياسة الخصوصية", termsOfService:"شروط الاستخدام",
       categoriesTitle:"الأقسام", listingsTitle:"الإعلانات",
-      introMain:"بيع واشترِ مجموعات البريك القابلة للجمع في جميع أنحاء السعودية.",
-      introFree:"النشر مجاني", introDirect:"راسل البائعين مباشرة",
-      introFee:"عمولة 3% عند البيع فقط",
+      introMain:"مجموعات بريك أصلية، تُشحن إلى جميع أنحاء السعودية.",
+      introFree:"شحن لكل المناطق", introDirect:"أو استلام شخصي",
+      introFee:"كل مجموعة تُفحص قبل الشحن",
       contractNotice:"هذا البيع عقد بينك وبين البائع. توفّر نينجابركس المنصة فقط وليست طرفاً في المعاملة.",
       soldBy:"البائع", loading:"جاري التحميل…",
+      cart:"السلة", addToCart:"أضف إلى السلة",
+      signInNeeded:"سجّل الدخول للمتابعة",
+      signInNeededBody:"تحتاج إلى حساب لإتمام الطلب. لن يستغرق سوى لحظات، ويتيح لك متابعة طلبك لاحقاً.", soldOut:"تم البيع", inStock:"متوفر",
+      addedToCart:"أُضيف إلى السلة", alreadyInCart:"موجود في سلتك", cartEmpty:"سلتك فارغة.",
+      yourCart:"سلتك", itemsTotal:"القطع", total:"الإجمالي", keepShopping:"متابعة التسوق",
+      checkout:"إتمام الطلب", shippingNote:"تختار طريقة التوصيل عند إتمام الطلب، وتُؤكَّد تكلفة الشحن قبل الدفع.",
+      yourNameLbl:"اسمك", phoneLbl:"الجوال", emailOptLbl:"البريد الإلكتروني (اختياري)",
+      deliveryLbl:"التوصيل", deliveryShip:"شحن إليّ", deliveryMeet:"استلام شخصي",
+      addressLbl:"العنوان", addressPh:"الشارع، المبنى، الحي", postalLbl:"الرمز البريدي",
+      meetupLbl:"المنطقة أو الوقت المفضل", meetupPh:"مثال: الدمام، عصر نهاية الأسبوع",
+      paymentLbl:"الدفع", payTransfer:"تحويل بنكي / STC Pay", payCash:"نقداً عند الاستلام",
+      noteLbl:"ملاحظة (اختياري)", placeOrder:"تأكيد الطلب", placing:"جاري الإرسال…",
+      paymentNotice:"أرسل طلبك وسأتواصل معك بتفاصيل الدفع وتأكيد التوصيل. لا يُخصم أي مبلغ تلقائياً.",
+      namePhoneRequired:"الرجاء إدخال اسمك ورقم جوالك.", addressRequired:"الرجاء إدخال عنوان التوصيل.",
+      orderPlaced:"تم إرسال الطلب", orderPlacedBody:"شكراً لك! سأتواصل معك قريباً بتفاصيل الدفع وتأكيد التوصيل.",
+      noOrdersYet:"لا توجد طلبات بعد.", itemsWord:"قطع",
+      shippingTo:"شحن إلى", meetupOrder:"استلام شخصي", shipTo:"شحن إلى", meetup:"استلام شخصي",
+      addProduct:"+ إضافة منتج", openOrders:"الطلبات المفتوحة", noOpenOrders:"لا توجد طلبات مفتوحة.",
+      revenueLbl:"الإيرادات", productsLbl:"منتجات معروضة", openOrdersLbl:"طلبات مفتوحة", completedLbl:"مكتملة",
+      markPaid:"تم الدفع", markPreparing:"قيد التجهيز", markShippedShop:"تم الشحن",
+      markReady:"جاهز للاستلام", markComplete:"إكمال", cancelOrder:"إلغاء",
+      confirmCancelOrder:"إلغاء هذا الطلب؟ ستعود القطع للعرض.",
+      st_awaiting_payment:"بانتظار الدفع", st_paid:"مدفوع", st_preparing:"قيد التجهيز",
+      st_shipped:"تم الشحن", st_ready_for_pickup:"جاهز للاستلام",
+      st_completed:"مكتمل", st_cancelled:"ملغى",
+      fairPlay:"نينجابركس بائع مستقل لمنتجات LEGO\u00AE الأصلية، وليست تابعة لمجموعة LEGO أو معتمدة منها.",
       myOrders:"طلباتي", myOrdersSub:"كل ما تشتريه أو تبيعه، وما الخطوة التالية.",
       buying:"شراء", selling:"بيع", noOrders:"لا يوجد شيء هنا بعد.",
       statusAwaitingShip:"بانتظار الشحن", statusShipped:"تم الشحن", statusComplete:"مكتمل", statusCancelled:"ملغى",
@@ -1342,9 +1410,8 @@
           <div class="l-title">${escapeHtml(l.title)}</div>
           ${l.release_year || l.set_number ? `<div class="l-setinfo">${l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : ''}${l.set_number && l.release_year ? '<span class="ls-sep"></span>' : ''}${l.release_year ? `<span class="ls-year">${l.release_year}</span>` : ''}</div>` : ''}
           <div class="l-price">${Number(l.price).toLocaleString()} SAR</div>
-          <div class="l-seller" data-seller="${l.seller_id}">${sellerNameCache[l.seller_id] ? escapeHtml(sellerNameCache[l.seller_id]) : '…'}</div>
-          <div class="l-meta"><span class="city">${l.city}</span><span>${new Date(l.created_at).toLocaleDateString()}</span></div>
-          <button class="contact-btn" data-listing="${l.id}" data-seller="${l.seller_id}" data-title="${l.title.replace(/"/g,'&quot;')}">${t('contactSeller')}</button>
+          <div class="l-meta"><span>${t(condLabels[l.condition] || l.condition)}</span>${l.stock > 0 ? '' : `<span class="sold-tag">${t('soldOut')}</span>`}</div>
+          <button class="contact-btn" ${l.stock > 0 ? '' : 'disabled'} data-listing="${l.id}">${l.stock > 0 ? t('addToCart') : t('soldOut')}</button>
         </div>`;
       el.addEventListener('click', (e)=>{
         if(e.target.closest('.contact-btn')) return;
@@ -1356,13 +1423,7 @@
         openDetail(l);
       });
       const btn = el.querySelector('.contact-btn');
-      if(currentUser && currentUser.id === l.seller_id){
-        btn.textContent = t('markSold');
-        btn.style.background = 'var(--jade)';
-        btn.addEventListener('click', ()=> openSoldPanel(l.id, l.title, l.price));
-      } else {
-        btn.addEventListener('click', ()=> startConversation(l.id, l.seller_id, l.title));
-      }
+      if(l.stock > 0) btn.addEventListener('click', (e)=>{ e.stopPropagation(); addToCart(l); });
       frag.appendChild(el);
     });
     grid.replaceChildren(frag);
@@ -1372,18 +1433,11 @@
     const { data, error } = await db
       .from('listings')
       .select('*')
-      .eq('status', 'active')
+      .in('status', ['active','reserved'])
       .order('created_at', { ascending:false });
     if(error){ console.error('Failed to load listings:', error.message); return; }
     listings = data || [];
 
-    // ZATCA requires the seller to be clearly identified on every listing.
-    // Fetch all names in one query rather than one per card.
-    const ids = [...new Set(listings.map(l=>l.seller_id))].filter(id=> !sellerNameCache[id]);
-    if(ids.length){
-      const { data: sellers } = await db.from('profiles').select('id, full_name').in('id', ids);
-      (sellers || []).forEach(sl=>{ sellerNameCache[sl.id] = sl.full_name; });
-    }
     applyFilters();
   }
 
@@ -1654,6 +1708,8 @@
   async function signOut(){
     await db.auth.signOut();
     currentUser = null;
+    cart = [];
+    updateCartCount();
     document.getElementById('accountMenu').classList.remove('open');
     renderAccountState();
   }
@@ -1685,98 +1741,89 @@
       document.getElementById('amName').textContent = currentUser.name;
       const roleMap = { Buyer:'roleBuyer', Seller:'roleSeller', Owner:'roleOwner' };
       document.getElementById('amRole').textContent = t(roleMap[currentUser.role] || 'roleBuyer');
-      document.getElementById('amAdminLink').style.display = currentUser.role === 'Owner' ? 'block' : 'none';
+      const isOwner = currentUser.role === 'Owner';
+      document.getElementById('amAdminLink').style.display = isOwner ? 'block' : 'none';
+      const addBtn = document.getElementById('addProductBtn');
+      const addFirst = document.getElementById('addFirstBtn');
+      if(addBtn) addBtn.style.display = isOwner ? 'inline-flex' : 'none';
+      if(addFirst) addFirst.style.display = isOwner ? 'inline-flex' : 'none';
     } else {
       btn.textContent = t('signIn');
       signedOut.style.display = 'block';
       signedIn.style.display = 'none';
+      const addBtn = document.getElementById('addProductBtn');
+      const addFirst = document.getElementById('addFirstBtn');
+      if(addBtn) addBtn.style.display = 'none';
+      if(addFirst) addFirst.style.display = 'none';
     }
   }
 
   refreshCurrentUser();
 
-  function openMessages(){
-    document.getElementById('accountMenu').classList.remove('open');
-    document.querySelector('.msg-panel').classList.remove('viewing-thread');
-    document.getElementById('messagesOverlay').classList.add('open');
-    loadConversations();
-  }
   async function loadAdminData(){
-    // Counts come straight from the database. RLS still enforces owner-only
-    // access server-side, so a non-owner gets nothing back even if they call this.
-    const [listingsRes, sellersRes, salesRes, signupsRes, pendingRes] = await Promise.all([
+    const [prodRes, ordersRes, revenueRes] = await Promise.all([
       db.from('listings').select('id', { count:'exact', head:true }).eq('status','active'),
-      db.from('profiles').select('id', { count:'exact', head:true }).eq('role','seller'),
-      db.from('sales').select('commission_amount, status'),
-      db.from('profiles').select('full_name, role, created_at').order('created_at', { ascending:false }).limit(5),
-      db.from('listings').select('title, price, city').eq('status','pending_review').limit(5)
+      db.from('orders_to_action').select('*'),
+      db.from('shop_orders').select('order_total, status')
     ]);
 
-    const { data: reports } = await db.from('reports')
-      .select('*, listings(title, id)')
-      .eq('status','open')
-      .order('created_at', { ascending:false })
-      .limit(10);
+    const orders = ordersRes.data || [];
+    const allOrders = revenueRes.data || [];
+    const revenue = allOrders
+      .filter(o=> ['paid','preparing','shipped','ready_for_pickup','completed'].includes(o.status))
+      .reduce((sum,o)=> sum + Number(o.order_total || 0), 0);
 
-    const reportsEl = document.getElementById('adminReports');
-    reportsEl.innerHTML = (reports && reports.length)
-      ? reports.map(r=>`<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;">
-          <div style="font-weight:600;">${escapeHtml(r.listings ? r.listings.title : t('listingRemoved'))}</div>
-          <div style="color:var(--muted);margin:4px 0;">${escapeHtml(r.reason)}</div>
-          <button class="link-btn danger" onclick="removeReportedListing('${r.listings ? r.listings.id : ''}','${r.id}')">${t('removeListing')}</button>
-          <button class="link-btn" style="margin-inline-start:14px;" onclick="dismissReport('${r.id}')">${t('dismissReport')}</button>
-        </div>`).join('')
-      : t('noReports');
+    document.getElementById('statListings').textContent  = prodRes.count ?? 0;
+    document.getElementById('statSellers').textContent   = orders.length;
+    document.getElementById('statSales').textContent     = allOrders.filter(o=> o.status === 'completed').length;
+    document.getElementById('statCommission').textContent = revenue.toLocaleString() + ' SAR';
 
-    document.getElementById('statListings').textContent = listingsRes.count ?? 0;
-    document.getElementById('statSellers').textContent = sellersRes.count ?? 0;
-
-    const sales = salesRes.data || [];
-    const totalCommission = sales.reduce((sum,s)=> sum + Number(s.commission_amount || 0), 0);
-    document.getElementById('statCommission').textContent = totalCommission.toLocaleString() + ' SAR';
-    document.getElementById('statSales').textContent = sales.length;
-
-    const signups = signupsRes.data || [];
-    const signupsEl = document.getElementById('adminSignups');
-    signupsEl.innerHTML = signups.length
-      ? signups.map(u=>`<div style="padding:6px 0;border-bottom:1px solid var(--line);font-size:13px;">${u.full_name} <span style="color:var(--muted);">— ${u.role}</span></div>`).join('')
-      : t('noSignups');
-
-    const pending = pendingRes.data || [];
-    const pendingEl = document.getElementById('adminPending');
-    pendingEl.innerHTML = pending.length
-      ? pending.map(l=>`<div style="padding:6px 0;border-bottom:1px solid var(--line);font-size:13px;">${l.title} <span style="color:var(--muted);">— ${Number(l.price).toLocaleString()} SAR, ${l.city}</span></div>`).join('')
-      : t('nothingReview');
-
-    // Who owes commission, and how overdue
-    const { data: owedRows } = await db.from('commission_owed')
-      .select('*')
-      .order('days_overdue', { ascending:false });
-
-    const owedEl = document.getElementById('adminOwed');
-    owedEl.innerHTML = (owedRows && owedRows.length)
-      ? owedRows.map(r=>`<div class="owed-row">
+    const el = document.getElementById('adminOrders');
+    el.innerHTML = orders.length ? orders.map(o=>`
+      <div class="order-card">
+        <div class="oc-top">
           <div>
-            <div style="font-weight:700;">${escapeHtml(r.full_name || '—')}</div>
-            <div style="color:var(--muted);font-size:14px;">
-              ${r.unpaid_sales} ${t('unpaidSales')} · ${r.days_overdue} ${t('daysOverdue')}
-              ${r.suspended ? ' · <strong style="color:var(--brick-red);">'+t('suspendedLabel')+'</strong>' : ''}
+            <div class="oc-title">${escapeHtml(o.contact_name)}</div>
+            <div style="font-size:14px;color:var(--muted);">
+              ${o.item_count} ${t('itemsWord')} ·
+              ${o.delivery_method === 'shipping' ? t('shipTo') + ' ' + escapeHtml(o.city || '') : t('meetup')} ·
+              ${escapeHtml(o.contact_phone)}
             </div>
           </div>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <span class="amt">${Number(r.total_owed).toLocaleString()} SAR</span>
-            ${r.suspended
-              ? `<button class="btn-reinstate" onclick="setSuspended('${r.seller_id}',false)">${t('reinstate')}</button>`
-              : `<button class="btn-suspend" onclick="setSuspended('${r.seller_id}',true)">${t('suspend')}</button>`}
-          </div>
-        </div>`).join('')
-      : t('noneOwed');
+          <div class="oc-amt">${Number(o.order_total).toLocaleString()} SAR</div>
+        </div>
+        <div class="oc-status ${o.status === 'awaiting_payment' ? 'held' : 'shipped'}">${t('st_'+o.status) || o.status}</div>
+        <div class="oc-actions">
+          ${adminNextActions(o)}
+        </div>
+      </div>`).join('') : `<div class="admin-empty">${t('noOpenOrders')}</div>`;
+  }
 
-    const owed = sales.filter(s=> s.status === 'pending');
-    const payoutsEl = document.getElementById('adminPayouts');
-    payoutsEl.textContent = owed.length
-      ? owed.length + ' sale(s) pending payout — ' + owed.reduce((sum,s)=> sum + Number(s.commission_amount||0), 0).toLocaleString() + ' SAR in commission'
-      : t('noPayouts');
+  function adminNextActions(o){
+    const btn = (status, label, cls) =>
+      `<button class="oc-btn ${cls||''}" onclick="setOrderStatus('${o.id}','${status}')">${label}</button>`;
+    let out = '';
+    if(o.status === 'awaiting_payment') out += btn('paid', t('markPaid'));
+    if(o.status === 'paid')             out += btn('preparing', t('markPreparing'));
+    if(o.status === 'preparing')
+      out += o.delivery_method === 'shipping'
+        ? btn('shipped', t('markShippedShop'))
+        : btn('ready_for_pickup', t('markReady'));
+    if(['shipped','ready_for_pickup'].includes(o.status)) out += btn('completed', t('markComplete'));
+    out += btn('cancelled', t('cancelOrder'), 'secondary');
+    return out;
+  }
+
+  async function setOrderStatus(orderId, status){
+    if(status === 'cancelled'){
+      const ok = await showDialog({ title:t('cancelOrder'), body:t('confirmCancelOrder'),
+                                    okLabel:t('cancelOrder'), danger:true });
+      if(!ok) return;
+    }
+    const { error } = await db.from('shop_orders').update({ status }).eq('id', orderId);
+    if(error){ alert(error.message); return; }
+    loadAdminData();
+    loadListings();
   }
 
   function openAdmin(){
@@ -1787,221 +1834,9 @@
 
   document.querySelectorAll('.sell-overlay').forEach(ov=>{
     ov.addEventListener('click', (e)=>{
-      if(e.target === ov){
-        ov.classList.remove('open');
-        if(ov.id === 'messagesOverlay' && messagePoller){ clearInterval(messagePoller); messagePoller = null; }
-      }
+      if(e.target === ov) ov.classList.remove('open');
     });
   });
-
-
-  // ===== MESSAGING =====
-  let activeConversation = null;
-  let messagePoller = null;
-
-  async function startConversation(listingId, sellerId, listingTitle){
-    if(!currentUser){ alert(t('mustSignInMsg')); return; }
-    if(currentUser.id === sellerId){ alert(t('cantMessageSelf')); return; }
-
-    // Reuse an existing conversation for this listing if there is one
-    const { data: existing } = await db.from('conversations')
-      .select('*')
-      .eq('listing_id', listingId)
-      .eq('buyer_id', currentUser.id)
-      .maybeSingle();
-
-    let convo = existing;
-    if(!convo){
-      const { data, error } = await db.from('conversations')
-        .insert({ listing_id: listingId, buyer_id: currentUser.id, seller_id: sellerId })
-        .select()
-        .single();
-      if(error){ alert(error.message); return; }
-      convo = data;
-    }
-
-    document.getElementById('messagesOverlay').classList.add('open');
-    await loadConversations();
-    openThread(convo.id, listingTitle);
-  }
-
-  async function loadConversations(){
-    const listEl = document.getElementById('threadList');
-    if(!currentUser){ listEl.innerHTML = '<div class="admin-empty" style="padding:16px;">' + t('signInPrompt') + '</div>'; return; }
-
-    const { data, error } = await db.from('conversations')
-      .select('*, listings(title)')
-      .order('created_at', { ascending:false });
-    if(error){ console.error(error.message); return; }
-
-    if(!data || data.length === 0){
-      listEl.innerHTML = '<div class="admin-empty" style="padding:16px;">' + t('noConvos') + '</div>';
-      return;
-    }
-
-    listEl.innerHTML = data.map(c=>{
-      const title = c.listings ? c.listings.title : t('listingRemoved');
-      const youAre = c.buyer_id === currentUser.id ? t('asBuyer') : t('asSeller');
-      return `<div class="thread-item" data-convo="${c.id}" data-title="${title.replace(/"/g,'&quot;')}">
-        <div class="tt">${title}</div><div class="tw">${youAre}</div></div>`;
-    }).join('');
-
-    listEl.querySelectorAll('.thread-item').forEach(item=>{
-      item.addEventListener('click', ()=> openThread(item.dataset.convo, item.dataset.title));
-    });
-  }
-
-  function backToThreadList(){
-    document.querySelector('.msg-panel').classList.remove('viewing-thread');
-    activeConversation = null;
-    if(messagePoller){ clearInterval(messagePoller); messagePoller = null; }
-  }
-
-  function closeMessages(){
-    document.getElementById('messagesOverlay').classList.remove('open');
-    document.querySelector('.msg-panel').classList.remove('viewing-thread');
-    activeConversation = null;
-    if(messagePoller){ clearInterval(messagePoller); messagePoller = null; }
-  }
-
-  async function openThread(convoId, title){
-    activeConversation = convoId;
-    document.querySelector('.msg-panel').classList.add('viewing-thread');
-    document.getElementById('threadPlaceholder').style.display = 'none';
-    document.getElementById('threadView').style.display = 'flex';
-    document.getElementById('threadTitle').textContent = title;
-    document.querySelectorAll('.thread-item').forEach(i=>i.classList.toggle('active', i.dataset.convo === convoId));
-    await loadMessages();
-
-    // Poll for new messages while the thread is open
-    if(messagePoller) clearInterval(messagePoller);
-    messagePoller = setInterval(function(){
-      if(document.visibilityState === 'visible') loadMessages();
-    }, 5000);
-  }
-
-  async function loadMessages(){
-    if(!activeConversation) return;
-    const { data, error } = await db.from('messages')
-      .select('*')
-      .eq('conversation_id', activeConversation)
-      .order('created_at', { ascending:true });
-    if(error){ console.error(error.message); return; }
-
-    const box = document.getElementById('threadMsgs');
-    const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 50;
-    box.innerHTML = (data || []).map(m=>{
-      const mine = m.sender_id === currentUser.id;
-      return `<div class="tmsg ${mine ? 'mine' : 'theirs'}">${escapeHtml(m.body)}</div>`;
-    }).join('');
-    if(wasAtBottom) box.scrollTop = box.scrollHeight;
-  }
-
-  function escapeHtml(str){
-    return String(str).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-  }
-
-  async function sendMessage(){
-    const input = document.getElementById('threadInput');
-    const text = input.value.trim();
-    if(!text || !activeConversation || !currentUser) return;
-    input.value = '';
-
-    const { error } = await db.from('messages').insert({
-      conversation_id: activeConversation,
-      sender_id: currentUser.id,
-      body: text
-    });
-    if(error){ alert(error.message); return; }
-    await loadMessages();
-  }
-
-
-  // ===== SALES & COMMISSION =====
-  let soldListingId = null;
-
-  function openSoldPanel(listingId, title, price){
-    soldListingId = listingId;
-    document.getElementById('soldListingName').textContent = title;
-    document.getElementById('soldPrice').value = price || '';
-    document.getElementById('soldOverlay').classList.add('open');
-    updateCommissionPreview();
-  }
-
-  function updateCommissionPreview(){
-    const price = Number(document.getElementById('soldPrice').value) || 0;
-    const box = document.getElementById('commissionPreview');
-    if(price <= 0){ box.classList.remove('show'); return; }
-    const commission = Math.round(price * 0.03 * 100) / 100;
-    const payout = Math.round(price * 0.97 * 100) / 100;
-    box.innerHTML = `
-      <div class="row"><span>${t('salePrice')}</span><span>${price.toLocaleString()} SAR</span></div>
-      <div class="row"><span>${t('ninjabrixFee')}</span><span>-${commission.toLocaleString()} SAR</span></div>
-      <div class="row total"><span>${t('youKeep')}</span><span>${payout.toLocaleString()} SAR</span></div>`;
-    box.classList.add('show');
-  }
-
-  async function confirmSold(){
-    if(!currentUser || !soldListingId) return;
-    const price = Number(document.getElementById('soldPrice').value);
-    if(!price || price <= 0){ alert(t('enterSalePrice')); return; }
-
-    // Find the buyer from the conversation on this listing, if there is one.
-    // Falls back to the seller's own id when the sale happened off-platform.
-    const { data: convo } = await db.from('conversations')
-      .select('buyer_id')
-      .eq('listing_id', soldListingId)
-      .limit(1)
-      .maybeSingle();
-
-    const { error: saleError } = await db.from('sales').insert({
-      listing_id: soldListingId,
-      buyer_id: convo ? convo.buyer_id : currentUser.id,
-      seller_id: currentUser.id,
-      sale_price: price,
-      status: 'pending'
-    });
-    if(saleError){ alert(saleError.message); return; }
-
-    await db.from('listings').update({ status: 'sold' }).eq('id', soldListingId);
-
-    document.getElementById('soldOverlay').classList.remove('open');
-    soldListingId = null;
-    await loadListings();
-    alert(t('saleRecorded'));
-  }
-
-  async function openMySales(){
-    document.getElementById('accountMenu').classList.remove('open');
-    if(!currentUser){ alert(t('mustSignIn')); return; }
-    document.getElementById('mySalesOverlay').classList.add('open');
-
-    const { data, error } = await db.from('sales')
-      .select('*, listings(title)')
-      .eq('seller_id', currentUser.id)
-      .order('created_at', { ascending:false });
-    if(error){ console.error(error.message); return; }
-
-    const sales = data || [];
-    const totalSold = sales.reduce((sum,s)=> sum + Number(s.sale_price||0), 0);
-    const owed = sales.filter(s=> s.status === 'pending')
-                      .reduce((sum,s)=> sum + Number(s.commission_amount||0), 0);
-
-    document.getElementById('mySalesTotal').textContent = totalSold.toLocaleString() + ' SAR';
-    document.getElementById('myCommissionOwed').textContent = owed.toLocaleString() + ' SAR';
-    document.getElementById('owedNotice').style.display = owed > 0 ? 'block' : 'none';
-
-    const listEl = document.getElementById('mySalesList');
-    listEl.innerHTML = sales.length ? sales.map(s=>{
-      const title = s.listings ? s.listings.title : t('listingRemoved');
-      const paid = s.status === 'paid_out';
-      return `<div class="sale-row">
-        <div><div style="font-weight:600;">${escapeHtml(title)}</div>
-        <div style="color:var(--muted);font-size:12px;">${Number(s.sale_price).toLocaleString()} SAR · ${paid ? t('paid') : t('unpaid')}</div></div>
-        <div class="sr-com">${Number(s.commission_amount).toLocaleString()} SAR</div>
-      </div>`;
-    }).join('') : `<div class="admin-empty">${t('noSalesYet')}</div>`;
-  }
 
 
   // ===== LISTING DETAIL, REPORTING, DELETION =====
@@ -2034,34 +1869,21 @@
 
     // Show the date immediately; fill in the seller name when it arrives.
     // Waiting on the network here is what made taps feel unresponsive.
-    const dateStr = new Date(l.created_at).toLocaleDateString();
-    const sellerEl = document.getElementById('detailSeller');
-    const cached = sellerNameCache[l.seller_id];
-    sellerEl.textContent = cached
-      ? t('listedBy') + ' ' + cached + ' · ' + dateStr
-      : dateStr;
-
-    if(!cached){
-      db.from('profiles').select('full_name').eq('id', l.seller_id).maybeSingle()
-        .then(({ data: seller })=>{
-          const name = seller ? seller.full_name : '—';
-          sellerNameCache[l.seller_id] = name;
-          if(detailListing && detailListing.id === l.id){
-            sellerEl.textContent = t('listedBy') + ' ' + name + ' · ' + dateStr;
-          }
-        });
-    }
+    document.getElementById('detailSeller').textContent =
+      l.stock > 0 ? t('inStock') : t('soldOut');
 
     const action = document.getElementById('detailAction');
-    const isMine = currentUser && currentUser.id === l.seller_id;
-    action.textContent = isMine ? t('markSold') : t('contactSeller');
-    action.onclick = isMine
-      ? ()=>{ document.getElementById('detailOverlay').classList.remove('open'); openSoldPanel(l.id, l.title, l.price); }
-      : ()=>{ document.getElementById('detailOverlay').classList.remove('open'); startConversation(l.id, l.seller_id, l.title); };
+    const inStock = l.stock > 0;
+    action.textContent = inStock ? t('addToCart') : t('soldOut');
+    action.disabled = !inStock;
+    action.onclick = inStock
+      ? ()=>{ addToCart(l); document.getElementById('detailOverlay').classList.remove('open'); }
+      : null;
 
-    document.getElementById('detailDelete').style.display = isMine ? 'block' : 'none';
-    document.getElementById('detailEdit').style.display = isMine ? 'block' : 'none';
-    document.getElementById('detailReport').style.display = isMine ? 'none' : 'block';
+    const isOwner = currentUser && currentUser.role === 'Owner';
+    document.getElementById('detailDelete').style.display = isOwner ? 'block' : 'none';
+    document.getElementById('detailEdit').style.display = isOwner ? 'block' : 'none';
+    document.getElementById('detailReport').style.display = 'none';
     document.getElementById('detailOverlay').classList.add('open');
   }
 
@@ -2209,256 +2031,215 @@
     document.getElementById('photoPreview').innerHTML = '';
   }
 
-  // ===== UNREAD MESSAGE INDICATOR =====
-  let lastSeenMessageCount = 0;
 
-  async function checkUnreadMessages(){
-    if(!currentUser) return;
-    const { count } = await db.from('messages')
-      .select('id', { count:'exact', head:true })
-      .neq('sender_id', currentUser.id);
-    const dot = document.getElementById('msgDot');
-    if(count && count > lastSeenMessageCount && lastSeenMessageCount !== 0){
-      dot.style.display = 'block';
-    }
-    if(lastSeenMessageCount === 0) lastSeenMessageCount = count || 0;
+  // ===== CART =====
+  // Kept in memory only. A page refresh clears it, which is acceptable
+  // for a small shop and avoids stale prices or sold-out items sitting
+  // in someone's cart for days.
+  let cart = [];
+
+  function updateCartCount(){
+    const el = document.getElementById('cartCount');
+    el.textContent = cart.length;
+    el.style.display = cart.length ? 'inline-flex' : 'none';
   }
-  setInterval(function(){
-    if(document.visibilityState === 'visible') checkUnreadMessages();
-  }, 60000);
 
-  async function setSuspended(userId, suspend){
+  function addToCart(l){
+    if(!currentUser){ promptSignIn(); return; }
+    if(cart.some(c=> c.id === l.id)){ toast(t('alreadyInCart')); return; }
+    cart.push({ id:l.id, title:l.title, price:Number(l.price),
+                set_number:l.set_number, release_year:l.release_year,
+                photo:(l.photo_urls && l.photo_urls[0]) || null });
+    updateCartCount();
+    toast(t('addedToCart'));
+  }
+
+  function removeFromCart(id){
+    cart = cart.filter(c=> c.id !== id);
+    updateCartCount();
+    renderCart();
+  }
+
+  function cartTotal(){ return cart.reduce((sum,c)=> sum + c.price, 0); }
+
+  function openCart(){
+    renderCart();
+    document.getElementById('cartOverlay').classList.add('open');
+  }
+
+  function renderCart(){
+    const box = document.getElementById('cartItems');
+    const summary = document.getElementById('cartSummary');
+    const checkoutBtn = document.getElementById('cartCheckoutBtn');
+
+    if(!cart.length){
+      box.innerHTML = `<div class="admin-empty">${t('cartEmpty')}</div>`;
+      summary.style.display = 'none';
+      checkoutBtn.disabled = true;
+      return;
+    }
+
+    box.innerHTML = cart.map(c=>`
+      <div class="cart-row">
+        <div class="cart-thumb">${c.photo ? `<img src="${c.photo}" alt="">` : ''}</div>
+        <div class="cart-info">
+          <div class="cart-title">${escapeHtml(c.title)}</div>
+          ${c.set_number || c.release_year ? `<div class="cart-set">${c.set_number ? '#'+escapeHtml(c.set_number) : ''}${c.set_number && c.release_year ? ' · ' : ''}${c.release_year || ''}</div>` : ''}
+        </div>
+        <div class="cart-price">${c.price.toLocaleString()} SAR</div>
+        <button class="cart-remove" onclick="removeFromCart('${c.id}')" aria-label="Remove">&times;</button>
+      </div>`).join('');
+
+    document.getElementById('cartItemsTotal').textContent = cartTotal().toLocaleString() + ' SAR';
+    document.getElementById('cartTotal').textContent = cartTotal().toLocaleString() + ' SAR';
+    summary.style.display = 'block';
+    checkoutBtn.disabled = false;
+  }
+
+  async function promptSignIn(){
     const ok = await showDialog({
-      title: suspend ? t('suspend') : t('reinstate'),
-      body: suspend ? t('confirmSuspend') : t('confirmReinstate'),
-      okLabel: suspend ? t('suspend') : t('reinstate'), danger: suspend });
-    if(!ok) return;
-    const { error } = await db.from('profiles').update({
-      suspended: suspend,
-      suspended_reason: suspend ? 'Unpaid commission' : null,
-      suspended_at: suspend ? new Date().toISOString() : null
-    }).eq('id', userId);
-    if(error){ alert(error.message); return; }
-    await loadAdminData();
-    await loadListings();
-  }
-
-  // ===== DIALOGS =====
-  // Native confirm()/prompt() block the main thread until the user responds,
-  // which tanks interaction responsiveness. These are non-blocking.
-  function showDialog({ title, body, input, okLabel, danger }){
-    return new Promise((resolve)=>{
-      const overlay = document.getElementById('dialogOverlay');
-      const inputWrap = document.getElementById('dialogInputWrap');
-      const inputEl = document.getElementById('dialogInput');
-      const okBtn = document.getElementById('dialogOk');
-      const cancelBtn = document.getElementById('dialogCancel');
-
-      document.getElementById('dialogTitle').textContent = title || '';
-      document.getElementById('dialogBody').textContent = body || '';
-      okBtn.textContent = okLabel || t('confirmBtn');
-      cancelBtn.textContent = t('cancel');
-      okBtn.style.background = danger ? 'var(--brick-red)' : 'var(--brick-blue)';
-
-      if(input){
-        inputWrap.style.display = 'block';
-        inputEl.value = '';
-        inputEl.placeholder = input.placeholder || '';
-      } else {
-        inputWrap.style.display = 'none';
-      }
-
-      overlay.classList.add('open');
-      setTimeout(()=>{ (input ? inputEl : okBtn).focus(); }, 60);
-
-      function cleanup(result){
-        overlay.classList.remove('open');
-        okBtn.onclick = null; cancelBtn.onclick = null; inputEl.onkeydown = null;
-        resolve(result);
-      }
-      okBtn.onclick = ()=> cleanup(input ? (inputEl.value || '') : true);
-      cancelBtn.onclick = ()=> cleanup(input ? null : false);
-      inputEl.onkeydown = (e)=>{ if(e.key === 'Enter') okBtn.click(); };
+      title: t('signInNeeded'),
+      body:  t('signInNeededBody'),
+      okLabel: t('signIn')
     });
-  }
-
-  // ===== PHOTO LIGHTBOX =====
-  let lightboxPhotos = [];
-  let lightboxIndex = 0;
-
-  function openLightbox(index){
-    if(!lightboxPhotos.length) return;
-    lightboxIndex = index;
-    showLightboxPhoto();
-    document.getElementById('lightbox').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function showLightboxPhoto(){
-    document.getElementById('lightboxImg').src = lightboxPhotos[lightboxIndex];
-    const count = document.getElementById('lightboxCount');
-    count.textContent = lightboxPhotos.length > 1
-      ? (lightboxIndex + 1) + ' / ' + lightboxPhotos.length : '';
-    const multi = lightboxPhotos.length > 1;
-    document.querySelector('.lb-prev').style.display = multi ? 'flex' : 'none';
-    document.querySelector('.lb-next').style.display = multi ? 'flex' : 'none';
-  }
-
-  function lightboxStep(dir, e){
-    if(e) e.stopPropagation();
-    if(!lightboxPhotos.length) return;
-    lightboxIndex = (lightboxIndex + dir + lightboxPhotos.length) % lightboxPhotos.length;
-    showLightboxPhoto();
-  }
-
-  function closeLightbox(e){
-    // Only close on the backdrop or the close button, not the photo itself
-    if(e && e.target && e.target.tagName === 'IMG') return;
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  const messagesOverlayEl = document.getElementById('messagesOverlay');
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape' && messagesOverlayEl.classList.contains('open')
-       && !document.getElementById('lightbox').classList.contains('open')){
-      closeMessages(); return;
+    if(ok){
+      document.getElementById('cartOverlay').classList.remove('open');
+      openAuth('signin');
     }
-  });
+  }
 
-  const lightboxEl = document.getElementById('lightbox');
-  document.addEventListener('keydown', (e)=>{
-    if(!lightboxEl.classList.contains('open')) return;
-    if(e.key === 'Escape') closeLightbox();
-    if(e.key === 'ArrowRight') lightboxStep(1);
-    if(e.key === 'ArrowLeft') lightboxStep(-1);
-  });
+  // ===== CHECKOUT =====
+  let deliveryMethod = 'shipping';
+  let paymentMethod  = 'transfer';
 
-  // Swipe between photos on touch devices
-  (function(){
-    let startX = 0;
-    const lb = document.getElementById('lightbox');
-    lb.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, {passive:true});
-    lb.addEventListener('touchend', e=>{
-      const dx = e.changedTouches[0].clientX - startX;
-      if(Math.abs(dx) > 55) lightboxStep(dx > 0 ? -1 : 1);
-    }, {passive:true});
-  })();
+  function pickDelivery(el){
+    document.querySelectorAll('[data-delivery]').forEach(o=>o.classList.remove('active'));
+    el.classList.add('active');
+    deliveryMethod = el.dataset.delivery;
+    document.getElementById('shippingFields').style.display = deliveryMethod === 'shipping' ? 'block' : 'none';
+    document.getElementById('meetupFields').style.display   = deliveryMethod === 'meetup'   ? 'block' : 'none';
+    // Cash only makes sense when meeting in person
+    const cashOpt = document.querySelector('[data-payment="cash"]');
+    cashOpt.style.display = deliveryMethod === 'meetup' ? 'block' : 'none';
+    if(deliveryMethod === 'shipping' && paymentMethod === 'cash'){
+      pickPayment(document.querySelector('[data-payment="transfer"]'));
+    }
+  }
 
+  function pickPayment(el){
+    document.querySelectorAll('[data-payment]').forEach(o=>o.classList.remove('active'));
+    el.classList.add('active');
+    paymentMethod = el.dataset.payment;
+  }
 
-  // ===== ORDERS & ESCROW =====
-  let orderTab = 'buying';
+  function openCheckout(){
+    if(!currentUser){ promptSignIn(); return; }
+    if(!cart.length) return;
+    document.getElementById('cartOverlay').classList.remove('open');
+    document.getElementById('checkoutSummary').textContent =
+      cart.length + ' ' + t('itemsWord') + ' · ' + cartTotal().toLocaleString() + ' SAR';
+    if(currentUser){
+      const nameEl = document.getElementById('coName');
+      if(!nameEl.value) nameEl.value = currentUser.name || '';
+      const emailEl = document.getElementById('coEmail');
+      if(!emailEl.value) emailEl.value = currentUser.email || '';
+    }
+    document.getElementById('checkoutOverlay').classList.add('open');
+  }
 
-  function openOrders(){
+  async function placeOrder(){
+    if(!currentUser){ promptSignIn(); return; }
+    const name  = document.getElementById('coName').value.trim();
+    const phone = document.getElementById('coPhone').value.trim();
+    if(!name || !phone){ alert(t('namePhoneRequired')); return; }
+
+    const address = document.getElementById('coAddress').value.trim();
+    const city    = document.getElementById('coCity').value.trim();
+    if(deliveryMethod === 'shipping' && (!address || !city)){
+      alert(t('addressRequired')); return;
+    }
+
+    const btn = document.getElementById('placeOrderBtn');
+    btn.disabled = true;
+    const originalLabel = btn.textContent;
+    btn.textContent = t('placing');
+
+    try{
+      const { data, error } = await db.rpc('place_order', {
+        p_items: cart.map(c=> ({ listing_id:c.id, quantity:1 })),
+        p_contact_name: name,
+        p_contact_phone: phone,
+        p_contact_email: document.getElementById('coEmail').value.trim() || null,
+        p_delivery_method: deliveryMethod,
+        p_address_line: deliveryMethod === 'shipping' ? address : null,
+        p_city:         deliveryMethod === 'shipping' ? city : null,
+        p_postal_code:  deliveryMethod === 'shipping' ? (document.getElementById('coPostal').value.trim() || null) : null,
+        p_meetup_note:  deliveryMethod === 'meetup' ? (document.getElementById('coMeetup').value.trim() || null) : null,
+        p_payment_method: paymentMethod,
+        p_shipping_fee: 0,
+        p_buyer_note: document.getElementById('coNote').value.trim() || null
+      });
+      if(error){ alert(error.message); return; }
+
+      cart = [];
+      updateCartCount();
+      document.getElementById('checkoutOverlay').classList.remove('open');
+      await showDialog({ title:t('orderPlaced'), body:t('orderPlacedBody'), okLabel:t('close') });
+      loadListings();
+    }catch(err){
+      alert(err.message);
+    }finally{
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
+  }
+
+  // ===== BUYER ORDER HISTORY =====
+  async function openMyOrders(){
     document.getElementById('accountMenu').classList.remove('open');
     if(!currentUser){ alert(t('mustSignIn')); return; }
-    document.getElementById('ordersOverlay').classList.add('open');
-    loadOrders();
-  }
+    document.getElementById('myOrdersOverlay').classList.add('open');
 
-  function switchOrderTab(tab){
-    orderTab = tab;
-    document.getElementById('tabBuying').classList.toggle('active', tab==='buying');
-    document.getElementById('tabSelling').classList.toggle('active', tab==='selling');
-    loadOrders();
-  }
-
-  function fmtDate(d){ return d ? new Date(d).toLocaleDateString() : '—'; }
-
-  // Plain-language explanation of where the money is and what unlocks it.
-  // Uncertainty is what makes sellers nervous, so this is deliberately explicit.
-  function escrowNote(row, selling){
-    if(row.payout_status === 'released')
-      return selling ? t('noteSellerReleased') : t('noteBuyerReleased');
-    if(row.payout_status === 'refunded')
-      return t('noteRefunded');
-    if(!row.shipped_at)
-      return selling
-        ? t('noteSellerToShip').replace('{date}', fmtDate(row.ship_due_at))
-        : t('noteBuyerWaitingShip');
-    return selling
-      ? t('noteSellerShipped').replace('{date}', fmtDate(row.auto_release_at))
-      : t('noteBuyerConfirm').replace('{date}', fmtDate(row.auto_release_at));
-  }
-
-  function statusClass(row){
-    if(row.payout_status === 'released') return 'released';
-    if(row.payout_status === 'refunded') return 'refunded';
-    return row.shipped_at ? 'shipped' : 'held';
-  }
-
-  function statusLabel(row){
-    if(row.payout_status === 'released') return t('statusComplete');
-    if(row.payout_status === 'refunded') return t('statusCancelled');
-    return row.shipped_at ? t('statusShipped') : t('statusAwaitingShip');
-  }
-
-  async function loadOrders(){
-    const listEl = document.getElementById('ordersList');
+    const listEl = document.getElementById('myOrdersList');
     listEl.innerHTML = `<div class="admin-empty">${t('loading')}</div>`;
 
-    const selling = orderTab === 'selling';
-    let query = db.from('my_pending_shipments').select('*').order('ship_due_at', { ascending:true });
-    if(selling){
-      query = query.eq('seller_id', currentUser.id);
-    } else {
-      const { data: myOrders } = await db.from('orders').select('id').eq('buyer_id', currentUser.id);
-      const ids = (myOrders || []).map(o=>o.id);
-      if(!ids.length){ listEl.innerHTML = `<div class="admin-empty">${t('noOrders')}</div>`; return; }
-      query = query.in('order_id', ids);
-    }
+    const { data, error } = await db.from('shop_orders')
+      .select('*, shop_order_items(title, unit_price)')
+      .eq('buyer_id', currentUser.id)
+      .order('created_at', { ascending:false });
 
-    const { data, error } = await query;
     if(error){ listEl.innerHTML = `<div class="admin-empty">${escapeHtml(error.message)}</div>`; return; }
-    if(!data || !data.length){ listEl.innerHTML = `<div class="admin-empty">${t('noOrders')}</div>`; return; }
+    if(!data || !data.length){ listEl.innerHTML = `<div class="admin-empty">${t('noOrdersYet')}</div>`; return; }
 
-    listEl.innerHTML = data.map(row=>{
-      const amount = selling ? row.vendor_payout : row.gross_amount;
-      const canShip    = selling && !row.shipped_at && row.payout_status === 'held';
-      const canConfirm = !selling && row.shipped_at && row.payout_status === 'held';
-      return `<div class="order-card">
+    listEl.innerHTML = data.map(o=>`
+      <div class="order-card">
         <div class="oc-top">
-          <div class="oc-title">${escapeHtml(row.title)}</div>
-          <div class="oc-amt">${Number(amount).toLocaleString()} SAR</div>
+          <div class="oc-title">${(o.shop_order_items || []).map(i=> escapeHtml(i.title)).join(', ')}</div>
+          <div class="oc-amt">${Number(o.order_total).toLocaleString()} SAR</div>
         </div>
-        <div class="oc-status ${statusClass(row)}">${statusLabel(row)}</div>
-        <div class="oc-note">${escrowNote(row, selling)}</div>
-        <div class="oc-actions">
-          ${canShip ? `<button class="oc-btn" onclick="markShipped('${row.order_id}')">${t('markShipped')}</button>` : ''}
-          ${canConfirm ? `<button class="oc-btn" onclick="confirmReceipt('${row.order_id}')">${t('confirmReceipt')}</button>` : ''}
-          ${(canConfirm || canShip) ? `<button class="oc-btn secondary" onclick="raiseDispute('${row.order_id}')">${t('reportProblem')}</button>` : ''}
+        <div class="oc-status ${o.status === 'completed' ? 'released' : (o.status === 'cancelled' ? 'refunded' : 'held')}">
+          ${t('st_'+o.status) || o.status}
         </div>
-      </div>`;
-    }).join('');
+        <div class="oc-note">${o.delivery_method === 'shipping' ? t('shippingTo') + ' ' + escapeHtml(o.city || '') : t('meetupOrder')} · ${new Date(o.created_at).toLocaleDateString()}</div>
+      </div>`).join('');
   }
 
-  async function markShipped(orderId){
-    const ok = await showDialog({ title:t('markShipped'), body:t('confirmShipped'), okLabel:t('markShipped') });
-    if(!ok) return;
-    const { error } = await db.rpc('mark_shipped', { p_order_id: orderId });
-    if(error){ alert(error.message); return; }
-    loadOrders();
+  // ===== TOAST =====
+  let toastTimer = null;
+  function toast(msg){
+    let el = document.getElementById('toast');
+    if(!el){
+      el = document.createElement('div');
+      el.id = 'toast'; el.className = 'toast';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> el.classList.remove('show'), 2200);
   }
 
-  async function confirmReceipt(orderId){
-    const ok = await showDialog({ title:t('confirmReceipt'), body:t('confirmReceiptBody'), okLabel:t('confirmReceipt') });
-    if(!ok) return;
-    const { error } = await db.rpc('confirm_receipt', { p_order_id: orderId });
-    if(error){ alert(error.message); return; }
-    loadOrders();
-  }
-
-  async function raiseDispute(orderId){
-    const reason = await showDialog({ title:t('reportProblem'), body:t('disputeBody'),
-                                      input:{ placeholder:t('disputePlaceholder') }, okLabel:t('sendReport') });
-    if(!reason || !reason.trim()) return;
-    const { error } = await db.from('disputes').insert({
-      order_id: orderId, raised_by: currentUser.id, reason: reason.trim()
-    });
-    if(error){ alert(error.message); return; }
-    alert(t('disputeRaised'));
-    loadOrders();
-  }
+  updateCartCount();
 
   // ===== SUPPORT WIDGET =====
   function toggleSupport(){ document.getElementById('supportWindow').classList.toggle('open'); }
