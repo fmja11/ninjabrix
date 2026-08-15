@@ -775,7 +775,7 @@
 <div class="intro-strip">
   <p class="intro-main" data-i18n="introMain">Genuine brick sets, shipped across Saudi Arabia.</p>
   <p class="intro-sub">
-    <span data-i18n="introFree">Ships nationwide</span>
+    <span data-i18n="introFree">Redbox delivery nationwide</span>
     <span class="dot-sep">&middot;</span>
     <span data-i18n="introDirect">Or meet in person</span>
     <span class="dot-sep">&middot;</span>
@@ -930,6 +930,7 @@
     <div id="cartItems"></div>
     <div class="cart-summary" id="cartSummary" style="display:none;">
       <div class="cs-row"><span data-i18n="itemsTotal">Items</span><span id="cartItemsTotal">0 SAR</span></div>
+      <div class="cs-row"><span data-i18n="redboxFee">Redbox delivery</span><span id="cartShipping">25 SAR</span></div>
       <div class="cs-row total"><span data-i18n="total">Total</span><span id="cartTotal">0 SAR</span></div>
       <p class="cs-note" data-i18n="shippingNote">Delivery is chosen at checkout. Shipping cost is confirmed before you pay.</p>
     </div>
@@ -954,17 +955,18 @@
     <div class="field">
       <label data-i18n="deliveryLbl">Delivery</label>
       <div class="role-pick">
-        <div class="role-opt active" data-delivery="shipping" onclick="pickDelivery(this)" data-i18n="deliveryShip">Ship to me</div>
+        <div class="role-opt active" data-delivery="shipping" onclick="pickDelivery(this)" data-i18n="deliveryShip">Redbox delivery</div>
         <div class="role-opt" data-delivery="meetup" onclick="pickDelivery(this)" data-i18n="deliveryMeet">Meet in person</div>
       </div>
     </div>
 
     <div id="shippingFields">
-      <div class="field"><label data-i18n="addressLbl">Address</label><input type="text" id="coAddress" data-i18n-ph="addressPh"></div>
+      <div class="notice" data-i18n="redboxNotice">I ship through Redbox parcel lockers. Tell me your nearest station and I'll send it there — you'll get a code to collect it.</div>
       <div class="field-row">
         <div class="field"><label data-i18n="cityLbl">City</label><input type="text" id="coCity" placeholder="Dammam"></div>
-        <div class="field"><label data-i18n="postalLbl">Postal code</label><input type="text" id="coPostal"></div>
+        <div class="field"><label data-i18n="redboxLbl">Nearest Redbox station</label><input type="text" id="coAddress" data-i18n-ph="redboxPh"></div>
       </div>
+      <input type="hidden" id="coPostal" value="">
     </div>
 
     <div id="meetupFields" style="display:none;">
@@ -1120,6 +1122,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // ===== SUPABASE CONNECTION =====
+  // ---- SHOP SETTINGS ----
+  const SHIPPING_FEE = 25;   // SAR, Redbox delivery
+  // -----------------------
+
   const SUPABASE_URL = "https://zwliqmsvihfdkyaadnsi.supabase.co";
   const SUPABASE_KEY = "sb_publishable_hdU4cQVhQvPsyqBr46iycg_mty30Cfv";
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -1176,7 +1182,7 @@
       privacyPolicy:"Privacy Policy", termsOfService:"Terms of Service",
       categoriesTitle:"Categories", listingsTitle:"Listings",
       introMain:"Genuine brick sets, shipped across Saudi Arabia.",
-      introFree:"Ships nationwide", introDirect:"Or meet in person",
+      introFree:"Redbox delivery nationwide", introDirect:"Or meet in person",
       introFee:"Every set checked before it ships",
       contractNotice:"This sale is a contract between you and the seller. Ninjabrix provides the platform only and is not a party to the transaction.",
       soldBy:"Sold by", loading:"Loading…",
@@ -1185,10 +1191,14 @@
       signInNeededBody:"You need an account to order. It only takes a moment, and it lets you track your order afterwards.", soldOut:"Sold", inStock:"In stock",
       addedToCart:"Added to cart", alreadyInCart:"Already in your cart", cartEmpty:"Your cart is empty.",
       yourCart:"Your Cart", itemsTotal:"Items", total:"Total", keepShopping:"Keep shopping",
-      checkout:"Checkout", shippingNote:"Delivery is chosen at checkout. Shipping cost is confirmed before you pay.",
+      checkout:"Checkout", shippingNote:"Delivery is 25 SAR by Redbox, or free if you collect in person. You choose at checkout.",
       yourNameLbl:"Your name", phoneLbl:"Phone", emailOptLbl:"Email (optional)",
-      deliveryLbl:"Delivery", deliveryShip:"Ship to me", deliveryMeet:"Meet in person",
+      deliveryLbl:"Delivery", deliveryShip:"Redbox delivery", deliveryMeet:"Meet in person",
       addressLbl:"Address", addressPh:"Street, building, district", postalLbl:"Postal code",
+      editProduct:"Edit", freeWord:"Free", deliveryWord:"delivery",
+      redboxFee:"Redbox delivery", redboxLbl:"Nearest Redbox station", redboxPh:"e.g. Redbox — Othaim Mall",
+      redboxNotice:"I ship through Redbox parcel lockers. Tell me your nearest station and I'll send it there — you'll get a code to collect it.",
+      redboxRequired:"Please enter your city and nearest Redbox station.",
       meetupLbl:"Preferred area or time", meetupPh:"e.g. Dammam, weekend afternoons",
       paymentLbl:"Payment", payTransfer:"Bank / STC Pay", payCash:"Cash on meetup",
       noteLbl:"Note (optional)", placeOrder:"Place order", placing:"Placing…",
@@ -1196,7 +1206,7 @@
       namePhoneRequired:"Please enter your name and phone number.", addressRequired:"Please enter your delivery address.",
       orderPlaced:"Order placed", orderPlacedBody:"Thanks! I'll contact you shortly with payment details and to confirm delivery.",
       noOrdersYet:"No orders yet.", itemsWord:"items",
-      shippingTo:"Shipping to", meetupOrder:"Meetup", shipTo:"Ship to", meetup:"Meetup",
+      shippingTo:"Redbox —", meetupOrder:"Meetup", shipTo:"Redbox —", meetup:"Meetup",
       addProduct:"+ Add Product", openOrders:"Open Orders", noOpenOrders:"No open orders.",
       revenueLbl:"Revenue", productsLbl:"Products for sale", openOrdersLbl:"Open orders", completedLbl:"Completed",
       markPaid:"Mark paid", markPreparing:"Preparing", markShippedShop:"Mark shipped",
@@ -1303,7 +1313,7 @@
       privacyPolicy:"سياسة الخصوصية", termsOfService:"شروط الاستخدام",
       categoriesTitle:"الأقسام", listingsTitle:"الإعلانات",
       introMain:"مجموعات بريك أصلية، تُشحن إلى جميع أنحاء السعودية.",
-      introFree:"شحن لكل المناطق", introDirect:"أو استلام شخصي",
+      introFree:"توصيل ردبوكس لكل المناطق", introDirect:"أو استلام شخصي",
       introFee:"كل مجموعة تُفحص قبل الشحن",
       contractNotice:"هذا البيع عقد بينك وبين البائع. توفّر نينجابركس المنصة فقط وليست طرفاً في المعاملة.",
       soldBy:"البائع", loading:"جاري التحميل…",
@@ -1312,10 +1322,14 @@
       signInNeededBody:"تحتاج إلى حساب لإتمام الطلب. لن يستغرق سوى لحظات، ويتيح لك متابعة طلبك لاحقاً.", soldOut:"تم البيع", inStock:"متوفر",
       addedToCart:"أُضيف إلى السلة", alreadyInCart:"موجود في سلتك", cartEmpty:"سلتك فارغة.",
       yourCart:"سلتك", itemsTotal:"القطع", total:"الإجمالي", keepShopping:"متابعة التسوق",
-      checkout:"إتمام الطلب", shippingNote:"تختار طريقة التوصيل عند إتمام الطلب، وتُؤكَّد تكلفة الشحن قبل الدفع.",
+      checkout:"إتمام الطلب", shippingNote:"التوصيل 25 ريال عبر ردبوكس، أو مجاناً عند الاستلام الشخصي. تختار عند إتمام الطلب.",
       yourNameLbl:"اسمك", phoneLbl:"الجوال", emailOptLbl:"البريد الإلكتروني (اختياري)",
-      deliveryLbl:"التوصيل", deliveryShip:"شحن إليّ", deliveryMeet:"استلام شخصي",
+      deliveryLbl:"التوصيل", deliveryShip:"توصيل ردبوكس", deliveryMeet:"استلام شخصي",
       addressLbl:"العنوان", addressPh:"الشارع، المبنى، الحي", postalLbl:"الرمز البريدي",
+      editProduct:"تعديل", freeWord:"مجاناً", deliveryWord:"توصيل",
+      redboxFee:"توصيل ردبوكس", redboxLbl:"أقرب محطة ردبوكس", redboxPh:"مثال: ردبوكس — أسواق العثيم",
+      redboxNotice:"أشحن عبر خزائن ردبوكس. أخبرني بأقرب محطة إليك وسأرسلها هناك، وسيصلك رمز للاستلام.",
+      redboxRequired:"الرجاء إدخال مدينتك وأقرب محطة ردبوكس.",
       meetupLbl:"المنطقة أو الوقت المفضل", meetupPh:"مثال: الدمام، عصر نهاية الأسبوع",
       paymentLbl:"الدفع", payTransfer:"تحويل بنكي / STC Pay", payCash:"نقداً عند الاستلام",
       noteLbl:"ملاحظة (اختياري)", placeOrder:"تأكيد الطلب", placing:"جاري الإرسال…",
@@ -1323,7 +1337,7 @@
       namePhoneRequired:"الرجاء إدخال اسمك ورقم جوالك.", addressRequired:"الرجاء إدخال عنوان التوصيل.",
       orderPlaced:"تم إرسال الطلب", orderPlacedBody:"شكراً لك! سأتواصل معك قريباً بتفاصيل الدفع وتأكيد التوصيل.",
       noOrdersYet:"لا توجد طلبات بعد.", itemsWord:"قطع",
-      shippingTo:"شحن إلى", meetupOrder:"استلام شخصي", shipTo:"شحن إلى", meetup:"استلام شخصي",
+      shippingTo:"ردبوكس —", meetupOrder:"استلام شخصي", shipTo:"ردبوكس —", meetup:"استلام شخصي",
       addProduct:"+ إضافة منتج", openOrders:"الطلبات المفتوحة", noOpenOrders:"لا توجد طلبات مفتوحة.",
       revenueLbl:"الإيرادات", productsLbl:"منتجات معروضة", openOrdersLbl:"طلبات مفتوحة", completedLbl:"مكتملة",
       markPaid:"تم الدفع", markPreparing:"قيد التجهيز", markShippedShop:"تم الشحن",
@@ -1442,7 +1456,15 @@
         openDetail(l);
       });
       const btn = el.querySelector('.contact-btn');
-      if(l.stock > 0) btn.addEventListener('click', (e)=>{ e.stopPropagation(); addToCart(l); });
+      if(currentUser && currentUser.role === 'Owner'){
+        // Your own stock — manage it, don't buy it
+        btn.textContent = t('editProduct');
+        btn.disabled = false;
+        btn.style.background = 'var(--ink)';
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); detailListing = l; editListing(); });
+      } else if(l.stock > 0){
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); addToCart(l); });
+      }
       frag.appendChild(el);
     });
     grid.replaceChildren(frag);
@@ -1805,7 +1827,7 @@
             <div class="oc-title">${escapeHtml(o.contact_name)}</div>
             <div style="font-size:14px;color:var(--muted);">
               ${o.item_count} ${t('itemsWord')} ·
-              ${o.delivery_method === 'shipping' ? t('shipTo') + ' ' + escapeHtml(o.city || '') : t('meetup')} ·
+              ${o.delivery_method === 'shipping' ? t('shipTo') + ' ' + escapeHtml(o.address_line || '') + ', ' + escapeHtml(o.city || '') : t('meetup')} ·
               ${escapeHtml(o.contact_phone)}
             </div>
           </div>
@@ -1892,14 +1914,20 @@
       l.stock > 0 ? t('inStock') : t('soldOut');
 
     const action = document.getElementById('detailAction');
-    const inStock = l.stock > 0;
-    action.textContent = inStock ? t('addToCart') : t('soldOut');
-    action.disabled = !inStock;
-    action.onclick = inStock
-      ? ()=>{ addToCart(l); document.getElementById('detailOverlay').classList.remove('open'); }
-      : null;
-
     const isOwner = currentUser && currentUser.role === 'Owner';
+    const inStock = l.stock > 0;
+
+    if(isOwner){
+      action.textContent = t('editProduct');
+      action.disabled = false;
+      action.onclick = ()=> editListing();
+    } else {
+      action.textContent = inStock ? t('addToCart') : t('soldOut');
+      action.disabled = !inStock;
+      action.onclick = inStock
+        ? ()=>{ addToCart(l); document.getElementById('detailOverlay').classList.remove('open'); }
+        : null;
+    }
     document.getElementById('detailDelete').style.display = isOwner ? 'block' : 'none';
     document.getElementById('detailEdit').style.display = isOwner ? 'block' : 'none';
     document.getElementById('detailReport').style.display = 'none';
@@ -2172,7 +2200,9 @@
     renderCart();
   }
 
-  function cartTotal(){ return cart.reduce((sum,c)=> sum + c.price, 0); }
+  function cartSubtotal(){ return cart.reduce((sum,c)=> sum + c.price, 0); }
+  function currentShipping(){ return deliveryMethod === 'shipping' ? SHIPPING_FEE : 0; }
+  function cartTotal(){ return cartSubtotal() + currentShipping(); }
 
   function openCart(){
     renderCart();
@@ -2202,7 +2232,9 @@
         <button class="cart-remove" onclick="removeFromCart('${c.id}')" aria-label="Remove">&times;</button>
       </div>`).join('');
 
-    document.getElementById('cartItemsTotal').textContent = cartTotal().toLocaleString() + ' SAR';
+    document.getElementById('cartItemsTotal').textContent = cartSubtotal().toLocaleString() + ' SAR';
+    document.getElementById('cartShipping').textContent = currentShipping()
+      ? currentShipping().toLocaleString() + ' SAR' : t('freeWord');
     document.getElementById('cartTotal').textContent = cartTotal().toLocaleString() + ' SAR';
     summary.style.display = 'block';
     checkoutBtn.disabled = false;
@@ -2236,6 +2268,7 @@
     if(deliveryMethod === 'shipping' && paymentMethod === 'cash'){
       pickPayment(document.querySelector('[data-payment="transfer"]'));
     }
+    updateCheckoutSummary();
   }
 
   function pickPayment(el){
@@ -2248,8 +2281,7 @@
     if(!currentUser){ promptSignIn(); return; }
     if(!cart.length) return;
     document.getElementById('cartOverlay').classList.remove('open');
-    document.getElementById('checkoutSummary').textContent =
-      cart.length + ' ' + t('itemsWord') + ' · ' + cartTotal().toLocaleString() + ' SAR';
+    updateCheckoutSummary();
     if(currentUser){
       const nameEl = document.getElementById('coName');
       if(!nameEl.value) nameEl.value = currentUser.name || '';
@@ -2257,6 +2289,16 @@
       if(!emailEl.value) emailEl.value = currentUser.email || '';
     }
     document.getElementById('checkoutOverlay').classList.add('open');
+  }
+
+  function updateCheckoutSummary(){
+    const el = document.getElementById('checkoutSummary');
+    if(!el) return;
+    const ship = currentShipping();
+    el.textContent = cart.length + ' ' + t('itemsWord') + ' · '
+      + cartSubtotal().toLocaleString() + ' SAR'
+      + (ship ? ' + ' + ship + ' ' + t('deliveryWord') : '')
+      + ' = ' + cartTotal().toLocaleString() + ' SAR';
   }
 
   async function placeOrder(){
@@ -2268,7 +2310,7 @@
     const address = document.getElementById('coAddress').value.trim();
     const city    = document.getElementById('coCity').value.trim();
     if(deliveryMethod === 'shipping' && (!address || !city)){
-      alert(t('addressRequired')); return;
+      alert(t('redboxRequired')); return;
     }
 
     const btn = document.getElementById('placeOrderBtn');
@@ -2288,7 +2330,7 @@
         p_postal_code:  deliveryMethod === 'shipping' ? (document.getElementById('coPostal').value.trim() || null) : null,
         p_meetup_note:  deliveryMethod === 'meetup' ? (document.getElementById('coMeetup').value.trim() || null) : null,
         p_payment_method: paymentMethod,
-        p_shipping_fee: 0,
+        p_shipping_fee: currentShipping(),
         p_buyer_note: document.getElementById('coNote').value.trim() || null
       });
       if(error){ alert(error.message); return; }
