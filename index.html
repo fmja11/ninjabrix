@@ -1030,10 +1030,6 @@
     </div>
     <div id="signupExtra" style="display:none;">
       <div class="field"><label data-i18n="fullNameLbl">Full Name</label><input type="text" id="authName" data-i18n-ph="fullNamePh"></div>
-      <div class="role-pick">
-        <div class="role-opt active" data-role="Buyer" onclick="pickRole(this)" data-i18n="roleBuyer">Buyer</div>
-        <div class="role-opt" data-role="Seller" onclick="pickRole(this)" data-i18n="roleSeller">Seller</div>
-      </div>
     </div>
     <div class="field"><label data-i18n="emailLbl">Email</label><input type="email" id="authEmail" placeholder="you@example.com"></div>
     <div class="field"><label data-i18n="passwordLbl">Password</label><input type="password" id="authPassword" placeholder="••••••••"></div>
@@ -1682,7 +1678,6 @@
   // ===== ACCOUNT / AUTH (real Supabase auth) =====
   let currentUser = null; // { name, email, role, id }
   let authTab = 'signin';
-  let pickedRole = 'Buyer';
 
   function toggleAccountMenu(){ document.getElementById('accountMenu').classList.toggle('open'); }
   // Cached refs: this fires on every tap, so it must not query the DOM each time
@@ -1705,11 +1700,6 @@
     document.getElementById('signupExtra').style.display = tab==='signup' ? 'block' : 'none';
     document.getElementById('forgotLink').style.display = tab==='signin' ? 'block' : 'none';
   }
-  function pickRole(el){
-    document.querySelectorAll('.role-opt').forEach(o=>o.classList.remove('active'));
-    el.classList.add('active');
-    pickedRole = el.dataset.role;
-  }
 
   async function doAuth(){
     const email = document.getElementById('authEmail').value.trim();
@@ -1722,11 +1712,12 @@
       // The profile row is created automatically by a database trigger
       // (handle_new_user), which reads these metadata fields. Owner role is
       // never self-assignable — it's set manually in the Supabase table editor.
-      const role = pickedRole.toLowerCase() === 'seller' ? 'seller' : 'buyer';
+      // Everyone who signs up is a customer. Owner access is granted
+      // manually in the database, never self-assigned.
       const { data, error } = await db.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name, role: role } }
+        options: { data: { full_name: name, role: 'buyer' } }
       });
       if(error){ alert(error.message); return; }
       if(data.user && !data.session){
@@ -1780,8 +1771,8 @@
       signedIn.style.display = 'block';
       document.getElementById('amAvatar').textContent = currentUser.name[0].toUpperCase();
       document.getElementById('amName').textContent = currentUser.name;
-      const roleMap = { Buyer:'roleBuyer', Seller:'roleSeller', Owner:'roleOwner' };
-      document.getElementById('amRole').textContent = t(roleMap[currentUser.role] || 'roleBuyer');
+      document.getElementById('amRole').textContent =
+        currentUser.role === 'Owner' ? t('roleOwner') : currentUser.email;
       const isOwner = currentUser.role === 'Owner';
       document.getElementById('amAdminLink').style.display = isOwner ? 'block' : 'none';
       const addBtn = document.getElementById('addProductBtn');
