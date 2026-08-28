@@ -362,6 +362,8 @@
   .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--brick-blue); }
   .field textarea{ resize:vertical; min-height:90px; }
   .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .redbox-find{ display:inline-block; margin-top:9px; font-weight:700;
+    color:var(--brick-blue-d); text-decoration:underline; }
   .notice{ background:#EAF2FE; border:1px solid #C3DAFB; border-radius:var(--radius);
     padding:13px 15px; font-size:15px; color:var(--ink-2); margin-bottom:18px; }
   .sell-actions{ display:flex; gap:10px; margin-top:8px; }
@@ -933,7 +935,10 @@
     </div>
 
     <div id="shippingFields">
-      <div class="notice" data-i18n="redboxNotice">I ship through Redbox parcel lockers. Tell me your nearest station and I'll send it there — you'll get a code to collect it.</div>
+      <div class="notice">
+        <span data-i18n="redboxNotice">I ship through RedBox parcel lockers. Tell me your nearest station and I'll send it there — you'll get an SMS with a PIN to collect it.</span>
+        <a href="https://redboxsa.com/en/" target="_blank" rel="noopener" class="redbox-find" data-i18n="findRedbox">Find your nearest RedBox Point &rarr;</a>
+      </div>
       <div class="field-row">
         <div class="field"><label data-i18n="cityLbl">City</label><input type="text" id="coCity" placeholder="Dammam"></div>
         <div class="field"><label data-i18n="redboxLbl">Nearest Redbox station</label><input type="text" id="coAddress" data-i18n-ph="redboxPh"></div>
@@ -1142,8 +1147,8 @@
       yourNameLbl:"Your name", phoneLbl:"Phone", emailOptLbl:"Email (optional)",
       deliveryLbl:"Delivery", deliveryShip:"Redbox delivery", deliveryMeet:"Meet in person",
       editProduct:"Edit", freeWord:"Free", deliveryWord:"delivery",
-      redboxFee:"Redbox delivery", redboxLbl:"Nearest Redbox station", redboxPh:"e.g. Redbox — Othaim Mall",
-      redboxNotice:"I ship through Redbox parcel lockers. Tell me your nearest station and I'll send it there — you'll get a code to collect it.",
+      redboxFee:"Redbox delivery", redboxLbl:"Nearest Redbox station", redboxPh:"e.g. RedBox — Othaim Mall, Dammam",
+      redboxNotice:"I ship through RedBox parcel lockers. Tell me your nearest station and I'll send it there — you'll get an SMS with a PIN to collect it.", findRedbox:"Find your nearest RedBox Point \u2192",
       redboxRequired:"Please enter your city and nearest Redbox station.",
       meetupLbl:"Preferred area or time", meetupPh:"e.g. Dammam, weekend afternoons",
       paymentLbl:"Payment", payTransfer:"Bank / STC Pay", payCash:"Cash on meetup",
@@ -1219,8 +1224,8 @@
       yourNameLbl:"اسمك", phoneLbl:"الجوال", emailOptLbl:"البريد الإلكتروني (اختياري)",
       deliveryLbl:"التوصيل", deliveryShip:"توصيل ردبوكس", deliveryMeet:"استلام شخصي",
       editProduct:"تعديل", freeWord:"مجاناً", deliveryWord:"توصيل",
-      redboxFee:"توصيل ردبوكس", redboxLbl:"أقرب محطة ردبوكس", redboxPh:"مثال: ردبوكس — أسواق العثيم",
-      redboxNotice:"أشحن عبر خزائن ردبوكس. أخبرني بأقرب محطة إليك وسأرسلها هناك، وسيصلك رمز للاستلام.",
+      redboxFee:"توصيل ردبوكس", redboxLbl:"أقرب محطة ردبوكس", redboxPh:"مثال: ردبوكس — أسواق العثيم، الدمام",
+      redboxNotice:"أشحن عبر خزائن ردبوكس. أخبرني بأقرب محطة إليك وسأرسلها هناك، وستصلك رسالة برمز الاستلام.", findRedbox:"ابحث عن أقرب نقطة ردبوكس \u2190",
       redboxRequired:"الرجاء إدخال مدينتك وأقرب محطة ردبوكس.",
       meetupLbl:"المنطقة أو الوقت المفضل", meetupPh:"مثال: الدمام، عصر نهاية الأسبوع",
       paymentLbl:"الدفع", payTransfer:"تحويل بنكي / STC Pay", payCash:"نقداً عند الاستلام",
