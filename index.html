@@ -727,6 +727,7 @@
       <button id="langEnBtn" onclick="setLang('en')">EN</button>
       <button id="langArBtn" onclick="setLang('ar')">AR</button>
     </div>
+    <button class="icon-btn" onclick="openMessages()" aria-label="Messages"><span data-i18n="messages">Messages</span></button>
     <button class="icon-btn cart-btn" onclick="openCart()" aria-label="Cart">
       <span data-i18n="cart">Cart</span><span class="cart-count" id="cartCount">0</span>
     </button>
@@ -742,23 +743,24 @@
           <div class="am-user"><div class="am-avatar" id="amAvatar">N</div><div><div class="am-name" id="amName">—</div><div class="am-role" id="amRole">Buyer</div></div></div>
           <a class="am-link" id="amAdminLink" href="#" onclick="openAdmin();return false;" style="display:none;" data-i18n="ownerDash">Owner Dashboard</a>
           <a class="am-link" href="#" onclick="openMyOrders();return false;" data-i18n="myOrders">My Orders</a>
+          <a class="am-link" href="#" onclick="openMySales();return false;" data-i18n="mySales">My Sales &amp; Commission</a>
           <a class="am-link" href="#" onclick="openSettings();return false;" data-i18n="accountSettings">Account Settings</a>
           <a class="am-link" href="#" onclick="signOut();return false;" data-i18n="signOut">Sign Out</a>
         </div>
       </div>
     </div>
-    <button class="post-btn" id="addProductBtn" style="display:none;" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="addProduct">+ Add Product</button>
+    <button class="post-btn" id="addProductBtn" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="addProduct">+ Add Product</button>
   </div>
 </div>
 
 <div class="intro-strip">
-  <p class="intro-main" data-i18n="introMain">Minifigures and brick sets, delivered across Saudi Arabia.</p>
+  <p class="intro-main" data-i18n="introMain">Buy from our stock, or from collectors across Saudi Arabia.</p>
   <p class="intro-sub">
-    <span data-i18n="introFree">Redbox delivery nationwide</span>
+    <span data-i18n="introFree">Free to list</span>
     <span class="dot-sep">&middot;</span>
     <span data-i18n="introDirect">Or meet in person</span>
     <span class="dot-sep">&middot;</span>
-    <span data-i18n="introFee">Every item checked before it ships</span>
+    <span data-i18n="introFee">3% only when your item sells</span>
   </p>
 </div>
 
@@ -818,7 +820,7 @@
       <div class="empty-glyph"></div>
       <h3 data-i18n="emptyH">No listings here yet</h3>
       <p data-i18n="emptyP">Nothing here yet. New minifigures and sets are added regularly — check back soon.</p>
-      <button class="post-btn" id="addFirstBtn" style="display:none;" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="addProduct">+ Add Product</button>
+      <button class="post-btn" id="addFirstBtn" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="addProduct">+ Add Product</button>
     </div>
   </main>
 </div>
@@ -894,6 +896,70 @@
     <div class="field"><label data-i18n="newPasswordLbl">New password</label><input type="password" id="newPassword" placeholder="••••••••"></div>
     <div class="sell-actions">
       <button class="btn-submit" onclick="updatePassword()" data-i18n="savePassword">Save Password</button>
+    </div>
+  </div>
+</div>
+
+<div class="sell-overlay" id="messagesOverlay">
+  <div class="msg-panel">
+    <div class="msg-list">
+      <div class="msg-list-head">
+        <span data-i18n="conversations">Conversations</span>
+        <button class="msg-close" onclick="closeMessages()" aria-label="Close">&times;</button>
+      </div>
+      <div id="threadList"><div class="admin-empty" style="padding:16px;" data-i18n="noConvos">No conversations yet.</div></div>
+    </div>
+    <div class="msg-thread-area" id="threadArea">
+      <div class="msg-empty" id="threadPlaceholder">
+        <div class="empty-glyph"></div>
+        <h3 data-i18n="nothingHere">Nothing here yet</h3>
+        <p data-i18n="msgEmptyP">When someone messages you about a listing, it shows up here.</p>
+      </div>
+      <div id="threadView" style="display:none; flex-direction:column; height:100%;">
+        <div class="thread-head">
+          <button class="thread-back" onclick="backToThreadList()" aria-label="Back">&#8249;</button>
+          <span id="threadTitle"></span>
+          <button class="msg-close thread-close" onclick="closeMessages()" aria-label="Close">&times;</button>
+        </div>
+        <div class="thread-msgs" id="threadMsgs"></div>
+        <div class="thread-input">
+          <input type="text" id="threadInput" data-i18n-ph="typeMessage" onkeydown="if(event.key==='Enter')sendMessage()">
+          <button onclick="sendMessage()" data-i18n="send">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sell-overlay" id="soldOverlay">
+  <div class="sell-panel">
+    <h2 data-i18n="markSoldTitle">Mark as Sold</h2>
+    <div class="sub" id="soldListingName"></div>
+    <div class="notice" data-i18n="soldNotice">Ninjabrix charges 3% of the final sale price. You'll be invoiced for it separately.</div>
+    <div class="field"><label data-i18n="finalPriceLbl">Final sale price (SAR)</label><input type="number" id="soldPrice" oninput="updateCommissionPreview()"></div>
+    <div class="commission-preview" id="commissionPreview"></div>
+    <div class="sell-actions">
+      <button class="btn-cancel" onclick="document.getElementById('soldOverlay').classList.remove('open')" data-i18n="cancel">Cancel</button>
+      <button class="btn-submit" onclick="confirmSold()" data-i18n="confirmSale">Confirm Sale</button>
+    </div>
+  </div>
+</div>
+
+<div class="sell-overlay" id="mySalesOverlay">
+  <div class="sell-panel">
+    <h2 data-i18n="mySales">My Sales &amp; Commission</h2>
+    <div class="sub" data-i18n="mySalesSub">Sales you've recorded and the 3% owed on each.</div>
+    <div class="admin-stats" style="margin-bottom:18px;">
+      <div class="admin-stat"><div class="val" id="mySalesTotal">—</div><div class="lbl" data-i18n="totalSold">Total sold</div></div>
+      <div class="admin-stat"><div class="val" id="myCommissionOwed">—</div><div class="lbl" data-i18n="commissionOwed">Commission owed</div></div>
+    </div>
+    <div class="owed-notice" id="owedNotice" style="display:none;">
+      <strong data-i18n="commissionDue">Commission due</strong>
+      <p data-i18n="commissionDueBody">Email support@ninjabrix.com to settle what you owe.</p>
+    </div>
+    <div id="mySalesList"></div>
+    <div class="sell-actions" style="margin-top:16px;">
+      <button class="btn-cancel" onclick="document.getElementById('mySalesOverlay').classList.remove('open')" data-i18n="close">Close</button>
     </div>
   </div>
 </div>
@@ -992,6 +1058,7 @@
       <button class="btn-submit" id="detailAction"></button>
     </div>
     <div class="detail-footer">
+      <button class="link-btn" id="detailReport" onclick="reportListing()" data-i18n="reportListing">Report this listing</button>
       <button class="link-btn" id="detailEdit" onclick="editListing()" style="display:none;" data-i18n="editListing">Edit listing</button>
       <button class="link-btn danger" id="detailDelete" onclick="deleteListing()" style="display:none;" data-i18n="deleteListing">Delete listing</button>
     </div>
@@ -1122,6 +1189,23 @@
       fullNamePh:"Your name", roleOwner:"Owner", emailLbl:"Email",
       passwordLbl:"Password", continueBtn:"Continue",
       ownerAccess:"Owner Access", close:"Close",
+      messages:"Messages", conversations:"Conversations", noConvos:"No conversations yet.",
+      nothingHere:"Nothing here yet", msgEmptyP:"When someone messages you about a listing, it shows up here.",
+      typeMessage:"Type a message\u2026", asBuyer:"You're the buyer", asSeller:"You're the seller",
+      listingRemoved:"Listing removed", contactSeller:"Contact Seller", cantMessageSelf:"This is your own listing.",
+      listedBy:"Listed by", soldByShop:"Sold by Ninjabrix",
+      contactSellerInstead:"This one is sold directly by its seller \u2014 message them instead.",
+      markSold:"Mark as Sold", markSoldTitle:"Mark as Sold", finalPriceLbl:"Final sale price (SAR)",
+      soldNotice:"Ninjabrix charges 3% of the final sale price. You'll be invoiced for it separately.",
+      confirmSale:"Confirm Sale", salePrice:"Sale price", ninjabrixFee:"Ninjabrix fee (3%)", youKeep:"You keep",
+      enterSalePrice:"Enter the final sale price.", saleRecorded:"Sale recorded.",
+      mySales:"My Sales & Commission", mySalesSub:"Sales you've recorded and the 3% owed on each.",
+      totalSold:"Total sold", commissionOwed:"Commission owed", noSalesYet:"No sales recorded yet.",
+      paid:"Paid", unpaid:"Unpaid", commissionDue:"Commission due",
+      commissionDueBody:"Email support@ninjabrix.com to settle what you owe.",
+      reportListing:"Report this listing", reportPrompt:"What's wrong with this listing?",
+      reportPlaceholder:"Tell us what's wrong", sendReport:"Send report",
+      reportThanks:"Thanks \u2014 we'll review this listing.",
       supportTitle:"Ninjabrix Support", supportSub:"Usually replies instantly",
       supportGreeting:"Hi! Ask me about minifigures, shipping, payment, or how ordering works.",
       send:"Send", searchPh:"Search minifigures, sets, parts…", supportPh:"Type a question…",
@@ -1135,9 +1219,9 @@
       typeDeleteToConfirm:"Type DELETE to confirm.", accountDeleted:"Your account has been deleted.",
       privacyPolicy:"Privacy Policy", termsOfService:"Terms of Service",
       categoriesTitle:"Categories", listingsTitle:"In Stock",
-      introMain:"Minifigures and brick sets, delivered across Saudi Arabia.",
-      introFree:"Redbox delivery nationwide", introDirect:"Or meet in person",
-      introFee:"Every item checked before it ships", loading:"Loading…",
+      introMain:"Buy from our stock, or from collectors across Saudi Arabia.",
+      introFree:"Free to list", introDirect:"Or meet in person",
+      introFee:"3% only when your item sells", loading:"Loading…",
       cart:"Cart", addToCart:"Add to Cart",
       signInNeeded:"Sign in to continue",
       signInNeededBody:"You need an account to order. It only takes a moment, and it lets you track your order afterwards.", soldOut:"Sold", inStock:"In stock",
@@ -1158,7 +1242,7 @@
       orderPlaced:"Order placed", orderPlacedBody:"Thanks! I'll contact you shortly with payment details and to confirm delivery.",
       noOrdersYet:"No orders yet.", itemsWord:"items",
       shippingTo:"Redbox —", meetupOrder:"Meetup", shipTo:"Redbox —", meetup:"Meetup",
-      addProduct:"+ Add Product", openOrders:"Open Orders", noOpenOrders:"No open orders.",
+      addProduct:"+ Post a Listing", openOrders:"Open Orders", noOpenOrders:"No open orders.",
       revenueLbl:"Revenue", productsLbl:"Products for sale", openOrdersLbl:"Open orders", completedLbl:"Completed",
       markPaid:"Mark paid", markPreparing:"Preparing", markShippedShop:"Mark shipped",
       markReady:"Ready for pickup", markComplete:"Complete", cancelOrder:"Cancel",
@@ -1199,6 +1283,23 @@
       fullNamePh:"اسمك", roleOwner:"مالك", emailLbl:"البريد الإلكتروني",
       passwordLbl:"كلمة المرور", continueBtn:"متابعة",
       ownerAccess:"صلاحية المالك", close:"إغلاق",
+      messages:"الرسائل", conversations:"المحادثات", noConvos:"لا توجد محادثات بعد.",
+      nothingHere:"لا يوجد شيء هنا بعد", msgEmptyP:"عندما يراسلك أحد بخصوص إعلان، ستظهر المحادثة هنا.",
+      typeMessage:"اكتب رسالة\u2026", asBuyer:"أنت المشتري", asSeller:"أنت البائع",
+      listingRemoved:"تم حذف الإعلان", contactSeller:"تواصل مع البائع", cantMessageSelf:"هذا إعلانك أنت.",
+      listedBy:"نشره", soldByShop:"يباع من نينجابركس",
+      contactSellerInstead:"هذه القطعة يبيعها صاحبها مباشرة \u2014 راسله بدلاً من ذلك.",
+      markSold:"تم البيع", markSoldTitle:"تسجيل عملية بيع", finalPriceLbl:"سعر البيع النهائي (ريال)",
+      soldNotice:"تأخذ نينجابركس 3% من سعر البيع النهائي، وستصلك فاتورة بها بشكل منفصل.",
+      confirmSale:"تأكيد البيع", salePrice:"سعر البيع", ninjabrixFee:"عمولة نينجابركس (3%)", youKeep:"تحصل على",
+      enterSalePrice:"أدخل سعر البيع النهائي.", saleRecorded:"تم تسجيل البيع.",
+      mySales:"مبيعاتي والعمولة", mySalesSub:"المبيعات التي سجّلتها والعمولة المستحقة 3% على كل منها.",
+      totalSold:"إجمالي المبيعات", commissionOwed:"العمولة المستحقة", noSalesYet:"لم تسجّل أي مبيعات بعد.",
+      paid:"مدفوعة", unpaid:"غير مدفوعة", commissionDue:"عمولة مستحقة",
+      commissionDueBody:"راسل support@ninjabrix.com لتسوية المبلغ المستحق.",
+      reportListing:"الإبلاغ عن هذا الإعلان", reportPrompt:"ما المشكلة في هذا الإعلان؟",
+      reportPlaceholder:"وضّح لنا ما المشكلة", sendReport:"إرسال البلاغ",
+      reportThanks:"شكراً \u2014 سنراجع هذا الإعلان.",
       supportTitle:"دعم نينجابركس", supportSub:"يرد عادة فوراً",
       supportGreeting:"مرحباً! اسألني عن الشحن أو الدفع أو حالة المجموعات أو كيفية الطلب.",
       send:"إرسال", searchPh:"ابحث عن شخصيات، مجموعات، قطع…", supportPh:"اكتب سؤالك…",
@@ -1212,9 +1313,9 @@
       typeDeleteToConfirm:"اكتب DELETE للتأكيد.", accountDeleted:"تم حذف حسابك.",
       privacyPolicy:"سياسة الخصوصية", termsOfService:"شروط الاستخدام",
       categoriesTitle:"الأقسام", listingsTitle:"المتوفر",
-      introMain:"شخصيات ومجموعات بريك، تُوصل إلى جميع أنحاء السعودية.",
-      introFree:"توصيل ردبوكس لكل المناطق", introDirect:"أو استلام شخصي",
-      introFee:"كل قطعة تُفحص قبل الشحن", loading:"جاري التحميل…",
+      introMain:"اشترِ من مخزوننا أو من الهواة في جميع أنحاء السعودية.",
+      introFree:"النشر مجاني", introDirect:"أو استلام شخصي",
+      introFee:"عمولة 3% عند بيع قطعتك فقط", loading:"جاري التحميل…",
       cart:"السلة", addToCart:"أضف إلى السلة",
       signInNeeded:"سجّل الدخول للمتابعة",
       signInNeededBody:"تحتاج إلى حساب لإتمام الطلب. لن يستغرق سوى لحظات، ويتيح لك متابعة طلبك لاحقاً.", soldOut:"تم البيع", inStock:"متوفر",
@@ -1235,7 +1336,7 @@
       orderPlaced:"تم إرسال الطلب", orderPlacedBody:"شكراً لك! سأتواصل معك قريباً بتفاصيل الدفع وتأكيد التوصيل.",
       noOrdersYet:"لا توجد طلبات بعد.", itemsWord:"قطع",
       shippingTo:"ردبوكس —", meetupOrder:"استلام شخصي", shipTo:"ردبوكس —", meetup:"استلام شخصي",
-      addProduct:"+ إضافة منتج", openOrders:"الطلبات المفتوحة", noOpenOrders:"لا توجد طلبات مفتوحة.",
+      addProduct:"+ أضف إعلان", openOrders:"الطلبات المفتوحة", noOpenOrders:"لا توجد طلبات مفتوحة.",
       revenueLbl:"الإيرادات", productsLbl:"منتجات معروضة", openOrdersLbl:"طلبات مفتوحة", completedLbl:"مكتملة",
       markPaid:"تم الدفع", markPreparing:"قيد التجهيز", markShippedShop:"تم الشحن",
       markReady:"جاهز للاستلام", markComplete:"إكمال", cancelOrder:"إلغاء",
@@ -1301,14 +1402,15 @@
       const tone = tones[l.category] || 'var(--muted)';
       el.innerHTML = `
         <div class="thumb" style="background:linear-gradient(160deg, #EFEBDF, #E2DCC9); color:${tone}">
-          ${l.photo_urls && l.photo_urls.length ? `<img src="${l.photo_urls[0]}" alt="${escapeHtml(l.title)}" loading="lazy">` : '<div class="glyph-tile"><span></span><span></span><span></span><span></span></div>'}
+          ${l.photo_urls && l.photo_urls.length ? `<img src="${escapeHtml(l.photo_urls[0])}" alt="${escapeHtml(l.title)}" loading="lazy">` : '<div class="glyph-tile"><span></span><span></span><span></span><span></span></div>'}
         </div>
         <div class="l-body">
           <div class="l-title">${escapeHtml(l.title)}</div>
-          ${l.release_year || l.set_number ? `<div class="l-setinfo">${l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : ''}${l.set_number && l.release_year ? '<span class="ls-sep"></span>' : ''}${l.release_year ? `<span class="ls-year">${l.release_year}</span>` : ''}</div>` : ''}
+          ${l.release_year || l.set_number ? `<div class="l-setinfo">${l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : ''}${l.set_number && l.release_year ? '<span class="ls-sep"></span>' : ''}${l.release_year ? `<span class="ls-year">${Number(l.release_year)}</span>` : ''}</div>` : ''}
           <div class="l-price">${Number(l.price).toLocaleString()} SAR</div>
-          <div class="l-meta"><span>${t(condLabels[l.condition] || l.condition)}</span>${l.stock > 0 ? '' : `<span class="sold-tag">${t('soldOut')}</span>`}</div>
-          <button class="contact-btn" ${l.stock > 0 ? '' : 'disabled'} data-listing="${l.id}">${l.stock > 0 ? t('addToCart') : t('soldOut')}</button>
+          <div class="l-seller">${l.is_shop_item ? t('soldByShop') : (sellerNameCache[l.seller_id] ? escapeHtml(sellerNameCache[l.seller_id]) : '…')}</div>
+          <div class="l-meta"><span>${t(condLabels[l.condition] || l.condition)}</span>${(l.is_shop_item && l.stock <= 0) ? `<span class="sold-tag">${t('soldOut')}</span>` : ''}</div>
+          <button class="contact-btn" ${(l.is_shop_item && l.stock <= 0) ? 'disabled' : ''} data-listing="${l.id}">${l.is_shop_item ? (l.stock > 0 ? t('addToCart') : t('soldOut')) : t('contactSeller')}</button>
         </div>`;
       el.addEventListener('click', (e)=>{
         if(e.target.closest('.contact-btn')) return;
@@ -1320,14 +1422,21 @@
         openDetail(l);
       });
       const btn = el.querySelector('.contact-btn');
-      if(currentUser && currentUser.role === 'Owner'){
-        // Your own stock — manage it, don't buy it
-        btn.textContent = t('editProduct');
+      const mine = currentUser && currentUser.id === l.seller_id;
+      if(mine){
+        btn.textContent = l.is_shop_item ? t('editProduct') : t('markSold');
         btn.disabled = false;
-        btn.style.background = 'var(--ink)';
-        btn.addEventListener('click', (e)=>{ e.stopPropagation(); detailListing = l; editListing(); });
-      } else if(l.stock > 0){
-        btn.addEventListener('click', (e)=>{ e.stopPropagation(); addToCart(l); });
+        btn.style.background = l.is_shop_item ? 'var(--ink)' : 'var(--brick-green)';
+        btn.addEventListener('click', (e)=>{
+          e.stopPropagation(); detailListing = l;
+          l.is_shop_item ? editListing() : openSoldPanel(l.id, l.title, l.price);
+        });
+      } else if(l.is_shop_item){
+        if(l.stock > 0) btn.addEventListener('click', (e)=>{ e.stopPropagation(); addToCart(l); });
+      } else {
+        btn.textContent = t('contactSeller');
+        btn.disabled = false;
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); startConversation(l.id, l.seller_id, l.title); });
       }
       frag.appendChild(el);
     });
@@ -1610,6 +1719,7 @@
     currentUser = null;
     cart = [];
     updateCartCount();
+    if(messagePoller){ clearInterval(messagePoller); messagePoller = null; }
     document.getElementById('accountMenu').classList.remove('open');
     renderAccountState();
   }
@@ -1642,18 +1752,12 @@
         currentUser.role === 'Owner' ? t('roleOwner') : currentUser.email;
       const isOwner = currentUser.role === 'Owner';
       document.getElementById('amAdminLink').style.display = isOwner ? 'block' : 'none';
-      const addBtn = document.getElementById('addProductBtn');
-      const addFirst = document.getElementById('addFirstBtn');
-      if(addBtn) addBtn.style.display = isOwner ? 'inline-flex' : 'none';
-      if(addFirst) addFirst.style.display = isOwner ? 'inline-flex' : 'none';
+
     } else {
       btn.textContent = t('signIn');
       signedOut.style.display = 'block';
       signedIn.style.display = 'none';
-      const addBtn = document.getElementById('addProductBtn');
-      const addFirst = document.getElementById('addFirstBtn');
-      if(addBtn) addBtn.style.display = 'none';
-      if(addFirst) addFirst.style.display = 'none';
+
     }
   }
 
@@ -1747,7 +1851,7 @@
     detailListing = l;
     const gallery = document.getElementById('detailGallery');
     gallery.innerHTML = (l.photo_urls && l.photo_urls.length)
-      ? l.photo_urls.map((u,i)=>`<img src="${u}" alt="${escapeHtml(l.title)}" loading="lazy" onclick="openLightbox(${i})">`).join('')
+      ? l.photo_urls.map((u,i)=>`<img src="${escapeHtml(u)}" alt="${escapeHtml(l.title)}" loading="lazy" onclick="openLightbox(${i})">`).join('')
       : `<div class="no-photo">${t('noPhotos')}</div>`;
     lightboxPhotos = l.photo_urls || [];
 
@@ -1756,7 +1860,7 @@
     setLine.innerHTML =
       (l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : '') +
       (l.set_number && l.release_year ? '<span class="ls-sep"></span>' : '') +
-      (l.release_year ? `<span class="ls-year">${l.release_year}</span>` : '');
+      (l.release_year ? `<span class="ls-year">${Number(l.release_year)}</span>` : '');
     setLine.style.display = (l.set_number || l.release_year) ? 'inline-flex' : 'none';
 
     document.getElementById('detailPrice').textContent = Number(l.price).toLocaleString() + ' SAR';
@@ -1768,26 +1872,35 @@
 
     // Show the date immediately; fill in the seller name when it arrives.
     // Waiting on the network here is what made taps feel unresponsive.
-    document.getElementById('detailSeller').textContent =
-      l.stock > 0 ? t('inStock') : t('soldOut');
+    document.getElementById('detailSeller').textContent = l.is_shop_item
+      ? (l.stock > 0 ? t('soldByShop') + ' · ' + t('inStock') : t('soldOut'))
+      : t('listedBy') + ' ' + (sellerNameCache[l.seller_id] || '…');
 
     const action = document.getElementById('detailAction');
-    const isOwner = currentUser && currentUser.role === 'Owner';
+    const mine = currentUser && currentUser.id === l.seller_id;
     const inStock = l.stock > 0;
 
-    if(isOwner){
-      action.textContent = t('editProduct');
+    if(mine){
+      action.textContent = l.is_shop_item ? t('editProduct') : t('markSold');
       action.disabled = false;
-      action.onclick = ()=> editListing();
-    } else {
+      action.onclick = ()=> l.is_shop_item
+        ? editListing()
+        : (document.getElementById('detailOverlay').classList.remove('open'), openSoldPanel(l.id, l.title, l.price));
+    } else if(l.is_shop_item){
       action.textContent = inStock ? t('addToCart') : t('soldOut');
       action.disabled = !inStock;
       action.onclick = inStock
         ? ()=>{ addToCart(l); document.getElementById('detailOverlay').classList.remove('open'); }
         : null;
+    } else {
+      action.textContent = t('contactSeller');
+      action.disabled = false;
+      action.onclick = ()=>{ document.getElementById('detailOverlay').classList.remove('open');
+                             startConversation(l.id, l.seller_id, l.title); };
     }
-    document.getElementById('detailDelete').style.display = isOwner ? 'block' : 'none';
-    document.getElementById('detailEdit').style.display = isOwner ? 'block' : 'none';
+    document.getElementById('detailReport').style.display = mine ? 'none' : 'block';
+    document.getElementById('detailDelete').style.display = mine ? 'block' : 'none';
+    document.getElementById('detailEdit').style.display = mine ? 'block' : 'none';
     document.getElementById('detailOverlay').classList.add('open');
   }
 
@@ -2012,6 +2125,7 @@
 
   function addToCart(l){
     if(!currentUser){ promptSignIn(); return; }
+    if(!l.is_shop_item){ toast(t('contactSellerInstead')); return; }
     if(cart.some(c=> c.id === l.id)){ toast(t('alreadyInCart')); return; }
     cart.push({ id:l.id, title:l.title, price:Number(l.price),
                 set_number:l.set_number, release_year:l.release_year,
@@ -2049,10 +2163,10 @@
 
     box.innerHTML = cart.map(c=>`
       <div class="cart-row">
-        <div class="cart-thumb">${c.photo ? `<img src="${c.photo}" alt="">` : ''}</div>
+        <div class="cart-thumb">${c.photo ? `<img src="${escapeHtml(c.photo)}" alt="">` : ''}</div>
         <div class="cart-info">
           <div class="cart-title">${escapeHtml(c.title)}</div>
-          ${c.set_number || c.release_year ? `<div class="cart-set">${c.set_number ? '#'+escapeHtml(c.set_number) : ''}${c.set_number && c.release_year ? ' · ' : ''}${c.release_year || ''}</div>` : ''}
+          ${c.set_number || c.release_year ? `<div class="cart-set">${c.set_number ? '#'+escapeHtml(c.set_number) : ''}${c.set_number && c.release_year ? ' · ' : ''}${Number(c.release_year) || ''}</div>` : ''}
         </div>
         <div class="cart-price">${c.price.toLocaleString()} SAR</div>
         <button class="cart-remove" onclick="removeFromCart('${c.id}')" aria-label="Remove">&times;</button>
@@ -2220,6 +2334,192 @@
   }
 
   updateCartCount();
+
+
+  // ===== MESSAGING (buyer <-> third-party seller) =====
+  let activeConversation = null;
+  let messagePoller = null;
+
+  async function startConversation(listingId, sellerId, listingTitle){
+    if(!currentUser){ promptSignIn(); return; }
+    if(currentUser.id === sellerId){ toast(t('cantMessageSelf')); return; }
+
+    const { data: existing } = await db.from('conversations')
+      .select('*').eq('listing_id', listingId).eq('buyer_id', currentUser.id).maybeSingle();
+
+    let convo = existing;
+    if(!convo){
+      const { data, error } = await db.from('conversations')
+        .insert({ listing_id: listingId, buyer_id: currentUser.id, seller_id: sellerId })
+        .select().single();
+      if(error){ alert(error.message); return; }
+      convo = data;
+    }
+    document.getElementById('messagesOverlay').classList.add('open');
+    await loadConversations();
+    openThread(convo.id, listingTitle);
+  }
+
+  async function loadConversations(){
+    const listEl = document.getElementById('threadList');
+    if(!currentUser){ listEl.innerHTML = `<div class="admin-empty" style="padding:16px;">${t('signInPrompt')}</div>`; return; }
+
+    const { data, error } = await db.from('conversations')
+      .select('*, listings(title)').order('created_at', { ascending:false });
+    if(error){ console.error(error.message); return; }
+    if(!data || !data.length){
+      listEl.innerHTML = `<div class="admin-empty" style="padding:16px;">${t('noConvos')}</div>`; return;
+    }
+    listEl.innerHTML = data.map(c=>{
+      const title = c.listings ? c.listings.title : t('listingRemoved');
+      const role  = c.buyer_id === currentUser.id ? t('asBuyer') : t('asSeller');
+      return `<div class="thread-item" data-convo="${c.id}" data-title="${escapeHtml(title)}">
+        <div class="tt">${escapeHtml(title)}</div><div class="tw">${role}</div></div>`;
+    }).join('');
+    listEl.querySelectorAll('.thread-item').forEach(item=>{
+      item.addEventListener('click', ()=> openThread(item.dataset.convo, item.dataset.title));
+    });
+  }
+
+  function backToThreadList(){
+    document.querySelector('.msg-panel').classList.remove('viewing-thread');
+    activeConversation = null;
+    if(messagePoller){ clearInterval(messagePoller); messagePoller = null; }
+  }
+
+  function closeMessages(){
+    document.getElementById('messagesOverlay').classList.remove('open');
+    document.querySelector('.msg-panel').classList.remove('viewing-thread');
+    activeConversation = null;
+    if(messagePoller){ clearInterval(messagePoller); messagePoller = null; }
+  }
+
+  function openMessages(){
+    document.getElementById('accountMenu').classList.remove('open');
+    if(!currentUser){ promptSignIn(); return; }
+    document.querySelector('.msg-panel').classList.remove('viewing-thread');
+    document.getElementById('messagesOverlay').classList.add('open');
+    loadConversations();
+  }
+
+  async function openThread(convoId, title){
+    activeConversation = convoId;
+    document.querySelector('.msg-panel').classList.add('viewing-thread');
+    document.getElementById('threadPlaceholder').style.display = 'none';
+    document.getElementById('threadView').style.display = 'flex';
+    document.getElementById('threadTitle').textContent = title;
+    document.querySelectorAll('.thread-item').forEach(i=>i.classList.toggle('active', i.dataset.convo === convoId));
+    await loadMessages();
+    if(messagePoller) clearInterval(messagePoller);
+    messagePoller = setInterval(()=>{ if(document.visibilityState === 'visible') loadMessages(); }, 5000);
+  }
+
+  async function loadMessages(){
+    if(!activeConversation) return;
+    const { data, error } = await db.from('messages')
+      .select('*').eq('conversation_id', activeConversation).order('created_at', { ascending:true });
+    if(error){ console.error(error.message); return; }
+    const box = document.getElementById('threadMsgs');
+    const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 50;
+    box.innerHTML = (data || []).map(m=>
+      `<div class="tmsg ${m.sender_id === currentUser.id ? 'mine' : 'theirs'}">${escapeHtml(m.body)}</div>`).join('');
+    if(atBottom) box.scrollTop = box.scrollHeight;
+  }
+
+  async function sendMessage(){
+    const input = document.getElementById('threadInput');
+    const text = input.value.trim();
+    if(!text || !activeConversation || !currentUser) return;
+    input.value = '';
+    const { error } = await db.from('messages')
+      .insert({ conversation_id: activeConversation, sender_id: currentUser.id, body: text });
+    if(error){ alert(error.message); return; }
+    await loadMessages();
+  }
+
+  // ===== COMMISSION ON THIRD-PARTY SALES =====
+  let soldListingId = null;
+
+  function openSoldPanel(listingId, title, price){
+    soldListingId = listingId;
+    document.getElementById('soldListingName').textContent = title;
+    document.getElementById('soldPrice').value = price || '';
+    document.getElementById('soldOverlay').classList.add('open');
+    updateCommissionPreview();
+  }
+
+  function updateCommissionPreview(){
+    const price = Number(document.getElementById('soldPrice').value) || 0;
+    const box = document.getElementById('commissionPreview');
+    if(price <= 0){ box.classList.remove('show'); return; }
+    const fee = Math.round(price * 0.03 * 100) / 100;
+    box.innerHTML = `
+      <div class="row"><span>${t('salePrice')}</span><span>${price.toLocaleString()} SAR</span></div>
+      <div class="row"><span>${t('ninjabrixFee')}</span><span>-${fee.toLocaleString()} SAR</span></div>
+      <div class="row total"><span>${t('youKeep')}</span><span>${(price-fee).toLocaleString()} SAR</span></div>`;
+    box.classList.add('show');
+  }
+
+  async function confirmSold(){
+    if(!currentUser || !soldListingId) return;
+    const price = Number(document.getElementById('soldPrice').value);
+    if(!price || price <= 0){ alert(t('enterSalePrice')); return; }
+
+    const { data: convo } = await db.from('conversations')
+      .select('buyer_id').eq('listing_id', soldListingId).limit(1).maybeSingle();
+
+    const { error } = await db.from('sales').insert({
+      listing_id: soldListingId,
+      buyer_id: convo ? convo.buyer_id : currentUser.id,
+      seller_id: currentUser.id,
+      sale_price: price,
+      status: 'pending'
+    });
+    if(error){ alert(error.message); return; }
+    await db.from('listings').update({ status:'sold' }).eq('id', soldListingId);
+    document.getElementById('soldOverlay').classList.remove('open');
+    soldListingId = null;
+    await loadListings();
+    toast(t('saleRecorded'));
+  }
+
+  async function openMySales(){
+    document.getElementById('accountMenu').classList.remove('open');
+    if(!currentUser){ promptSignIn(); return; }
+    document.getElementById('mySalesOverlay').classList.add('open');
+
+    const { data } = await db.from('sales')
+      .select('*, listings(title)').eq('seller_id', currentUser.id)
+      .order('created_at', { ascending:false });
+    const sales = data || [];
+    const total = sales.reduce((s,x)=> s + Number(x.sale_price||0), 0);
+    const owed  = sales.filter(x=> x.status === 'pending')
+                       .reduce((s,x)=> s + Number(x.commission_amount||0), 0);
+    document.getElementById('mySalesTotal').textContent = total.toLocaleString() + ' SAR';
+    document.getElementById('myCommissionOwed').textContent = owed.toLocaleString() + ' SAR';
+    document.getElementById('owedNotice').style.display = owed > 0 ? 'block' : 'none';
+
+    document.getElementById('mySalesList').innerHTML = sales.length ? sales.map(x=>`
+      <div class="sale-row">
+        <div><div style="font-weight:700;">${escapeHtml(x.listings ? x.listings.title : t('listingRemoved'))}</div>
+        <div style="color:var(--muted);font-size:13px;">${Number(x.sale_price).toLocaleString()} SAR · ${x.status === 'paid_out' ? t('paid') : t('unpaid')}</div></div>
+        <div class="sr-com">${Number(x.commission_amount).toLocaleString()} SAR</div>
+      </div>`).join('') : `<div class="admin-empty">${t('noSalesYet')}</div>`;
+  }
+
+  // ===== REPORTING =====
+  async function reportListing(){
+    if(!currentUser){ promptSignIn(); return; }
+    if(!detailListing) return;
+    const reason = await showDialog({ title:t('reportListing'), body:t('reportPrompt'),
+                                      input:{ placeholder:t('reportPlaceholder') }, okLabel:t('sendReport') });
+    if(!reason || !reason.trim()) return;
+    const { error } = await db.from('reports').insert({
+      listing_id: detailListing.id, reporter_id: currentUser.id, reason: reason.trim() });
+    if(error){ alert(error.message); return; }
+    toast(t('reportThanks'));
+    document.getElementById('detailOverlay').classList.remove('open');
+  }
 
   // ===== SUPPORT WIDGET =====
   function toggleSupport(){ document.getElementById('supportWindow').classList.toggle('open'); }
