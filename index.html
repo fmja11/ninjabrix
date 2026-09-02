@@ -1722,6 +1722,7 @@
     if(messagePoller){ clearInterval(messagePoller); messagePoller = null; }
     document.getElementById('accountMenu').classList.remove('open');
     renderAccountState();
+    applyFilters();
   }
 
   async function refreshCurrentUser(){
@@ -1752,6 +1753,9 @@
         currentUser.role === 'Owner' ? t('roleOwner') : currentUser.email;
       const isOwner = currentUser.role === 'Owner';
       document.getElementById('amAdminLink').style.display = isOwner ? 'block' : 'none';
+      // Cards were rendered before the session resolved — redraw them now
+      // so the right button shows on the user's own listings.
+      if(typeof listings !== 'undefined' && listings.length) applyFilters();
 
     } else {
       btn.textContent = t('signIn');
