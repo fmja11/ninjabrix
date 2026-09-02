@@ -2527,73 +2527,121 @@
 
   // ===== SUPPORT WIDGET =====
   function toggleSupport(){ document.getElementById('supportWindow').classList.toggle('open'); }
-  const supportReplies = {
-    en: [
-      { k:['ship','shipping','deliver','delivery','post'],
-        a:"I ship anywhere in Saudi Arabia, or you can meet in person if you're nearby. You choose at checkout and I confirm the shipping cost before you pay." },
-      { k:['pay','payment','card','stc','bank','transfer','cash'],
-        a:"Payment is by bank transfer or STC Pay, or cash if we meet in person. Place your order first and I'll message you the details — nothing is charged automatically." },
-      { k:['condition','used','new','sealed','complete','missing'],
-        a:"Every set says whether it's new and sealed, used and complete, or loose parts. I check each one before listing, and anything missing is written in the description." },
-      { k:['order','track','status','when','arrive'],
-        a:"Once you order, I'll contact you to confirm. You can see the status any time under My Orders in your account menu." },
-      { k:['account','sign up','login','sign in','register'],
-        a:"You'll need an account to order — it takes a moment and lets you track your order afterwards. Use Sign In at the top right." },
-      { k:['return','refund','wrong','broken','damaged'],
-        a:"If something arrives not as described, message me and we'll sort it out. Tell me within a few days of receiving it." },
-      { k:['price','cheaper','discount','negotiate','offer'],
-        a:"Prices are as listed. If you're buying several sets together, message me and I'll see what I can do." },
-      { k:['lego','genuine','fake','real','authentic'],
-        a:"Everything I sell is genuine. Ninjabrix is an independent reseller and isn't affiliated with or endorsed by the LEGO Group." },
-    ],
-    ar: [
-      { k:['شحن','توصيل','ارسال','إرسال'],
-        a:"أشحن إلى جميع أنحاء السعودية، أو يمكن الاستلام الشخصي إن كنت قريباً. تختار الطريقة عند إتمام الطلب وأؤكد تكلفة الشحن قبل الدفع." },
-      { k:['دفع','تحويل','بنك','كاش','نقد','بطاقة'],
-        a:"الدفع عبر تحويل بنكي أو STC Pay، أو نقداً عند الاستلام الشخصي. أرسل طلبك أولاً وسأرسل لك التفاصيل — لا يُخصم أي مبلغ تلقائياً." },
-      { k:['حالة','مستعمل','جديد','مغلق','كامل','ناقص'],
-        a:"كل مجموعة مكتوب بجانبها إن كانت جديدة مغلقة أو مستعملة كاملة أو قطعاً متفرقة. أفحص كل قطعة قبل عرضها وأي نقص مذكور في الوصف." },
-      { k:['طلب','متابعة','وصل','متى'],
-        a:"بعد إرسال الطلب سأتواصل معك للتأكيد، ويمكنك متابعة حالته في أي وقت من \"طلباتي\" في قائمة حسابك." },
-      { k:['حساب','تسجيل','دخول'],
-        a:"تحتاج إلى حساب لإتمام الطلب — لن يستغرق سوى لحظات ويتيح لك متابعة طلبك. استخدم تسجيل الدخول أعلى الصفحة." },
-      { k:['ارجاع','إرجاع','استرداد','مكسور','تالف','خطأ'],
-        a:"إذا وصلتك القطعة مخالفة للوصف، راسلني وسنحل الأمر. أبلغني خلال أيام قليلة من الاستلام." },
-      { k:['سعر','خصم','تخفيض','عرض'],
-        a:"الأسعار كما هي معروضة. إذا كنت تشتري عدة مجموعات معاً، راسلني وسأرى ما يمكنني تقديمه." },
-      { k:['اصلي','أصلي','تقليد','ليقو'],
-        a:"كل ما أبيعه أصلي. نينجابركس بائع مستقل وغير تابع لمجموعة LEGO أو معتمد منها." },
-    ]
-  };
-  const fallbackReply = {
-    en:"I don't have an answer for that one — email support@ninjabrix.com and I'll get back to you.",
-    ar:"ليس لدي إجابة لهذا السؤال — راسلني على support@ninjabrix.com وسأرد عليك."
-  };
+  // Scored keyword matching. Not AI — it counts how many terms from each
+  // topic appear in the question and picks the best fit, so wording varies
+  // without breaking it. Anything it can't place goes to email.
+  const supportTopics = [
+    { id:'shipping',
+      k:['ship','shipping','deliver','delivery','redbox','red box','post','send','courier','aramex','smsa','locker','pickup','pick it up','collect','meet','شحن','توصيل','توصلون','ردبوكس','ارسال','استلام','تسليم','مندوب'],
+      en:"I deliver through RedBox lockers anywhere in Saudi Arabia for 25 SAR, or you can collect in person for free. At checkout you tell me your nearest RedBox point, and you'll get an SMS with a PIN when it arrives.",
+      ar:"أوصّل عبر خزائن ردبوكس إلى جميع أنحاء السعودية مقابل 25 ريال، أو الاستلام الشخصي مجاناً. عند إتمام الطلب تختار أقرب نقطة ردبوكس، وتصلك رسالة برمز الاستلام." },
+
+    { id:'payment',
+      k:['pay','payment','card','visa','mada','stc','apple','bank','transfer','cash','money','checkout','how much','cost','دفع','ادفع','بطاقه','مدى','تحويل','بنك','كاش','نقد','فلوس','سعر الدفع'],
+      en:"Payment is by bank transfer or STC Pay, or cash if we meet in person. Nothing is charged automatically — place your order and I'll message you the details. Card payment isn't available yet.",
+      ar:"الدفع عبر تحويل بنكي أو STC Pay، أو نقداً عند الاستلام الشخصي. لا يُخصم أي مبلغ تلقائياً — أرسل طلبك وسأرسل لك التفاصيل. الدفع بالبطاقة غير متاح حالياً." },
+
+    { id:'condition',
+      k:['condition','used','new','sealed','complete','missing','damaged','scratch','quality','box','instructions','manual','sticker','حاله','حالة','مستعمل','جديد','مغلق','كامل','ناقص','تالف','خدش','علبه','كتيب'],
+      en:"Every listing states the condition — new and sealed, used and complete, or loose parts. Anything missing or damaged is written in the description, and the photos show the actual item you'll receive.",
+      ar:"كل إعلان يوضّح الحالة — جديد مغلق، أو مستعمل كامل، أو قطع متفرقة. وأي نقص أو تلف مذكور في الوصف، والصور للقطعة الفعلية التي ستستلمها." },
+
+    { id:'authentic',
+      k:['real','fake','genuine','authentic','original','lego','copy','replica','knock','lepin','china','اصلي','أصلي','تقليد','مقلد','ليقو','ليجو','نسخه','مزيف'],
+      en:"Everything sold by Ninjabrix is genuine. Member listings are checked too, and you can report anything that looks wrong. Ninjabrix is an independent reseller and isn't affiliated with the LEGO Group.",
+      ar:"كل ما تبيعه نينجابركس أصلي، ونراجع إعلانات الأعضاء أيضاً، ويمكنك الإبلاغ عن أي شيء مشبوه. نينجابركس بائع مستقل وغير تابع لمجموعة LEGO." },
+
+    { id:'order',
+      k:['order','track','status','where is','when will','arrive','confirm','receipt','cancel','change my','طلب','طلبي','وين','متابعه','حاله الطلب','وصل','الغاء','تاكيد'],
+      en:"After ordering I'll contact you to confirm and arrange payment. You can check the status any time under My Orders in your account menu. To cancel before it ships, just message me.",
+      ar:"بعد الطلب سأتواصل معك للتأكيد وترتيب الدفع. ويمكنك متابعة الحالة في أي وقت من \"طلباتي\" في قائمة حسابك. وللإلغاء قبل الشحن، راسلني فقط." },
+
+    { id:'account',
+      k:['account','sign','login','log in','register','password','forgot','email','delete my','profile','حساب','تسجيل','دخول','كلمه المرور','نسيت','بريد','حذف حسابي'],
+      en:"You need an account to order, which lets you track it afterwards. Use Sign In at the top right. Forgot your password? There's a reset link on the sign-in screen. You can delete your account any time under Account Settings.",
+      ar:"تحتاج حساباً لإتمام الطلب، ويتيح لك متابعته لاحقاً. استخدم تسجيل الدخول أعلى الصفحة. نسيت كلمة المرور؟ يوجد رابط إعادة تعيين في صفحة الدخول. ويمكنك حذف حسابك في أي وقت من إعدادات الحساب." },
+
+    { id:'selling',
+      k:['sell','list','post','commission','fee','percent','3%','my item','can i sell','become seller','ابيع','أبيع','بيع','اعلان','عمولة','عموله','رسوم','نسبه','انشر'],
+      en:"Anyone can list items here. Posting is free, and Ninjabrix takes 3% only when your item actually sells. You arrange the sale with the buyer yourself, then mark it sold and I'll invoice the commission.",
+      ar:"يمكن لأي شخص عرض قطعه هنا. النشر مجاني، وتأخذ نينجابركس 3% فقط عند بيع قطعتك فعلاً. تتفق مع المشتري بنفسك، ثم تسجّل البيع وسأرسل لك فاتورة العمولة." },
+
+    { id:'returns',
+      k:['return','refund','wrong','broken','not as described','exchange','money back','problem','complaint','ارجاع','أرجع','ارجع','استرداد','مكسور','خطا','مشكله','شكوى','تبديل'],
+      en:"For items sold by Ninjabrix you can return within 7 days if unused, and I'll refund in full including delivery if it wasn't as described. For member listings you'd sort it out with that seller, but message me if you get stuck.",
+      ar:"للقطع التي تبيعها نينجابركس، يمكنك الإرجاع خلال 7 أيام إن لم تُستخدم، وأعيد كامل المبلغ شاملاً التوصيل إن كانت مخالفة للوصف. أما إعلانات الأعضاء فتُسوّى مع البائع، وراسلني إن واجهت مشكلة." },
+
+    { id:'price',
+      k:['price','cheap','discount','negotiate','offer','deal','bargain','bundle','lower','سعر','رخيص','خصم','تخفيض','عرض','اخر سعر'],
+      en:"Prices are as listed. If you're buying several items together, message me and I'll see what I can do on the total.",
+      ar:"الأسعار كما هي معروضة. وإذا كنت تشتري عدة قطع معاً، راسلني وسأرى ما يمكنني تقديمه على الإجمالي." },
+
+    { id:'stock',
+      k:['available','in stock','sold out','reserve','hold','more','restock','when new','get more','متوفر','موجود','نفد','باقي','جديد عندكم','تنزلون'],
+      en:"If it's showing on the site it's available — sold items are removed. New stock is added regularly, so check back. Want something specific? Message me and I'll look out for it.",
+      ar:"إذا كانت معروضة على الموقع فهي متوفرة — والقطع المباعة تُزال. تُضاف قطع جديدة باستمرار، فتابعنا. تبحث عن شيء محدد؟ راسلني وسأبحث عنه لك." },
+
+    { id:'contact',
+      k:['contact','talk','human','speak','whatsapp','phone','number','support','help me','someone','تواصل','اتصال','جوال','رقم','دعم','مساعده','ابي اكلم'],
+      en:"Email support@ninjabrix.com and I'll reply personally. For a specific listing from another member, use Contact Seller on that item to message them directly.",
+      ar:"راسل support@ninjabrix.com وسأرد عليك شخصياً. ولإعلان معيّن من عضو آخر، استخدم \"تواصل مع البائع\" على تلك القطعة لمراسلته مباشرة." },
+
+    { id:'about',
+      k:['what is','who are','who runs','about','ninjabrix','store','shop','trust','safe','legit','نينجابركس','متجر','من انتم','موثوق','امان'],
+      en:"Ninjabrix is an independent shop in Saudi Arabia selling genuine minifigures and brick sets, and a place where other collectors can list theirs too. Everything I sell is checked before it goes up.",
+      ar:"نينجابركس متجر مستقل في السعودية لبيع الشخصيات ومجموعات البريك الأصلية، ومكان يعرض فيه هواة آخرون قطعهم أيضاً. وكل ما أبيعه يُفحص قبل عرضه." },
+  ];
+
+  function normalize(str){
+    return String(str).toLowerCase()
+      .replace(/[\u0640\u064B-\u065F]/g,'')      // Arabic diacritics
+      .replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه')
+      .replace(/[^\p{L}\p{N}\s%]/gu,' ')
+      .replace(/\s+/g,' ').trim();
+  }
+
+  function bestTopic(question){
+    const q = normalize(question);
+    let best = null, bestScore = 0;
+    for(const topic of supportTopics){
+      let score = 0;
+      for(const kw of topic.k){
+        if(q.includes(normalize(kw))) score += kw.length > 4 ? 2 : 1;
+      }
+      if(score > bestScore){ bestScore = score; best = topic; }
+    }
+    return bestScore >= 1 ? best : null;
+  }
 
   function sendSupport(){
     const input = document.getElementById('supportInput');
     const text = input.value.trim();
     if(!text) return;
     const body = document.getElementById('supportBody');
+
     const userMsg = document.createElement('div');
     userMsg.className = 's-msg user';
     userMsg.textContent = text;
     body.appendChild(userMsg);
     input.value = '';
+    body.scrollTop = body.scrollHeight;
 
-    const lower = text.toLowerCase();
-    const pool = supportReplies[currentLang];
-    const match = pool.find(r => r.k.some(kw => lower.includes(kw.toLowerCase())));
-    const reply = match ? match.a : fallbackReply[currentLang];
+    const topic = bestTopic(text);
+    const reply = topic
+      ? topic[currentLang] || topic.en
+      : (currentLang === 'ar'
+          ? "لست متأكداً من هذا السؤال. راسل support@ninjabrix.com وسأرد عليك شخصياً."
+          : "I'm not sure about that one. Email support@ninjabrix.com and I'll answer personally.");
+
     setTimeout(()=>{
       const botMsg = document.createElement('div');
       botMsg.className = 's-msg bot';
       botMsg.textContent = reply;
       body.appendChild(botMsg);
       body.scrollTop = body.scrollHeight;
-    }, 400);
-    body.scrollTop = body.scrollHeight;
+    }, 350);
   }
+
 
   setLang('en');
 </script>
