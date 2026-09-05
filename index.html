@@ -1629,6 +1629,33 @@
     applyFilters();
   }
 
+  function applyFilters(){
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    let out = listings.filter(l=>
+      (currentCond === 'all' || l.condition === currentCond) &&
+      (currentSeason === 'all' || l.season === currentSeason) &&
+      (!q || l.title.toLowerCase().includes(q)
+          || (l.description||'').toLowerCase().includes(q)
+          || (l.set_number||'').toLowerCase().includes(q)
+          || (l.season||'').toLowerCase().includes(q))
+    );
+
+    if(currentSort === 'low')       out.sort((a,b)=> Number(a.price) - Number(b.price));
+    else if(currentSort === 'high') out.sort((a,b)=> Number(b.price) - Number(a.price));
+    else                            out.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+
+    render(out);
+
+    const rc = document.getElementById('resultCount');
+    if(rc) rc.textContent = out.length + ' ' + (out.length === 1 ? t('figureWord') : t('figuresWord'));
+  }
+
+  let searchTimer = null;
+  document.getElementById('searchInput').addEventListener('input', ()=>{
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applyFilters, 220);
+  });
+
   function filterListings(){ applyFilters(); }
 
   function clearBrowse(){
