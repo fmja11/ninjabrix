@@ -1112,7 +1112,7 @@
     <button class="drawer-link" data-cond="used" onclick="pickCond(this)" data-i18n="condUsed">Used</button>
 
     <div class="drawer-label" data-i18n="sortBy">Sort by</div>
-    <button class="drawer-link active" data-sort="new" onclick="pickSort(this)" data-i18n="sortNew">Newest first</button>
+    <button class="drawer-link active" data-sort="new" onclick="pickSort(this)" data-i18n="sortNew">Catalogue order</button>
     <button class="drawer-link" data-sort="low" onclick="pickSort(this)" data-i18n="sortLow">Price: low to high</button>
     <button class="drawer-link" data-sort="high" onclick="pickSort(this)" data-i18n="sortHigh">Price: high to low</button>
 
@@ -1492,7 +1492,7 @@
       createAccount:"Create Account", signInPrompt:"Sign in to order and track your purchases.", ownerDash:"Owner Dashboard", signOut:"Sign Out", categories:"Categories", completeSets:"Complete Sets", mechs:"Mechs", vehicles:"Vehicles & Dragons", figures:"Minifigures",
       bundles:"Bundles", looseParts:"Loose Parts", city:"City", condition:"Condition", condNew:"New, sealed",
       condUsed:"Used, complete", condParts:"Loose / spares", marketTitle:"Ninjabrix Marketplace",
-      marketSub:"Buy and sell directly with collectors near you.", sortNew:"Newest first", sortLow:"Price: low to high",
+      marketSub:"Buy and sell directly with collectors near you.", sortNew:"Catalogue order", sortLow:"Price: low to high",
       sortHigh:"Price: high to low", sortClose:"Closest to me", emptyH:"No listings here yet",
       emptyP:"Nothing here right now. New figures are added regularly — check back soon.",
       footerLine:"Independent marketplace for ninja-brick collectors. Not affiliated with any toy or media brand.",
@@ -1524,7 +1524,7 @@
       introFee:"RedBox delivery 25 SAR", loading:"Loading…",
       cart:"Cart", addToCart:"Add to Cart",
       signInNeeded:"Sign in to continue",
-      signInNeededBody:"You need an account to order. It only takes a moment, and it lets you track your order afterwards.", soldOut:"Sold", inStock:"In stock",
+      signInNeededBody:"You need an account to order. It only takes a moment, and it lets you track your order afterwards.", soldOut:"Out of stock", inStock:"In stock",
       addedToCart:"Added to cart", alreadyInCart:"Already in your cart", cartEmpty:"Your cart is empty.",
       yourCart:"Your Cart", itemsTotal:"Items", total:"Total", keepShopping:"Keep shopping",
       checkout:"Checkout", shippingNote:"Delivery is 25 SAR by Redbox, or free if you collect in person. You choose at checkout.",
@@ -1570,7 +1570,7 @@
       createAccount:"إنشاء حساب", signInPrompt:"سجّل الدخول لتطلب وتتابع مشترياتك.", ownerDash:"لوحة المالك", signOut:"تسجيل الخروج", categories:"الأقسام", completeSets:"مجموعات كاملة", mechs:"روبوتات", vehicles:"مركبات وتنانين", figures:"شخصيات",
       bundles:"باقات", looseParts:"قطع منفصلة", city:"المدينة", condition:"الحالة", condNew:"جديد، مغلق",
       condUsed:"مستعمل، كامل", condParts:"قطع متفرقة", marketTitle:"سوق نينجابركس",
-      marketSub:"بيع وشراء مباشر مع الهواة القريبين منك.", sortNew:"الأحدث أولاً", sortLow:"السعر: من الأقل للأعلى",
+      marketSub:"بيع وشراء مباشر مع الهواة القريبين منك.", sortNew:"ترتيب الكتالوج", sortLow:"السعر: من الأقل للأعلى",
       sortHigh:"السعر: من الأعلى للأقل", sortClose:"الأقرب لي", emptyH:"لا توجد إعلانات هنا بعد",
       emptyP:"لا يوجد شيء هنا بعد. تُضاف شخصيات ومجموعات جديدة باستمرار — عد قريباً.",
       footerLine:"سوق مستقل لهواة قطع نينجا-بريكس. غير مرتبط بأي علامة ألعاب أو إعلامية.",
@@ -1602,7 +1602,7 @@
       introFee:"توصيل ردبوكس 25 ريال", loading:"جاري التحميل…",
       cart:"السلة", addToCart:"أضف إلى السلة",
       signInNeeded:"سجّل الدخول للمتابعة",
-      signInNeededBody:"تحتاج إلى حساب لإتمام الطلب. لن يستغرق سوى لحظات، ويتيح لك متابعة طلبك لاحقاً.", soldOut:"تم البيع", inStock:"متوفر",
+      signInNeededBody:"تحتاج إلى حساب لإتمام الطلب. لن يستغرق سوى لحظات، ويتيح لك متابعة طلبك لاحقاً.", soldOut:"غير متوفر", inStock:"متوفر",
       addedToCart:"أُضيف إلى السلة", alreadyInCart:"موجود في سلتك", cartEmpty:"سلتك فارغة.",
       yourCart:"سلتك", itemsTotal:"القطع", total:"الإجمالي", keepShopping:"متابعة التسوق",
       checkout:"إتمام الطلب", shippingNote:"التوصيل 25 ريال عبر ردبوكس، أو مجاناً عند الاستلام الشخصي. تختار عند إتمام الطلب.",
@@ -1793,14 +1793,16 @@
           || (l.suit||'').toLowerCase().includes(q))
     );
 
-    // Available figures always come first; sold-outs fill in behind them.
-    const rank = l => (l.stock > 0 ? 0 : 1);
+    // Catalogue order is the point of a catalogue: Kai, Jay, Cole, Zane
+    // stay in sequence whether or not each one is in stock. Use the
+    // "In stock only" filter to hide what isn't available.
+    const ord = l => (l.display_order ?? 1e9);
     if(currentSort === 'low')
-      out.sort((a,b)=> rank(a)-rank(b) || Number(a.price) - Number(b.price));
+      out.sort((a,b)=> Number(a.price) - Number(b.price) || ord(a)-ord(b));
     else if(currentSort === 'high')
-      out.sort((a,b)=> rank(a)-rank(b) || Number(b.price) - Number(a.price));
+      out.sort((a,b)=> Number(b.price) - Number(a.price) || ord(a)-ord(b));
     else
-      out.sort((a,b)=> rank(a)-rank(b) || new Date(b.created_at) - new Date(a.created_at));
+      out.sort((a,b)=> ord(a)-ord(b) || new Date(a.created_at) - new Date(b.created_at));
 
     render(out);
 
