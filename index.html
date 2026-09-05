@@ -188,6 +188,11 @@
   .drawer-link:hover{ background:var(--bg); color:var(--ink); }
   .drawer-link.active{ color:var(--brick-blue-d); border-inline-start-color:var(--brick-blue);
     background:#EAF2FE; font-weight:800; }
+  .drawer-link.suit{ display:flex; align-items:center; gap:11px; }
+  .sy{ flex-shrink:0; min-width:66px; padding:2px 7px; background:var(--bg);
+    border:1px solid var(--line); border-radius:6px; font-size:11.5px; font-weight:800;
+    color:var(--muted); text-align:center; }
+  .drawer-link.suit.active .sy{ background:var(--brick-blue); border-color:var(--brick-blue); color:#fff; }
   .drawer-link.season{ display:flex; align-items:center; gap:11px; }
   .sn{
     flex-shrink:0; min-width:34px; height:24px; padding:0 7px;
@@ -284,6 +289,11 @@
   .drawer-link:hover{ background:var(--bg); color:var(--ink); }
   .drawer-link.active{ color:var(--brick-blue-d); border-inline-start-color:var(--brick-blue);
     background:#EAF2FE; font-weight:800; }
+  .drawer-link.suit{ display:flex; align-items:center; gap:11px; }
+  .sy{ flex-shrink:0; min-width:66px; padding:2px 7px; background:var(--bg);
+    border:1px solid var(--line); border-radius:6px; font-size:11.5px; font-weight:800;
+    color:var(--muted); text-align:center; }
+  .drawer-link.suit.active .sy{ background:var(--brick-blue); border-color:var(--brick-blue); color:#fff; }
   .drawer-link.season{ display:flex; align-items:center; gap:11px; }
   .sn{
     flex-shrink:0; min-width:34px; height:24px; padding:0 7px;
@@ -392,6 +402,8 @@
     transition:box-shadow .15s, transform .15s;
   }
   .listing{ position:relative; }
+  .listing.is-sold .thumb{ opacity:.42; }
+  .listing.is-sold .l-price{ color:var(--muted); font-size:17px; }
   .listing::after{ content:''; position:absolute; inset-inline:0; top:0; height:3px;
     background:var(--brick-blue); opacity:0; transition:opacity .15s; }
   .listing:hover::after{ opacity:1; }
@@ -835,6 +847,11 @@
   .drawer-link:hover{ background:var(--bg); color:var(--ink); }
   .drawer-link.active{ color:var(--brick-blue-d); border-inline-start-color:var(--brick-blue);
     background:#EAF2FE; font-weight:800; }
+  .drawer-link.suit{ display:flex; align-items:center; gap:11px; }
+  .sy{ flex-shrink:0; min-width:66px; padding:2px 7px; background:var(--bg);
+    border:1px solid var(--line); border-radius:6px; font-size:11.5px; font-weight:800;
+    color:var(--muted); text-align:center; }
+  .drawer-link.suit.active .sy{ background:var(--brick-blue); border-color:var(--brick-blue); color:#fff; }
   .drawer-link.season{ display:flex; align-items:center; gap:11px; }
   .sn{
     flex-shrink:0; min-width:34px; height:24px; padding:0 7px;
@@ -1027,9 +1044,49 @@
       <button class="drawer-link season" data-season="Secrets of the Forbidden Spinjitzu" onclick="pickSeason(this)"><span class="sn">S11</span>Secrets of the Forbidden Spinjitzu</button>
       <button class="drawer-link season" data-season="Prime Empire" onclick="pickSeason(this)"><span class="sn">S12</span>Prime Empire</button>
       <button class="drawer-link season" data-season="Master of the Mountain" onclick="pickSeason(this)"><span class="sn">S13</span>Master of the Mountain</button>
+      <button class="drawer-link season" data-season="The Island" onclick="pickSeason(this)"><span class="sn">Isl</span>The Island</button>
       <button class="drawer-link season" data-season="Seabound" onclick="pickSeason(this)"><span class="sn">S14</span>Seabound</button>
       <button class="drawer-link season" data-season="Crystalized" onclick="pickSeason(this)"><span class="sn">S15</span>Crystalized</button>
       <button class="drawer-link season" data-season="Dragons Rising" onclick="pickSeason(this)"><span class="sn">DR</span>Dragons Rising</button>
+
+    <div class="drawer-label" data-i18n="suitLbl">Suit / Gi</div>
+      <button class="drawer-link suit active" data-suit="all" onclick="pickSuit(this)" data-i18n="allSuits">All suits</button>
+      <button class="drawer-link suit" data-suit="Pilot Suits" onclick="pickSuit(this)"><span class="sy">2011</span>Pilot Suits</button>
+      <button class="drawer-link suit" data-suit="DX" onclick="pickSuit(this)"><span class="sy">2011–2012</span>DX</button>
+      <button class="drawer-link suit" data-suit="Kendo" onclick="pickSuit(this)"><span class="sy">2012</span>Kendo</button>
+      <button class="drawer-link suit" data-suit="ZX" onclick="pickSuit(this)"><span class="sy">2012</span>ZX</button>
+      <button class="drawer-link suit" data-suit="NRG" onclick="pickSuit(this)"><span class="sy">2012</span>NRG</button>
+      <button class="drawer-link suit" data-suit="Elemental Kimonos" onclick="pickSuit(this)"><span class="sy">2013</span>Elemental Kimonos</button>
+      <button class="drawer-link suit" data-suit="Techno Robes" onclick="pickSuit(this)"><span class="sy">2014</span>Techno Robes</button>
+      <button class="drawer-link suit" data-suit="Stone Armor" onclick="pickSuit(this)"><span class="sy">2014–2015</span>Stone Armor</button>
+      <button class="drawer-link suit" data-suit="Tournament Robes" onclick="pickSuit(this)"><span class="sy">2015</span>Tournament Robes</button>
+      <button class="drawer-link suit" data-suit="Jungle Robes" onclick="pickSuit(this)"><span class="sy">2015</span>Jungle Robes</button>
+      <button class="drawer-link suit" data-suit="Deepstone Armor" onclick="pickSuit(this)"><span class="sy">2015</span>Deepstone Armor</button>
+      <button class="drawer-link suit" data-suit="Airjitzu Robes" onclick="pickSuit(this)"><span class="sy">2015–2016</span>Airjitzu Robes</button>
+      <button class="drawer-link suit" data-suit="Destiny Robes" onclick="pickSuit(this)"><span class="sy">2016</span>Destiny Robes</button>
+      <button class="drawer-link suit" data-suit="Honor Robes" onclick="pickSuit(this)"><span class="sy">2016</span>Honor Robes</button>
+      <button class="drawer-link suit" data-suit="Fusion Armor" onclick="pickSuit(this)"><span class="sy">2017</span>Fusion Armor</button>
+      <button class="drawer-link suit" data-suit="Sons of Garmadon Robes" onclick="pickSuit(this)"><span class="sy">2018</span>Sons of Garmadon Robes</button>
+      <button class="drawer-link suit" data-suit="Hunted Robes" onclick="pickSuit(this)"><span class="sy">2018</span>Hunted Robes</button>
+      <button class="drawer-link suit" data-suit="Spinjitzu Masters Gi" onclick="pickSuit(this)"><span class="sy">2018</span>Spinjitzu Masters Gi</button>
+      <button class="drawer-link suit" data-suit="Dragon Masters Gi" onclick="pickSuit(this)"><span class="sy">2018</span>Dragon Masters Gi</button>
+      <button class="drawer-link suit" data-suit="Legacy Robes" onclick="pickSuit(this)"><span class="sy">2019</span>Legacy Robes</button>
+      <button class="drawer-link suit" data-suit="Forbidden Spinjitzu Gi" onclick="pickSuit(this)"><span class="sy">2019</span>Forbidden Spinjitzu Gi</button>
+      <button class="drawer-link suit" data-suit="Digi Outfits" onclick="pickSuit(this)"><span class="sy">2020</span>Digi Outfits</button>
+      <button class="drawer-link suit" data-suit="Spinjitzu Burst Gi" onclick="pickSuit(this)"><span class="sy">2020</span>Spinjitzu Burst Gi</button>
+      <button class="drawer-link suit" data-suit="Hero Armor" onclick="pickSuit(this)"><span class="sy">2020</span>Hero Armor</button>
+      <button class="drawer-link suit" data-suit="The Island Gi" onclick="pickSuit(this)"><span class="sy">2021</span>The Island Gi</button>
+      <button class="drawer-link suit" data-suit="Scuba Wetsuits" onclick="pickSuit(this)"><span class="sy">2021</span>Scuba Wetsuits</button>
+      <button class="drawer-link suit" data-suit="Core Outfits" onclick="pickSuit(this)"><span class="sy">2022</span>Core Outfits</button>
+      <button class="drawer-link suit" data-suit="Golden Dragon Armor" onclick="pickSuit(this)"><span class="sy">2022</span>Golden Dragon Armor</button>
+      <button class="drawer-link suit" data-suit="Merge / Monastery Suits" onclick="pickSuit(this)"><span class="sy">2023</span>Merge / Monastery Suits</button>
+      <button class="drawer-link suit" data-suit="Climber Gi" onclick="pickSuit(this)"><span class="sy">2024</span>Climber Gi</button>
+      <button class="drawer-link suit" data-suit="Tournament Tracksuits" onclick="pickSuit(this)"><span class="sy">2024</span>Tournament Tracksuits</button>
+      <button class="drawer-link suit" data-suit="Dragonian Rising Suits" onclick="pickSuit(this)"><span class="sy">2025–2026</span>Dragonian Rising Suits</button>
+
+    <div class="drawer-label" data-i18n="availability">Availability</div>
+    <button class="drawer-link active" data-avail="all" onclick="pickAvail(this)" data-i18n="showAll">Show all</button>
+    <button class="drawer-link" data-avail="in" onclick="pickAvail(this)" data-i18n="inStockOnly">In stock only</button>
 
     <div class="drawer-label" data-i18n="condition">Condition</div>
     <button class="drawer-link active" data-cond="all" onclick="pickCond(this)" data-i18n="anyCondition">Any</button>
@@ -1136,9 +1193,45 @@
 <option value="Secrets of the Forbidden Spinjitzu">S11 — Secrets of the Forbidden Spinjitzu</option>
 <option value="Prime Empire">S12 — Prime Empire</option>
 <option value="Master of the Mountain">S13 — Master of the Mountain</option>
+<option value="The Island">Isl — The Island</option>
 <option value="Seabound">S14 — Seabound</option>
 <option value="Crystalized">S15 — Crystalized</option>
 <option value="Dragons Rising">DR — Dragons Rising</option>
+      </select></div>
+    <div class="field"><label data-i18n="suitLbl">Suit / Gi</label>
+      <select id="sellSuit"><option value="">—</option>
+<option value="Pilot Suits">Pilot Suits (2011)</option>
+<option value="DX">DX (2011–2012)</option>
+<option value="Kendo">Kendo (2012)</option>
+<option value="ZX">ZX (2012)</option>
+<option value="NRG">NRG (2012)</option>
+<option value="Elemental Kimonos">Elemental Kimonos (2013)</option>
+<option value="Techno Robes">Techno Robes (2014)</option>
+<option value="Stone Armor">Stone Armor (2014–2015)</option>
+<option value="Tournament Robes">Tournament Robes (2015)</option>
+<option value="Jungle Robes">Jungle Robes (2015)</option>
+<option value="Deepstone Armor">Deepstone Armor (2015)</option>
+<option value="Airjitzu Robes">Airjitzu Robes (2015–2016)</option>
+<option value="Destiny Robes">Destiny Robes (2016)</option>
+<option value="Honor Robes">Honor Robes (2016)</option>
+<option value="Fusion Armor">Fusion Armor (2017)</option>
+<option value="Sons of Garmadon Robes">Sons of Garmadon Robes (2018)</option>
+<option value="Hunted Robes">Hunted Robes (2018)</option>
+<option value="Spinjitzu Masters Gi">Spinjitzu Masters Gi (2018)</option>
+<option value="Dragon Masters Gi">Dragon Masters Gi (2018)</option>
+<option value="Legacy Robes">Legacy Robes (2019)</option>
+<option value="Forbidden Spinjitzu Gi">Forbidden Spinjitzu Gi (2019)</option>
+<option value="Digi Outfits">Digi Outfits (2020)</option>
+<option value="Spinjitzu Burst Gi">Spinjitzu Burst Gi (2020)</option>
+<option value="Hero Armor">Hero Armor (2020)</option>
+<option value="The Island Gi">The Island Gi (2021)</option>
+<option value="Scuba Wetsuits">Scuba Wetsuits (2021)</option>
+<option value="Core Outfits">Core Outfits (2022)</option>
+<option value="Golden Dragon Armor">Golden Dragon Armor (2022)</option>
+<option value="Merge / Monastery Suits">Merge / Monastery Suits (2023)</option>
+<option value="Climber Gi">Climber Gi (2024)</option>
+<option value="Tournament Tracksuits">Tournament Tracksuits (2024)</option>
+<option value="Dragonian Rising Suits">Dragonian Rising Suits (2025–2026)</option>
       </select></div>
     <div class="field"><label data-i18n="releaseYearLbl">Release year</label>
         <input type="number" id="sellYear" min="1950" max="2030" placeholder="e.g. 2019"></div>
@@ -1392,7 +1485,7 @@
       fullNamePh:"Your name", roleOwner:"Owner", emailLbl:"Email",
       passwordLbl:"Password", continueBtn:"Continue",
       ownerAccess:"Owner Access", close:"Close",
-      browse:"Browse", seasonLbl:"Season", allSeasons:"All seasons", allFigures:"All figures",
+      browse:"Browse", suitLbl:"Suit / Gi", allSuits:"All suits", availability:"Availability", showAll:"Show all", inStockOnly:"In stock only", seasonLbl:"Season", allSeasons:"All seasons", allFigures:"All figures",
       heroTitle:"Made for Collectors",
       heroSub:"Genuine figures · Checked before shipping · Delivered anywhere in Saudi Arabia",
       shopNow:"Shop now", sortBy:"Sort by", anyPrice:"Any", clearAll:"Clear all", done:"Done",
@@ -1470,7 +1563,7 @@
       fullNamePh:"اسمك", roleOwner:"مالك", emailLbl:"البريد الإلكتروني",
       passwordLbl:"كلمة المرور", continueBtn:"متابعة",
       ownerAccess:"صلاحية المالك", close:"إغلاق",
-      browse:"تصفح", seasonLbl:"الموسم", allSeasons:"كل المواسم", allFigures:"كل الشخصيات",
+      browse:"تصفح", suitLbl:"الزي", allSuits:"كل الأزياء", availability:"التوفر", showAll:"عرض الكل", inStockOnly:"المتوفر فقط", seasonLbl:"الموسم", allSeasons:"كل المواسم", allFigures:"كل الشخصيات",
       heroTitle:"صُنع لهواة الجمع",
       heroSub:"شخصيات أصلية · تُفحص قبل الشحن · توصيل لجميع أنحاء السعودية",
       shopNow:"تسوق الآن", sortBy:"الترتيب", anyPrice:"الكل", clearAll:"مسح الكل", done:"تم",
@@ -1569,7 +1662,7 @@
     const frag = document.createDocumentFragment();
     items.forEach(l=>{
       const el = document.createElement('div');
-      el.className = 'listing';
+      el.className = 'listing' + (l.stock > 0 ? '' : ' is-sold');
       const tone = tones[l.category] || 'var(--muted)';
       el.innerHTML = `
         <div class="thumb" style="background:linear-gradient(160deg, #EFEBDF, #E2DCC9); color:${tone}">
@@ -1578,8 +1671,8 @@
         <div class="l-body">
           <div class="l-title">${escapeHtml(l.title)}</div>
           ${l.release_year || l.set_number ? `<div class="l-setinfo">${l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : ''}${l.set_number && l.release_year ? '<span class="ls-sep"></span>' : ''}${l.release_year ? `<span class="ls-year">${Number(l.release_year)}</span>` : ''}</div>` : ''}
-          <div class="l-price">${Number(l.price).toLocaleString()} SAR</div>
-          ${l.season ? `<div class="l-season">${escapeHtml(l.season)}</div>` : ''}
+          <div class="l-price">${l.stock > 0 ? Number(l.price).toLocaleString() + ' SAR' : t('soldOut')}</div>
+          ${l.suit ? `<div class="l-season">${escapeHtml(l.suit)}</div>` : (l.season ? `<div class="l-season">${escapeHtml(l.season)}</div>` : '')}
           <div class="l-meta"><span>${t(condLabels[l.condition] || l.condition)}</span>${l.stock <= 0 ? `<span class="sold-tag">${t('soldOut')}</span>` : ''}</div>
           <button class="contact-btn" ${l.stock <= 0 ? 'disabled' : ''} data-listing="${l.id}">${l.stock > 0 ? t('addToCart') : t('soldOut')}</button>
         </div>`;
@@ -1610,7 +1703,7 @@
     const { data, error } = await db
       .from('listings')
       .select('*')
-      .in('status', ['active','reserved'])
+      .in('status', ['active','reserved','sold'])
       .order('created_at', { ascending:false });
     if(error){ console.error('Failed to load listings:', error.message); return; }
     listings = data || [];
@@ -1621,6 +1714,8 @@
   let currentSort   = 'new';
   let currentCond   = 'all';
   let currentSeason = 'all';
+  let currentAvail  = 'all';
+  let currentSuit   = 'all';
 
   function toggleDrawer(){
     const d = document.getElementById('drawer');
@@ -1642,6 +1737,19 @@
     applyFilters();
     toggleDrawer();
   }
+  function pickSuit(el){
+    currentSuit = el.getAttribute('data-suit');
+    setActive('data-suit', el);
+    applyFilters();
+    toggleDrawer();
+  }
+
+  function pickAvail(el){
+    currentAvail = el.getAttribute('data-avail');
+    setActive('data-avail', el);
+    applyFilters();
+  }
+
   function pickCond(el){
     currentCond = el.getAttribute('data-cond');
     setActive('data-cond', el);
@@ -1658,15 +1766,23 @@
     let out = listings.filter(l=>
       (currentCond === 'all' || l.condition === currentCond) &&
       (currentSeason === 'all' || l.season === currentSeason) &&
+      (currentAvail === 'all' || l.stock > 0) &&
+      (currentSuit === 'all' || l.suit === currentSuit) &&
       (!q || l.title.toLowerCase().includes(q)
           || (l.description||'').toLowerCase().includes(q)
           || (l.set_number||'').toLowerCase().includes(q)
-          || (l.season||'').toLowerCase().includes(q))
+          || (l.season||'').toLowerCase().includes(q)
+          || (l.suit||'').toLowerCase().includes(q))
     );
 
-    if(currentSort === 'low')       out.sort((a,b)=> Number(a.price) - Number(b.price));
-    else if(currentSort === 'high') out.sort((a,b)=> Number(b.price) - Number(a.price));
-    else                            out.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+    // Available figures always come first; sold-outs fill in behind them.
+    const rank = l => (l.stock > 0 ? 0 : 1);
+    if(currentSort === 'low')
+      out.sort((a,b)=> rank(a)-rank(b) || Number(a.price) - Number(b.price));
+    else if(currentSort === 'high')
+      out.sort((a,b)=> rank(a)-rank(b) || Number(b.price) - Number(a.price));
+    else
+      out.sort((a,b)=> rank(a)-rank(b) || new Date(b.created_at) - new Date(a.created_at));
 
     render(out);
 
@@ -1683,11 +1799,13 @@
   function filterListings(){ applyFilters(); }
 
   function clearBrowse(){
-    currentSort='new'; currentCond='all'; currentSeason='all';
+    currentSort='new'; currentCond='all'; currentSeason='all'; currentAvail='all'; currentSuit='all';
     document.querySelectorAll('.drawer-link').forEach(b=>b.classList.remove('active'));
     document.querySelector('.drawer-link[data-season="all"]').classList.add('active');
     document.querySelector('.drawer-link[data-cond="all"]').classList.add('active');
     document.querySelector('.drawer-link[data-sort="new"]').classList.add('active');
+    document.querySelector('.drawer-link[data-avail="all"]').classList.add('active');
+    document.querySelector('.drawer-link[data-suit="all"]').classList.add('active');
     document.getElementById('searchInput').value = '';
     applyFilters();
   }
@@ -1771,6 +1889,7 @@
         description: document.getElementById('sellDesc').value.trim(),
         category: 'figure',
         season: document.getElementById('sellSeason').value || null,
+        suit: document.getElementById('sellSuit').value || null,
         condition: document.getElementById('sellCondition').value,
         price: Number(price),
         city: city,
@@ -2031,7 +2150,8 @@
 
     document.getElementById('detailPrice').textContent = Number(l.price).toLocaleString() + ' SAR';
     document.getElementById('detailTags').innerHTML =
-      (l.season ? `<span class="tag-strong">${escapeHtml(l.season)}</span>` : '') +
+      (l.suit ? `<span class="tag-strong">${escapeHtml(l.suit)}</span>` : '') +
+      (l.season ? `<span>${escapeHtml(l.season)}</span>` : '') +
       `<span>${t(condLabels[l.condition] || l.condition)}</span>` +
       `<span>${escapeHtml(l.city)}</span>`;
     document.getElementById('detailDesc').textContent = l.description || t('noDescription');
@@ -2158,6 +2278,7 @@
     document.getElementById('sellDesc').value = detailListing.description || '';
     document.getElementById('sellCondition').value = detailListing.condition;
     document.getElementById('sellSeason').value = detailListing.season || '';
+    document.getElementById('sellSuit').value = detailListing.suit || '';
     document.getElementById('sellYear').value = detailListing.release_year || '';
     document.getElementById('sellSetNumber').value = detailListing.set_number || '';
     document.getElementById('sellPanelTitle').textContent = t('editListingTitle');
@@ -2168,7 +2289,7 @@
   function resetSellPanel(){
     editingListingId = null;
     document.getElementById('sellPanelTitle').textContent = t('postListing2');
-    ['sellTitle','sellPrice','sellCity','sellDesc','sellPhotos','sellYear','sellSetNumber','sellSeason'].forEach(id=>{
+    ['sellTitle','sellPrice','sellCity','sellDesc','sellPhotos','sellYear','sellSetNumber','sellSeason','sellSuit'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.value = '';
     });
     document.getElementById('photoPreview').innerHTML = '';
