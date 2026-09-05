@@ -188,6 +188,14 @@
   .drawer-link:hover{ background:var(--bg); color:var(--ink); }
   .drawer-link.active{ color:var(--brick-blue-d); border-inline-start-color:var(--brick-blue);
     background:#EAF2FE; font-weight:800; }
+  .drawer-link.season{ display:flex; align-items:center; gap:11px; }
+  .sn{
+    flex-shrink:0; min-width:34px; height:24px; padding:0 7px;
+    background:var(--bg); border:1px solid var(--line); border-radius:6px;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:12.5px; font-weight:800; color:var(--muted); letter-spacing:.3px;
+  }
+  .drawer-link.season.active .sn{ background:var(--brick-blue); border-color:var(--brick-blue); color:#fff; }
   .drawer-link.all{ font-family:'Archivo Black','Archivo',sans-serif; font-size:17px; }
   .drawer-clear{
     margin:22px 22px 0; background:none; border:2px solid var(--line); color:var(--ink-2);
@@ -276,6 +284,14 @@
   .drawer-link:hover{ background:var(--bg); color:var(--ink); }
   .drawer-link.active{ color:var(--brick-blue-d); border-inline-start-color:var(--brick-blue);
     background:#EAF2FE; font-weight:800; }
+  .drawer-link.season{ display:flex; align-items:center; gap:11px; }
+  .sn{
+    flex-shrink:0; min-width:34px; height:24px; padding:0 7px;
+    background:var(--bg); border:1px solid var(--line); border-radius:6px;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:12.5px; font-weight:800; color:var(--muted); letter-spacing:.3px;
+  }
+  .drawer-link.season.active .sn{ background:var(--brick-blue); border-color:var(--brick-blue); color:#fff; }
   .drawer-link.all{ font-family:'Archivo Black','Archivo',sans-serif; font-size:17px; }
   .drawer-clear{
     margin:22px 22px 0; background:none; border:2px solid var(--line); color:var(--ink-2);
@@ -819,6 +835,14 @@
   .drawer-link:hover{ background:var(--bg); color:var(--ink); }
   .drawer-link.active{ color:var(--brick-blue-d); border-inline-start-color:var(--brick-blue);
     background:#EAF2FE; font-weight:800; }
+  .drawer-link.season{ display:flex; align-items:center; gap:11px; }
+  .sn{
+    flex-shrink:0; min-width:34px; height:24px; padding:0 7px;
+    background:var(--bg); border:1px solid var(--line); border-radius:6px;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:12.5px; font-weight:800; color:var(--muted); letter-spacing:.3px;
+  }
+  .drawer-link.season.active .sn{ background:var(--brick-blue); border-color:var(--brick-blue); color:#fff; }
   .drawer-link.all{ font-family:'Archivo Black','Archivo',sans-serif; font-size:17px; }
   .drawer-clear{
     margin:22px 22px 0; background:none; border:2px solid var(--line); color:var(--ink-2);
@@ -989,23 +1013,23 @@
     <button class="drawer-link all active" data-season="all" onclick="pickSeason(this)" data-i18n="allFigures">All figures</button>
 
     <div class="drawer-label" data-i18n="seasonLbl">Season</div>
-      <button class="drawer-link" data-season="Masters of Spinjitzu" onclick="pickSeason(this)">Masters of Spinjitzu</button>
-      <button class="drawer-link" data-season="Rise of the Snakes" onclick="pickSeason(this)">Rise of the Snakes</button>
-      <button class="drawer-link" data-season="Legacy of the Green Ninja" onclick="pickSeason(this)">Legacy of the Green Ninja</button>
-      <button class="drawer-link" data-season="Rebooted" onclick="pickSeason(this)">Rebooted</button>
-      <button class="drawer-link" data-season="Tournament of Elements" onclick="pickSeason(this)">Tournament of Elements</button>
-      <button class="drawer-link" data-season="Possession" onclick="pickSeason(this)">Possession</button>
-      <button class="drawer-link" data-season="Skybound" onclick="pickSeason(this)">Skybound</button>
-      <button class="drawer-link" data-season="Day of the Departed" onclick="pickSeason(this)">Day of the Departed</button>
-      <button class="drawer-link" data-season="Hands of Time" onclick="pickSeason(this)">Hands of Time</button>
-      <button class="drawer-link" data-season="Sons of Garmadon" onclick="pickSeason(this)">Sons of Garmadon</button>
-      <button class="drawer-link" data-season="Hunted" onclick="pickSeason(this)">Hunted</button>
-      <button class="drawer-link" data-season="March of the Oni" onclick="pickSeason(this)">March of the Oni</button>
-      <button class="drawer-link" data-season="Prime Empire" onclick="pickSeason(this)">Prime Empire</button>
-      <button class="drawer-link" data-season="Master of the Mountain" onclick="pickSeason(this)">Master of the Mountain</button>
-      <button class="drawer-link" data-season="Seabound" onclick="pickSeason(this)">Seabound</button>
-      <button class="drawer-link" data-season="Crystalized" onclick="pickSeason(this)">Crystalized</button>
-      <button class="drawer-link" data-season="Dragons Rising" onclick="pickSeason(this)">Dragons Rising</button>
+      <button class="drawer-link season" data-season="Pilot Episodes" onclick="pickSeason(this)"><span class="sn">Pilot</span>Pilot Episodes</button>
+      <button class="drawer-link season" data-season="Rise of the Snakes" onclick="pickSeason(this)"><span class="sn">S1</span>Rise of the Snakes</button>
+      <button class="drawer-link season" data-season="Legacy of the Green Ninja" onclick="pickSeason(this)"><span class="sn">S2</span>Legacy of the Green Ninja</button>
+      <button class="drawer-link season" data-season="Rebooted" onclick="pickSeason(this)"><span class="sn">S3</span>Rebooted</button>
+      <button class="drawer-link season" data-season="Tournament of Elements" onclick="pickSeason(this)"><span class="sn">S4</span>Tournament of Elements</button>
+      <button class="drawer-link season" data-season="Possession" onclick="pickSeason(this)"><span class="sn">S5</span>Possession</button>
+      <button class="drawer-link season" data-season="Skybound" onclick="pickSeason(this)"><span class="sn">S6</span>Skybound</button>
+      <button class="drawer-link season" data-season="Hands of Time" onclick="pickSeason(this)"><span class="sn">S7</span>Hands of Time</button>
+      <button class="drawer-link season" data-season="Sons of Garmadon" onclick="pickSeason(this)"><span class="sn">S8</span>Sons of Garmadon</button>
+      <button class="drawer-link season" data-season="Hunted" onclick="pickSeason(this)"><span class="sn">S9</span>Hunted</button>
+      <button class="drawer-link season" data-season="March of the Oni" onclick="pickSeason(this)"><span class="sn">S10</span>March of the Oni</button>
+      <button class="drawer-link season" data-season="Secrets of the Forbidden Spinjitzu" onclick="pickSeason(this)"><span class="sn">S11</span>Secrets of the Forbidden Spinjitzu</button>
+      <button class="drawer-link season" data-season="Prime Empire" onclick="pickSeason(this)"><span class="sn">S12</span>Prime Empire</button>
+      <button class="drawer-link season" data-season="Master of the Mountain" onclick="pickSeason(this)"><span class="sn">S13</span>Master of the Mountain</button>
+      <button class="drawer-link season" data-season="Seabound" onclick="pickSeason(this)"><span class="sn">S14</span>Seabound</button>
+      <button class="drawer-link season" data-season="Crystalized" onclick="pickSeason(this)"><span class="sn">S15</span>Crystalized</button>
+      <button class="drawer-link season" data-season="Dragons Rising" onclick="pickSeason(this)"><span class="sn">DR</span>Dragons Rising</button>
 
     <div class="drawer-label" data-i18n="condition">Condition</div>
     <button class="drawer-link active" data-cond="all" onclick="pickCond(this)" data-i18n="anyCondition">Any</button>
@@ -1098,23 +1122,23 @@
     <div class="field-row">
       <div class="field"><label data-i18n="seasonLbl">Season</label>
       <select id="sellSeason"><option value="">—</option>
-<option value="Masters of Spinjitzu">Masters of Spinjitzu</option>
-<option value="Rise of the Snakes">Rise of the Snakes</option>
-<option value="Legacy of the Green Ninja">Legacy of the Green Ninja</option>
-<option value="Rebooted">Rebooted</option>
-<option value="Tournament of Elements">Tournament of Elements</option>
-<option value="Possession">Possession</option>
-<option value="Skybound">Skybound</option>
-<option value="Day of the Departed">Day of the Departed</option>
-<option value="Hands of Time">Hands of Time</option>
-<option value="Sons of Garmadon">Sons of Garmadon</option>
-<option value="Hunted">Hunted</option>
-<option value="March of the Oni">March of the Oni</option>
-<option value="Prime Empire">Prime Empire</option>
-<option value="Master of the Mountain">Master of the Mountain</option>
-<option value="Seabound">Seabound</option>
-<option value="Crystalized">Crystalized</option>
-<option value="Dragons Rising">Dragons Rising</option>
+<option value="Pilot Episodes">Pilot — Pilot Episodes</option>
+<option value="Rise of the Snakes">S1 — Rise of the Snakes</option>
+<option value="Legacy of the Green Ninja">S2 — Legacy of the Green Ninja</option>
+<option value="Rebooted">S3 — Rebooted</option>
+<option value="Tournament of Elements">S4 — Tournament of Elements</option>
+<option value="Possession">S5 — Possession</option>
+<option value="Skybound">S6 — Skybound</option>
+<option value="Hands of Time">S7 — Hands of Time</option>
+<option value="Sons of Garmadon">S8 — Sons of Garmadon</option>
+<option value="Hunted">S9 — Hunted</option>
+<option value="March of the Oni">S10 — March of the Oni</option>
+<option value="Secrets of the Forbidden Spinjitzu">S11 — Secrets of the Forbidden Spinjitzu</option>
+<option value="Prime Empire">S12 — Prime Empire</option>
+<option value="Master of the Mountain">S13 — Master of the Mountain</option>
+<option value="Seabound">S14 — Seabound</option>
+<option value="Crystalized">S15 — Crystalized</option>
+<option value="Dragons Rising">DR — Dragons Rising</option>
       </select></div>
     <div class="field"><label data-i18n="releaseYearLbl">Release year</label>
         <input type="number" id="sellYear" min="1950" max="2030" placeholder="e.g. 2019"></div>
