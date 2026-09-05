@@ -1354,7 +1354,7 @@
     <button class="support-close" onclick="toggleSupport()">×</button>
   </div>
   <div class="support-body" id="supportBody">
-    <div class="s-msg bot" data-i18n="supportGreeting">Hi! Ask me about minifigures, shipping, payment, or how ordering works.</div>
+    <div class="s-msg bot" data-i18n="supportGreeting">Hi! Ask me about seasons, shipping, payment, or how ordering works.</div>
   </div>
   <div class="support-input-row">
     <input type="text" id="supportInput" data-i18n-ph="supportPh" onkeydown="if(event.key==='Enter')sendSupport()">
@@ -1398,7 +1398,7 @@
       shopNow:"Shop now", sortBy:"Sort by", anyPrice:"Any", clearAll:"Clear all", done:"Done",
       figureWord:"figure", figuresWord:"figures",
       supportTitle:"Ninjabrix Support", supportSub:"Usually replies instantly",
-      supportGreeting:"Hi! Ask me about minifigures, shipping, payment, or how ordering works.", searchPh:"Search by name or set number…", supportPh:"Type a question…", send:"Send",
+      supportGreeting:"Hi! Ask me about seasons, shipping, payment, or how ordering works.", searchPh:"Search by name or set number…", supportPh:"Type a question…", send:"Send",
       newUser:"New User", enterEmail:"Enter both your email and password to continue.",
       photosLbl:"Photos (up to 4)", uploading:"Uploading…", checkEmail:"Check your email to confirm your account, then sign in.",
       noPhotos:"No photos", noDescription:"No description provided.", deleteListing:"Delete listing",
@@ -2519,8 +2519,8 @@
 
     { id:'authentic',
       k:['real','fake','genuine','authentic','original','lego','copy','replica','knock','lepin','china','اصلي','أصلي','تقليد','مقلد','ليقو','ليجو','نسخه','مزيف'],
-      en:"Everything sold by Ninjabrix is genuine. Member listings are checked too, and you can report anything that looks wrong. Ninjabrix is an independent reseller and isn't affiliated with the LEGO Group.",
-      ar:"كل ما تبيعه نينجابركس أصلي، ونراجع إعلانات الأعضاء أيضاً، ويمكنك الإبلاغ عن أي شيء مشبوه. نينجابركس بائع مستقل وغير تابع لمجموعة LEGO." },
+      en:"Every figure is genuine LEGO and checked personally before it's listed. Ninjabrix is an independent reseller and isn't affiliated with or endorsed by the LEGO Group.",
+      ar:"كل شخصية أصلية من LEGO وتُفحص شخصياً قبل عرضها. نينجابركس بائع مستقل وغير تابع لمجموعة LEGO أو معتمد منها." },
 
     { id:'order',
       k:['order','track','status','where is','when will','arrive','confirm','receipt','cancel','change my','طلب','طلبي','وين','متابعه','حاله الطلب','وصل','الغاء','تاكيد'],
@@ -2533,14 +2533,14 @@
       ar:"تحتاج حساباً لإتمام الطلب، ويتيح لك متابعته لاحقاً. استخدم تسجيل الدخول أعلى الصفحة. نسيت كلمة المرور؟ يوجد رابط إعادة تعيين في صفحة الدخول. ويمكنك حذف حسابك في أي وقت من إعدادات الحساب." },
 
     { id:'selling',
-      k:['sell','list','post','commission','fee','percent','3%','my item','can i sell','become seller','ابيع','أبيع','بيع','اعلان','عمولة','عموله','رسوم','نسبه','انشر'],
-      en:"Anyone can list items here. Posting is free, and Ninjabrix takes 3% only when your item actually sells. You arrange the sale with the buyer yourself, then mark it sold and I'll invoice the commission.",
-      ar:"يمكن لأي شخص عرض قطعه هنا. النشر مجاني، وتأخذ نينجابركس 3% فقط عند بيع قطعتك فعلاً. تتفق مع المشتري بنفسك، ثم تسجّل البيع وسأرسل لك فاتورة العمولة." },
+      k:['sell','sell to you','buy from me','commission','list my','trade','ابيع','أبيع','بيع','اشتري مني','مقايضه','عمولة'],
+      en:"Ninjabrix is the only seller here, so you can't list your own figures. If you have figures you'd like to sell to me, email support@ninjabrix.com with photos and I'll take a look.",
+      ar:"نينجابركس هي البائع الوحيد هنا، لذا لا يمكنك عرض شخصياتك. وإذا كانت لديك شخصيات تود بيعها لي، راسل support@ninjabrix.com مع الصور وسألقي نظرة." },
 
     { id:'returns',
       k:['return','refund','wrong','broken','not as described','exchange','money back','problem','complaint','ارجاع','أرجع','ارجع','استرداد','مكسور','خطا','مشكله','شكوى','تبديل'],
-      en:"For items sold by Ninjabrix you can return within 7 days if unused, and I'll refund in full including delivery if it wasn't as described. For member listings you'd sort it out with that seller, but message me if you get stuck.",
-      ar:"للقطع التي تبيعها نينجابركس، يمكنك الإرجاع خلال 7 أيام إن لم تُستخدم، وأعيد كامل المبلغ شاملاً التوصيل إن كانت مخالفة للوصف. أما إعلانات الأعضاء فتُسوّى مع البائع، وراسلني إن واجهت مشكلة." },
+      en:"You can return a figure within 7 days if it's unused, and I'll refund in full including delivery if it wasn't as described. Just email support@ninjabrix.com.",
+      ar:"يمكنك إرجاع الشخصية خلال 7 أيام إن لم تُستخدم، وأعيد كامل المبلغ شاملاً التوصيل إن كانت مخالفة للوصف. راسلني على support@ninjabrix.com." },
 
     { id:'price',
       k:['price','cheap','discount','negotiate','offer','deal','bargain','bundle','lower','سعر','رخيص','خصم','تخفيض','عرض','اخر سعر'],
@@ -2552,15 +2552,20 @@
       en:"If it's showing on the site it's available — sold items are removed. New stock is added regularly, so check back. Want something specific? Message me and I'll look out for it.",
       ar:"إذا كانت معروضة على الموقع فهي متوفرة — والقطع المباعة تُزال. تُضاف قطع جديدة باستمرار، فتابعنا. تبحث عن شيء محدد؟ راسلني وسأبحث عنه لك." },
 
+    { id:'season',
+      k:['season','which season','what season','episode','series','spinjitzu','skybound','crystalized','dragons rising','prime empire','موسم','مواسم','حلقه','سلسله'],
+      en:"Every figure lists its season, and you can browse by season from the menu (the three lines, top left). Seasons run from the Pilot episodes through to Dragons Rising.",
+      ar:"كل شخصية موضّح بجانبها موسمها، ويمكنك التصفح حسب الموسم من القائمة (الخطوط الثلاثة أعلى الصفحة). المواسم تبدأ من الحلقات التجريبية حتى دراغونز رايزنق." },
+
     { id:'contact',
       k:['contact','talk','human','speak','whatsapp','phone','number','support','help me','someone','تواصل','اتصال','جوال','رقم','دعم','مساعده','ابي اكلم'],
-      en:"Email support@ninjabrix.com and I'll reply personally. For a specific listing from another member, use Contact Seller on that item to message them directly.",
-      ar:"راسل support@ninjabrix.com وسأرد عليك شخصياً. ولإعلان معيّن من عضو آخر، استخدم \"تواصل مع البائع\" على تلك القطعة لمراسلته مباشرة." },
+      en:"Email support@ninjabrix.com and I'll reply personally, usually the same day.",
+      ar:"راسل support@ninjabrix.com وسأرد عليك شخصياً، عادةً في نفس اليوم." },
 
     { id:'about',
       k:['what is','who are','who runs','about','ninjabrix','store','shop','trust','safe','legit','نينجابركس','متجر','من انتم','موثوق','امان'],
-      en:"Ninjabrix is an independent shop in Saudi Arabia selling genuine minifigures and brick sets, and a place where other collectors can list theirs too. Everything I sell is checked before it goes up.",
-      ar:"نينجابركس متجر مستقل في السعودية لبيع الشخصيات ومجموعات البريك الأصلية، ومكان يعرض فيه هواة آخرون قطعهم أيضاً. وكل ما أبيعه يُفحص قبل عرضه." },
+      en:"Ninjabrix is an independent shop in Saudi Arabia selling genuine Ninjago minifigures. Every figure is sourced and checked by me before it goes up.",
+      ar:"نينجابركس متجر مستقل في السعودية لبيع شخصيات نينجاقو الأصلية. وكل شخصية أوفّرها وأفحصها بنفسي قبل عرضها." },
   ];
 
   function normalize(str){
