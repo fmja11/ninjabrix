@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#0B5FD4">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Ninjabrix — Minifigures &amp; Brick Sets</title>
+<title>Ninjabrix — Ninjago Minifigures in Saudi Arabia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://zwliqmsvihfdkyaadnsi.supabase.co" crossorigin>
@@ -146,16 +146,81 @@
     .intro-sub .dot-sep{ padding:0 5px; }
   }
 
-  .band-title{
-    background:var(--brick-yellow); border-top:3px solid #E0A000; border-bottom:3px solid #E0A000;
-    padding:13px clamp(12px,3vw,28px);
-    display:flex; align-items:center; justify-content:center; gap:16px; position:relative;
+  /* ===== HAMBURGER ===== */
+  .hamburger{
+    display:flex; flex-direction:column; justify-content:center; gap:5px;
+    width:44px; height:44px; padding:0 10px; background:transparent; border:0; flex-shrink:0;
   }
-  .band-title span{
-    font-family:'Archivo Black','Archivo',sans-serif; font-size:19px;
-    letter-spacing:.5px; text-transform:uppercase; color:var(--ink);
+  .hamburger span{ display:block; height:2.5px; background:var(--ink); border-radius:2px; transition:.2s; }
+  .hamburger:hover span{ background:var(--brick-blue); }
+
+  /* ===== DRAWER ===== */
+  .drawer-scrim{
+    position:fixed; inset:0; background:rgba(20,23,28,.5); z-index:150;
+    opacity:0; pointer-events:none; transition:opacity .2s;
   }
-  .band-title .sort{ position:absolute; inset-inline-end:clamp(12px,3vw,28px); }
+  .drawer-scrim.open{ opacity:1; pointer-events:auto; }
+  .drawer{
+    position:fixed; inset-block:0; inset-inline-start:0; width:320px; max-width:86vw;
+    background:var(--surface); z-index:160; display:flex; flex-direction:column;
+    transform:translateX(-102%); transition:transform .25s ease;
+    box-shadow:4px 0 30px rgba(0,0,0,.18);
+  }
+  html[dir="rtl"] .drawer{ transform:translateX(102%); }
+  .drawer.open{ transform:translateX(0) !important; }
+  .drawer-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 22px; border-bottom:1px solid var(--line);
+    font-family:'Archivo Black','Archivo',sans-serif; font-size:20px;
+  }
+  .drawer-close{ background:none; border:0; font-size:30px; line-height:1; color:var(--muted);
+    width:40px; height:40px; }
+  .drawer-body{ overflow-y:auto; padding:12px 0 30px; flex:1; }
+  .drawer-label{
+    font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:.8px;
+    color:var(--muted); padding:18px 22px 8px;
+  }
+  .drawer-link{
+    display:block; width:100%; text-align:start; background:none; border:0;
+    padding:13px 22px; font-size:16px; color:var(--ink-2); font-weight:600;
+    border-inline-start:4px solid transparent;
+  }
+  .drawer-link:hover{ background:var(--bg); color:var(--ink); }
+  .drawer-link.active{ color:var(--brick-blue-d); border-inline-start-color:var(--brick-blue);
+    background:#EAF2FE; font-weight:800; }
+  .drawer-link.all{ font-family:'Archivo Black','Archivo',sans-serif; font-size:17px; }
+  .drawer-clear{
+    margin:22px 22px 0; background:none; border:2px solid var(--line); color:var(--ink-2);
+    width:calc(100% - 44px); height:46px; border-radius:999px; font-weight:700; font-size:15px;
+  }
+
+  /* ===== HERO ===== */
+  .hero{ position:relative; min-height:clamp(280px,44vw,440px); display:flex;
+    align-items:center; justify-content:center; text-align:center; overflow:hidden;
+    background:var(--ink); }
+  .hero img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.62; }
+  .hero.no-hero img{ display:none; }
+  .hero.no-hero{ background:linear-gradient(135deg,#14171C,#23304A 55%,#14171C); }
+  .hero-inner{ position:relative; padding:44px 22px; max-width:760px; }
+  .hero-title{ font-family:'Archivo Black','Archivo',sans-serif;
+    font-size:clamp(34px,7vw,68px); color:#fff; letter-spacing:-1.5px; line-height:1.05;
+    text-shadow:0 3px 20px rgba(0,0,0,.55); }
+  .hero-sub{ color:#E7EBF1; font-size:clamp(15px,2vw,18px); margin-top:14px;
+    text-shadow:0 2px 12px rgba(0,0,0,.6); }
+  .hero-cta{ margin-top:26px; background:#fff; color:var(--ink); border:0;
+    height:54px; padding:0 40px; border-radius:999px; font-weight:800; font-size:17px;
+    display:inline-flex; align-items:center; justify-content:center; line-height:1; }
+  .hero-cta:hover{ background:var(--brick-yellow); }
+
+  .shop-head{ display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+    padding:26px clamp(12px,3vw,28px) 6px; max-width:1500px; margin:0 auto; }
+  .shop-head h2{ font-family:'Archivo Black','Archivo',sans-serif; font-size:clamp(21px,3vw,27px); }
+  .browse-btn.open
+  .result-count{ color:var(--muted); font-size:15px; }
+  .bp-wrap
+  @media (max-width:640px){
+  .bp-wrap
+  }
 
   .intro-strip{
     background:var(--surface); border-bottom:1px solid var(--line);
@@ -169,8 +234,81 @@
   .intro-sub .dot-sep{ color:var(--line); padding:0 8px; }
 
   @media (max-width:640px){
-    .band-title{ flex-direction:column; gap:10px; }
-    .band-title .sort{ position:static; width:100%; max-width:280px; }
+    /* ===== HAMBURGER ===== */
+  .hamburger{
+    display:flex; flex-direction:column; justify-content:center; gap:5px;
+    width:44px; height:44px; padding:0 10px; background:transparent; border:0; flex-shrink:0;
+  }
+  .hamburger span{ display:block; height:2.5px; background:var(--ink); border-radius:2px; transition:.2s; }
+  .hamburger:hover span{ background:var(--brick-blue); }
+
+  /* ===== DRAWER ===== */
+  .drawer-scrim{
+    position:fixed; inset:0; background:rgba(20,23,28,.5); z-index:150;
+    opacity:0; pointer-events:none; transition:opacity .2s;
+  }
+  .drawer-scrim.open{ opacity:1; pointer-events:auto; }
+  .drawer{
+    position:fixed; inset-block:0; inset-inline-start:0; width:320px; max-width:86vw;
+    background:var(--surface); z-index:160; display:flex; flex-direction:column;
+    transform:translateX(-102%); transition:transform .25s ease;
+    box-shadow:4px 0 30px rgba(0,0,0,.18);
+  }
+  html[dir="rtl"] .drawer{ transform:translateX(102%); }
+  .drawer.open{ transform:translateX(0) !important; }
+  .drawer-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 22px; border-bottom:1px solid var(--line);
+    font-family:'Archivo Black','Archivo',sans-serif; font-size:20px;
+  }
+  .drawer-close{ background:none; border:0; font-size:30px; line-height:1; color:var(--muted);
+    width:40px; height:40px; }
+  .drawer-body{ overflow-y:auto; padding:12px 0 30px; flex:1; }
+  .drawer-label{
+    font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:.8px;
+    color:var(--muted); padding:18px 22px 8px;
+  }
+  .drawer-link{
+    display:block; width:100%; text-align:start; background:none; border:0;
+    padding:13px 22px; font-size:16px; color:var(--ink-2); font-weight:600;
+    border-inline-start:4px solid transparent;
+  }
+  .drawer-link:hover{ background:var(--bg); color:var(--ink); }
+  .drawer-link.active{ color:var(--brick-blue-d); border-inline-start-color:var(--brick-blue);
+    background:#EAF2FE; font-weight:800; }
+  .drawer-link.all{ font-family:'Archivo Black','Archivo',sans-serif; font-size:17px; }
+  .drawer-clear{
+    margin:22px 22px 0; background:none; border:2px solid var(--line); color:var(--ink-2);
+    width:calc(100% - 44px); height:46px; border-radius:999px; font-weight:700; font-size:15px;
+  }
+
+  /* ===== HERO ===== */
+  .hero{ position:relative; min-height:clamp(280px,44vw,440px); display:flex;
+    align-items:center; justify-content:center; text-align:center; overflow:hidden;
+    background:var(--ink); }
+  .hero img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.62; }
+  .hero.no-hero img{ display:none; }
+  .hero.no-hero{ background:linear-gradient(135deg,#14171C,#23304A 55%,#14171C); }
+  .hero-inner{ position:relative; padding:44px 22px; max-width:760px; }
+  .hero-title{ font-family:'Archivo Black','Archivo',sans-serif;
+    font-size:clamp(34px,7vw,68px); color:#fff; letter-spacing:-1.5px; line-height:1.05;
+    text-shadow:0 3px 20px rgba(0,0,0,.55); }
+  .hero-sub{ color:#E7EBF1; font-size:clamp(15px,2vw,18px); margin-top:14px;
+    text-shadow:0 2px 12px rgba(0,0,0,.6); }
+  .hero-cta{ margin-top:26px; background:#fff; color:var(--ink); border:0;
+    height:54px; padding:0 40px; border-radius:999px; font-weight:800; font-size:17px;
+    display:inline-flex; align-items:center; justify-content:center; line-height:1; }
+  .hero-cta:hover{ background:var(--brick-yellow); }
+
+  .shop-head{ display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+    padding:26px clamp(12px,3vw,28px) 6px; max-width:1500px; margin:0 auto; }
+  .shop-head h2{ font-family:'Archivo Black','Archivo',sans-serif; font-size:clamp(21px,3vw,27px); }
+  .browse-btn.open
+  .result-count{ color:var(--muted); font-size:15px; }
+  .bp-wrap
+  @media (max-width:640px){
+  .bp-wrap
+  }
   }
   @media (max-width:520px){
     .intro-strip{ padding:15px 12px 16px; }
@@ -216,7 +354,7 @@
   .hero-banner, .how-row{ display:none; }
 
   /* ================= LISTING GRID ================= */
-  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:16px; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:14px; }
   /* Placeholder cards hold the grid's height while listings load, so the
      footer doesn't get pushed down when real content arrives. */
   .skeleton{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
@@ -242,9 +380,9 @@
     background:var(--brick-blue); opacity:0; transition:opacity .15s; }
   .listing:hover::after{ opacity:1; }
   .listing:hover{ box-shadow:0 6px 22px rgba(11,95,212,.14); transform:translateY(-2px); }
-  .thumb{ aspect-ratio:1/1; position:relative; background:#E8EBF0;
+  .thumb{ aspect-ratio:3/4; position:relative; background:#E8EBF0;
     display:flex; align-items:center; justify-content:center; overflow:hidden; }
-  .thumb img{ width:100%; height:100%; object-fit:cover; }
+  .thumb img{ width:100%; height:100%; object-fit:contain; padding:8px; background:#fff; }
   .badge{ position:absolute; top:10px; inset-inline-start:10px; z-index:2;
     font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.4px;
     padding:5px 10px; border-radius:6px; }
@@ -258,6 +396,8 @@
     line-height:1.3; color:var(--ink); letter-spacing:-0.2px;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
   }
+  .l-season{ font-size:13.5px; color:var(--brick-blue-d); font-weight:700;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .l-setinfo{
     display:inline-flex; align-items:center; gap:9px; align-self:flex-start;
     background:var(--brick-blue); border-radius:8px;
@@ -637,14 +777,87 @@
     .intro-sub .dot-sep{ padding:0 5px; }
   }
 
-  .band-title{ padding:11px 12px; }
-    .band-title span{ font-size:17px; }
+  /* ===== HAMBURGER ===== */
+  .hamburger{
+    display:flex; flex-direction:column; justify-content:center; gap:5px;
+    width:44px; height:44px; padding:0 10px; background:transparent; border:0; flex-shrink:0;
+  }
+  .hamburger span{ display:block; height:2.5px; background:var(--ink); border-radius:2px; transition:.2s; }
+  .hamburger:hover span{ background:var(--brick-blue); }
+
+  /* ===== DRAWER ===== */
+  .drawer-scrim{
+    position:fixed; inset:0; background:rgba(20,23,28,.5); z-index:150;
+    opacity:0; pointer-events:none; transition:opacity .2s;
+  }
+  .drawer-scrim.open{ opacity:1; pointer-events:auto; }
+  .drawer{
+    position:fixed; inset-block:0; inset-inline-start:0; width:320px; max-width:86vw;
+    background:var(--surface); z-index:160; display:flex; flex-direction:column;
+    transform:translateX(-102%); transition:transform .25s ease;
+    box-shadow:4px 0 30px rgba(0,0,0,.18);
+  }
+  html[dir="rtl"] .drawer{ transform:translateX(102%); }
+  .drawer.open{ transform:translateX(0) !important; }
+  .drawer-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 22px; border-bottom:1px solid var(--line);
+    font-family:'Archivo Black','Archivo',sans-serif; font-size:20px;
+  }
+  .drawer-close{ background:none; border:0; font-size:30px; line-height:1; color:var(--muted);
+    width:40px; height:40px; }
+  .drawer-body{ overflow-y:auto; padding:12px 0 30px; flex:1; }
+  .drawer-label{
+    font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:.8px;
+    color:var(--muted); padding:18px 22px 8px;
+  }
+  .drawer-link{
+    display:block; width:100%; text-align:start; background:none; border:0;
+    padding:13px 22px; font-size:16px; color:var(--ink-2); font-weight:600;
+    border-inline-start:4px solid transparent;
+  }
+  .drawer-link:hover{ background:var(--bg); color:var(--ink); }
+  .drawer-link.active{ color:var(--brick-blue-d); border-inline-start-color:var(--brick-blue);
+    background:#EAF2FE; font-weight:800; }
+  .drawer-link.all{ font-family:'Archivo Black','Archivo',sans-serif; font-size:17px; }
+  .drawer-clear{
+    margin:22px 22px 0; background:none; border:2px solid var(--line); color:var(--ink-2);
+    width:calc(100% - 44px); height:46px; border-radius:999px; font-weight:700; font-size:15px;
+  }
+
+  /* ===== HERO ===== */
+  .hero{ position:relative; min-height:clamp(280px,44vw,440px); display:flex;
+    align-items:center; justify-content:center; text-align:center; overflow:hidden;
+    background:var(--ink); }
+  .hero img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.62; }
+  .hero.no-hero img{ display:none; }
+  .hero.no-hero{ background:linear-gradient(135deg,#14171C,#23304A 55%,#14171C); }
+  .hero-inner{ position:relative; padding:44px 22px; max-width:760px; }
+  .hero-title{ font-family:'Archivo Black','Archivo',sans-serif;
+    font-size:clamp(34px,7vw,68px); color:#fff; letter-spacing:-1.5px; line-height:1.05;
+    text-shadow:0 3px 20px rgba(0,0,0,.55); }
+  .hero-sub{ color:#E7EBF1; font-size:clamp(15px,2vw,18px); margin-top:14px;
+    text-shadow:0 2px 12px rgba(0,0,0,.6); }
+  .hero-cta{ margin-top:26px; background:#fff; color:var(--ink); border:0;
+    height:54px; padding:0 40px; border-radius:999px; font-weight:800; font-size:17px;
+    display:inline-flex; align-items:center; justify-content:center; line-height:1; }
+  .hero-cta:hover{ background:var(--brick-yellow); }
+
+  .shop-head{ display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+    padding:26px clamp(12px,3vw,28px) 6px; max-width:1500px; margin:0 auto; }
+  .shop-head h2{ font-family:'Archivo Black','Archivo',sans-serif; font-size:clamp(21px,3vw,27px); }
+  .browse-btn.open
+  .result-count{ color:var(--muted); font-size:15px; }
+  .bp-wrap
+  @media (max-width:640px){
+  .bp-wrap
+  }
     .filters{ padding:12px; }
     .filter-row{ gap:7px; }
     .mchip, .cat-item{ height:42px; padding:0 15px; font-size:14.5px; }
 
     main{ padding:16px 12px 70px; }
-    .grid{ grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:12px; }
+    .grid{ grid-template-columns:repeat(auto-fill,minmax(145px,1fr)); gap:11px; }
 
     /* Full-screen sheets instead of tiny centred boxes */
     .sell-overlay{ padding:0; align-items:stretch; }
@@ -683,7 +896,9 @@
     .grid{ grid-template-columns:1fr 1fr; gap:10px; }
     .l-price{ font-size:19px; }
     .l-title{ font-size:14.5px; }
-    .l-setinfo{ font-size:16px; padding:6px 11px; gap:7px; }
+    .l-season{ font-size:13.5px; color:var(--brick-blue-d); font-weight:700;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .l-setinfo{ font-size:16px; padding:6px 11px; gap:7px; }
     .detail-setline{ font-size:20px; padding:9px 16px; gap:10px; }
     .l-meta{ font-size:12.5px; }
     .contact-btn{ margin:0 10px 10px; height:44px; font-size:15px; }
@@ -691,7 +906,6 @@
     .admin-stats{ grid-template-columns:1fr; }
     .brand-name{ font-size:16px; }
     .icon-btn{ padding:0 10px; }
-    .band-title span{ font-size:16px; }
   }
 
   /* Inputs must be >=16px or iOS zooms the whole page on focus */
@@ -708,6 +922,9 @@
 
 <a href="#mainContent" class="skip-link" data-i18n="skipToContent">Skip to listings</a>
 <div class="topbar">
+  <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
   <div class="brand"><span class="brand-logo" aria-hidden="true"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
       <rect x="2" y="8" width="36" height="26" rx="5" fill="#14171C"/>
       <circle cx="12" cy="17" r="4.2" fill="#0B5FD4"/>
@@ -727,7 +944,6 @@
       <button id="langEnBtn" onclick="setLang('en')">EN</button>
       <button id="langArBtn" onclick="setLang('ar')">AR</button>
     </div>
-    <button class="icon-btn" onclick="openMessages()" aria-label="Messages"><span data-i18n="messages">Messages</span></button>
     <button class="icon-btn cart-btn" onclick="openCart()" aria-label="Cart">
       <span data-i18n="cart">Cart</span><span class="cart-count" id="cartCount">0</span>
     </button>
@@ -743,68 +959,80 @@
           <div class="am-user"><div class="am-avatar" id="amAvatar">N</div><div><div class="am-name" id="amName">—</div><div class="am-role" id="amRole">Buyer</div></div></div>
           <a class="am-link" id="amAdminLink" href="#" onclick="openAdmin();return false;" style="display:none;" data-i18n="ownerDash">Owner Dashboard</a>
           <a class="am-link" href="#" onclick="openMyOrders();return false;" data-i18n="myOrders">My Orders</a>
-          <a class="am-link" href="#" onclick="openMySales();return false;" data-i18n="mySales">My Sales &amp; Commission</a>
           <a class="am-link" href="#" onclick="openSettings();return false;" data-i18n="accountSettings">Account Settings</a>
           <a class="am-link" href="#" onclick="signOut();return false;" data-i18n="signOut">Sign Out</a>
         </div>
       </div>
     </div>
-    <button class="post-btn" id="addProductBtn" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="addProduct">+ Add Product</button>
+    <button class="post-btn" id="addProductBtn" style="display:none;" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="addProduct">+ Add Product</button>
   </div>
 </div>
 
 <div class="intro-strip">
-  <p class="intro-main" data-i18n="introMain">Buy from our stock, or from collectors across Saudi Arabia.</p>
+  <p class="intro-main" data-i18n="introMain">Ninjago minifigures, delivered across Saudi Arabia.</p>
   <p class="intro-sub">
-    <span data-i18n="introFree">Free to list</span>
+    <span data-i18n="introFree">Genuine figures only</span>
     <span class="dot-sep">&middot;</span>
-    <span data-i18n="introDirect">Or meet in person</span>
+    <span data-i18n="introDirect">Or collect in person</span>
     <span class="dot-sep">&middot;</span>
-    <span data-i18n="introFee">3% only when your item sells</span>
+    <span data-i18n="introFee">RedBox delivery 25 SAR</span>
   </p>
 </div>
 
-<div class="band-title"><span data-i18n="categoriesTitle">Categories</span></div>
+<div class="drawer-scrim" id="drawerScrim" onclick="toggleDrawer()"></div>
+<nav class="drawer" id="drawer" aria-label="Browse">
+  <div class="drawer-head">
+    <span data-i18n="browse">Browse</span>
+    <button class="drawer-close" onclick="toggleDrawer()" aria-label="Close">&times;</button>
+  </div>
+  <div class="drawer-body">
+    <button class="drawer-link all active" data-season="all" onclick="pickSeason(this)" data-i18n="allFigures">All figures</button>
 
-<div class="filters">
-  <div class="filter-row">
-    <button class="mchip active" data-cat="all" data-i18n="allListings">All</button>
-    <button class="mchip" data-cat="figures" data-i18n="figures">Minifigures</button>
-    <button class="mchip" data-cat="sets" data-i18n="completeSets">Complete Sets</button>
-    <button class="mchip" data-cat="mechs" data-i18n="mechs">Mechs</button>
-    <button class="mchip" data-cat="vehicles" data-i18n="vehicles">Vehicles &amp; Dragons</button>
-    <button class="mchip" data-cat="bundle" data-i18n="bundles">Bundles</button>
-    <button class="mchip" data-cat="parts" data-i18n="looseParts">Loose Parts</button>
-  </div>
-  <div class="filter-row">
-    <button class="cat-item active" data-city="all" data-i18n="allCities">All Cities</button>
-    <button class="cat-item" data-city="Dammam">Dammam</button>
-    <button class="cat-item" data-city="Khobar">Khobar</button>
-    <button class="cat-item" data-city="Riyadh">Riyadh</button>
-    <button class="cat-item" data-city="Jeddah">Jeddah</button>
-  </div>
-  <div class="filter-row">
-    <button class="cat-item active" data-year="all" data-i18n="anyYear">Any Year</button>
-    <button class="cat-item" data-year="2024">2024+</button>
-    <button class="cat-item" data-year="2020">2020–2023</button>
-    <button class="cat-item" data-year="2015">2015–2019</button>
-    <button class="cat-item" data-year="2010">2010–2014</button>
-    <button class="cat-item" data-year="older" data-i18n="olderThan2010">Before 2010</button>
-  </div>
-  <div class="filter-row">
-    <button class="cat-item active" data-cond="all" data-i18n="anyCondition">Any Condition</button>
-    <button class="cat-item" data-cond="new" data-i18n="condNew">New, sealed</button>
-    <button class="cat-item" data-cond="used" data-i18n="condUsed">Used, complete</button>
-    <button class="cat-item" data-cond="parts" data-i18n="condParts">Loose / spares</button>
-  </div>
-</div>
+    <div class="drawer-label" data-i18n="seasonLbl">Season</div>
+      <button class="drawer-link" data-season="Masters of Spinjitzu" onclick="pickSeason(this)">Masters of Spinjitzu</button>
+      <button class="drawer-link" data-season="Rise of the Snakes" onclick="pickSeason(this)">Rise of the Snakes</button>
+      <button class="drawer-link" data-season="Legacy of the Green Ninja" onclick="pickSeason(this)">Legacy of the Green Ninja</button>
+      <button class="drawer-link" data-season="Rebooted" onclick="pickSeason(this)">Rebooted</button>
+      <button class="drawer-link" data-season="Tournament of Elements" onclick="pickSeason(this)">Tournament of Elements</button>
+      <button class="drawer-link" data-season="Possession" onclick="pickSeason(this)">Possession</button>
+      <button class="drawer-link" data-season="Skybound" onclick="pickSeason(this)">Skybound</button>
+      <button class="drawer-link" data-season="Day of the Departed" onclick="pickSeason(this)">Day of the Departed</button>
+      <button class="drawer-link" data-season="Hands of Time" onclick="pickSeason(this)">Hands of Time</button>
+      <button class="drawer-link" data-season="Sons of Garmadon" onclick="pickSeason(this)">Sons of Garmadon</button>
+      <button class="drawer-link" data-season="Hunted" onclick="pickSeason(this)">Hunted</button>
+      <button class="drawer-link" data-season="March of the Oni" onclick="pickSeason(this)">March of the Oni</button>
+      <button class="drawer-link" data-season="Prime Empire" onclick="pickSeason(this)">Prime Empire</button>
+      <button class="drawer-link" data-season="Master of the Mountain" onclick="pickSeason(this)">Master of the Mountain</button>
+      <button class="drawer-link" data-season="Seabound" onclick="pickSeason(this)">Seabound</button>
+      <button class="drawer-link" data-season="Crystalized" onclick="pickSeason(this)">Crystalized</button>
+      <button class="drawer-link" data-season="Dragons Rising" onclick="pickSeason(this)">Dragons Rising</button>
 
-<div class="band-title"><span data-i18n="listingsTitle">In Stock</span>
-  <select class="sort" id="sortSelect" onchange="applyFilters()" aria-label="Sort listings">
-    <option value="new" data-i18n="sortNew">Newest first</option>
-    <option value="low" data-i18n="sortLow">Price: low to high</option>
-    <option value="high" data-i18n="sortHigh">Price: high to low</option>
-  </select>
+    <div class="drawer-label" data-i18n="condition">Condition</div>
+    <button class="drawer-link active" data-cond="all" onclick="pickCond(this)" data-i18n="anyCondition">Any</button>
+    <button class="drawer-link" data-cond="new" onclick="pickCond(this)" data-i18n="condNew">New, sealed</button>
+    <button class="drawer-link" data-cond="used" onclick="pickCond(this)" data-i18n="condUsed">Used</button>
+
+    <div class="drawer-label" data-i18n="sortBy">Sort by</div>
+    <button class="drawer-link active" data-sort="new" onclick="pickSort(this)" data-i18n="sortNew">Newest first</button>
+    <button class="drawer-link" data-sort="low" onclick="pickSort(this)" data-i18n="sortLow">Price: low to high</button>
+    <button class="drawer-link" data-sort="high" onclick="pickSort(this)" data-i18n="sortHigh">Price: high to low</button>
+
+    <button class="drawer-clear" onclick="clearBrowse()" data-i18n="clearAll">Clear all</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <img src="hero.jpg" alt="" onerror="this.parentElement.classList.add('no-hero')">
+  <div class="hero-inner">
+    <h1 class="hero-title" data-i18n="heroTitle">Made for Collectors</h1>
+    <p class="hero-sub" data-i18n="heroSub">Genuine figures &middot; Checked before shipping &middot; Delivered anywhere in Saudi Arabia</p>
+    <button class="hero-cta" onclick="document.getElementById('mainContent').scrollIntoView({behavior:'smooth'})" data-i18n="shopNow">Shop now</button>
+  </div>
+</section>
+
+<div class="shop-head">
+  <h2 data-i18n="listingsTitle">Available Now</h2>
+  <span class="result-count" id="resultCount"></span>
 </div>
 
 <div class="shell">
@@ -819,8 +1047,8 @@
     <div class="empty-state" id="emptyState">
       <div class="empty-glyph"></div>
       <h3 data-i18n="emptyH">No listings here yet</h3>
-      <p data-i18n="emptyP">Nothing here yet. New minifigures and sets are added regularly — check back soon.</p>
-      <button class="post-btn" id="addFirstBtn" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="addProduct">+ Add Product</button>
+      <p data-i18n="emptyP">Nothing here right now. New figures are added regularly — check back soon.</p>
+      <button class="post-btn" id="addFirstBtn" style="display:none;" onclick="resetSellPanel();document.getElementById('sellOverlay').classList.add('open')" data-i18n="addProduct">+ Add Product</button>
     </div>
   </main>
 </div>
@@ -842,7 +1070,7 @@
       <rect x="2" y="4" width="11" height="6" rx="3" fill="#14171C"/>
       <rect x="27" y="4" width="11" height="6" rx="3" fill="#14171C"/>
     </svg></span><span class="brand-name">NINJABRIX</span></div>
-      <p data-i18n="footerLine">Independent shop selling genuine minifigures and brick sets across Saudi Arabia.</p>
+      <p data-i18n="footerLine">Independent shop selling genuine Ninjago minifigures across Saudi Arabia.</p>
       <p class="fair-play" data-i18n="fairPlay">Ninjabrix is an independent reseller of genuine LEGO&reg; products and is not affiliated with, authorized, or endorsed by the LEGO Group. LEGO&reg; is a trademark of the LEGO Group.</p>
       <p class="foot-links">
         <a href="/privacy.html" data-i18n="privacyPolicy">Privacy Policy</a>
@@ -859,9 +1087,6 @@
     <div class="sub" data-i18n="postSub">Add a set to your shop. Buyers see it straight away.</div>
     <div class="field"><label data-i18n="titleLbl">Title</label><input type="text" id="sellTitle" data-i18n-ph="titlePh"></div>
     <div class="field-row">
-      <div class="field"><label data-i18n="categoryLbl">Category</label>
-        <select id="sellCategory"><option value="figures" data-i18n="figures">Minifigures</option><option value="sets" data-i18n="completeSets">Complete Sets</option><option value="mechs" data-i18n="mechs">Mechs</option><option value="vehicles" data-i18n="vehicles">Vehicles &amp; Dragons</option><option value="bundle" data-i18n="bundles">Bundles</option><option value="parts" data-i18n="looseParts">Loose Parts</option></select>
-      </div>
       <div class="field"><label data-i18n="conditionLbl">Condition</label>
         <select id="sellCondition"><option value="new" data-i18n="condNew">New, sealed</option><option value="used" data-i18n="condUsed">Used, complete</option><option value="parts" data-i18n="condParts">Loose / spares</option></select>
       </div>
@@ -871,7 +1096,27 @@
       <div class="field"><label data-i18n="cityLbl">City</label><input type="text" id="sellCity" placeholder="Dammam"></div>
     </div>
     <div class="field-row">
-      <div class="field"><label data-i18n="releaseYearLbl">Release year</label>
+      <div class="field"><label data-i18n="seasonLbl">Season</label>
+      <select id="sellSeason"><option value="">—</option>
+<option value="Masters of Spinjitzu">Masters of Spinjitzu</option>
+<option value="Rise of the Snakes">Rise of the Snakes</option>
+<option value="Legacy of the Green Ninja">Legacy of the Green Ninja</option>
+<option value="Rebooted">Rebooted</option>
+<option value="Tournament of Elements">Tournament of Elements</option>
+<option value="Possession">Possession</option>
+<option value="Skybound">Skybound</option>
+<option value="Day of the Departed">Day of the Departed</option>
+<option value="Hands of Time">Hands of Time</option>
+<option value="Sons of Garmadon">Sons of Garmadon</option>
+<option value="Hunted">Hunted</option>
+<option value="March of the Oni">March of the Oni</option>
+<option value="Prime Empire">Prime Empire</option>
+<option value="Master of the Mountain">Master of the Mountain</option>
+<option value="Seabound">Seabound</option>
+<option value="Crystalized">Crystalized</option>
+<option value="Dragons Rising">Dragons Rising</option>
+      </select></div>
+    <div class="field"><label data-i18n="releaseYearLbl">Release year</label>
         <input type="number" id="sellYear" min="1950" max="2030" placeholder="e.g. 2019"></div>
       <div class="field"><label data-i18n="setNumberLbl">Set number</label>
         <input type="text" id="sellSetNumber" data-i18n-ph="setNumberPh"></div>
@@ -896,70 +1141,6 @@
     <div class="field"><label data-i18n="newPasswordLbl">New password</label><input type="password" id="newPassword" placeholder="••••••••"></div>
     <div class="sell-actions">
       <button class="btn-submit" onclick="updatePassword()" data-i18n="savePassword">Save Password</button>
-    </div>
-  </div>
-</div>
-
-<div class="sell-overlay" id="messagesOverlay">
-  <div class="msg-panel">
-    <div class="msg-list">
-      <div class="msg-list-head">
-        <span data-i18n="conversations">Conversations</span>
-        <button class="msg-close" onclick="closeMessages()" aria-label="Close">&times;</button>
-      </div>
-      <div id="threadList"><div class="admin-empty" style="padding:16px;" data-i18n="noConvos">No conversations yet.</div></div>
-    </div>
-    <div class="msg-thread-area" id="threadArea">
-      <div class="msg-empty" id="threadPlaceholder">
-        <div class="empty-glyph"></div>
-        <h3 data-i18n="nothingHere">Nothing here yet</h3>
-        <p data-i18n="msgEmptyP">When someone messages you about a listing, it shows up here.</p>
-      </div>
-      <div id="threadView" style="display:none; flex-direction:column; height:100%;">
-        <div class="thread-head">
-          <button class="thread-back" onclick="backToThreadList()" aria-label="Back">&#8249;</button>
-          <span id="threadTitle"></span>
-          <button class="msg-close thread-close" onclick="closeMessages()" aria-label="Close">&times;</button>
-        </div>
-        <div class="thread-msgs" id="threadMsgs"></div>
-        <div class="thread-input">
-          <input type="text" id="threadInput" data-i18n-ph="typeMessage" onkeydown="if(event.key==='Enter')sendMessage()">
-          <button onclick="sendMessage()" data-i18n="send">Send</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="sell-overlay" id="soldOverlay">
-  <div class="sell-panel">
-    <h2 data-i18n="markSoldTitle">Mark as Sold</h2>
-    <div class="sub" id="soldListingName"></div>
-    <div class="notice" data-i18n="soldNotice">Ninjabrix charges 3% of the final sale price. You'll be invoiced for it separately.</div>
-    <div class="field"><label data-i18n="finalPriceLbl">Final sale price (SAR)</label><input type="number" id="soldPrice" oninput="updateCommissionPreview()"></div>
-    <div class="commission-preview" id="commissionPreview"></div>
-    <div class="sell-actions">
-      <button class="btn-cancel" onclick="document.getElementById('soldOverlay').classList.remove('open')" data-i18n="cancel">Cancel</button>
-      <button class="btn-submit" onclick="confirmSold()" data-i18n="confirmSale">Confirm Sale</button>
-    </div>
-  </div>
-</div>
-
-<div class="sell-overlay" id="mySalesOverlay">
-  <div class="sell-panel">
-    <h2 data-i18n="mySales">My Sales &amp; Commission</h2>
-    <div class="sub" data-i18n="mySalesSub">Sales you've recorded and the 3% owed on each.</div>
-    <div class="admin-stats" style="margin-bottom:18px;">
-      <div class="admin-stat"><div class="val" id="mySalesTotal">—</div><div class="lbl" data-i18n="totalSold">Total sold</div></div>
-      <div class="admin-stat"><div class="val" id="myCommissionOwed">—</div><div class="lbl" data-i18n="commissionOwed">Commission owed</div></div>
-    </div>
-    <div class="owed-notice" id="owedNotice" style="display:none;">
-      <strong data-i18n="commissionDue">Commission due</strong>
-      <p data-i18n="commissionDueBody">Email support@ninjabrix.com to settle what you owe.</p>
-    </div>
-    <div id="mySalesList"></div>
-    <div class="sell-actions" style="margin-top:16px;">
-      <button class="btn-cancel" onclick="document.getElementById('mySalesOverlay').classList.remove('open')" data-i18n="close">Close</button>
     </div>
   </div>
 </div>
@@ -1058,7 +1239,6 @@
       <button class="btn-submit" id="detailAction"></button>
     </div>
     <div class="detail-footer">
-      <button class="link-btn" id="detailReport" onclick="reportListing()" data-i18n="reportListing">Report this listing</button>
       <button class="link-btn" id="detailEdit" onclick="editListing()" style="display:none;" data-i18n="editListing">Edit listing</button>
       <button class="link-btn danger" id="detailDelete" onclick="deleteListing()" style="display:none;" data-i18n="deleteListing">Delete listing</button>
     </div>
@@ -1173,42 +1353,28 @@
   // ===== TRANSLATIONS =====
   const translations = {
     en: {
-      search:"Search", browsing:"Browsing: Dammam, Eastern Province", messages:"Messages", signIn:"Sign In",
-      createAccount:"Create Account", signInPrompt:"Sign in to order and track your purchases.", ownerDash:"Owner Dashboard", signOut:"Sign Out", categories:"Categories",
-      allListings:"All", completeSets:"Complete Sets", mechs:"Mechs", vehicles:"Vehicles & Dragons", figures:"Minifigures",
+      search:"Search", browsing:"Browsing: Dammam, Eastern Province", signIn:"Sign In",
+      createAccount:"Create Account", signInPrompt:"Sign in to order and track your purchases.", ownerDash:"Owner Dashboard", signOut:"Sign Out", categories:"Categories", completeSets:"Complete Sets", mechs:"Mechs", vehicles:"Vehicles & Dragons", figures:"Minifigures",
       bundles:"Bundles", looseParts:"Loose Parts", city:"City", condition:"Condition", condNew:"New, sealed",
       condUsed:"Used, complete", condParts:"Loose / spares", marketTitle:"Ninjabrix Marketplace",
       marketSub:"Buy and sell directly with collectors near you.", sortNew:"Newest first", sortLow:"Price: low to high",
       sortHigh:"Price: high to low", sortClose:"Closest to me", emptyH:"No listings here yet",
-      emptyP:"Nothing here yet. New minifigures and sets are added regularly — check back soon.",
+      emptyP:"Nothing here right now. New figures are added regularly — check back soon.",
       footerLine:"Independent marketplace for ninja-brick collectors. Not affiliated with any toy or media brand.",
       postListing2:"Add Product", postSub:"Add a set to your shop. Buyers see it straight away.",
-      titleLbl:"Title", titlePh:"e.g. Ninja Mech Battle Set, complete with figures", categoryLbl:"Category", conditionLbl:"Condition",
+      titleLbl:"Title", titlePh:"e.g. Lloyd — Dragons Rising", conditionLbl:"Condition",
       priceLbl:"Price (SAR)", cityLbl:"City", descLbl:"Description", descPh:"Piece count, missing parts, box condition…",
       cancel:"Cancel", mustSignIn:"Please sign in before posting a listing.", photoTooBig:"That photo is too large - pick one under 12MB.", tooManyListings:"Daily listing limit reached. Try again tomorrow.", fillRequired:"Please fill in the title, price, and city.", fullNameLbl:"Full Name",
       fullNamePh:"Your name", roleOwner:"Owner", emailLbl:"Email",
       passwordLbl:"Password", continueBtn:"Continue",
       ownerAccess:"Owner Access", close:"Close",
-      messages:"Messages", conversations:"Conversations", noConvos:"No conversations yet.",
-      nothingHere:"Nothing here yet", msgEmptyP:"When someone messages you about a listing, it shows up here.",
-      typeMessage:"Type a message\u2026", asBuyer:"You're the buyer", asSeller:"You're the seller",
-      listingRemoved:"Listing removed", contactSeller:"Contact Seller", cantMessageSelf:"This is your own listing.",
-      listedBy:"Listed by", soldByShop:"Sold by Ninjabrix",
-      contactSellerInstead:"This one is sold directly by its seller \u2014 message them instead.",
-      markSold:"Mark as Sold", markSoldTitle:"Mark as Sold", finalPriceLbl:"Final sale price (SAR)",
-      soldNotice:"Ninjabrix charges 3% of the final sale price. You'll be invoiced for it separately.",
-      confirmSale:"Confirm Sale", salePrice:"Sale price", ninjabrixFee:"Ninjabrix fee (3%)", youKeep:"You keep",
-      enterSalePrice:"Enter the final sale price.", saleRecorded:"Sale recorded.",
-      mySales:"My Sales & Commission", mySalesSub:"Sales you've recorded and the 3% owed on each.",
-      totalSold:"Total sold", commissionOwed:"Commission owed", noSalesYet:"No sales recorded yet.",
-      paid:"Paid", unpaid:"Unpaid", commissionDue:"Commission due",
-      commissionDueBody:"Email support@ninjabrix.com to settle what you owe.",
-      reportListing:"Report this listing", reportPrompt:"What's wrong with this listing?",
-      reportPlaceholder:"Tell us what's wrong", sendReport:"Send report",
-      reportThanks:"Thanks \u2014 we'll review this listing.",
+      browse:"Browse", seasonLbl:"Season", allSeasons:"All seasons", allFigures:"All figures",
+      heroTitle:"Made for Collectors",
+      heroSub:"Genuine figures · Checked before shipping · Delivered anywhere in Saudi Arabia",
+      shopNow:"Shop now", sortBy:"Sort by", anyPrice:"Any", clearAll:"Clear all", done:"Done",
+      figureWord:"figure", figuresWord:"figures",
       supportTitle:"Ninjabrix Support", supportSub:"Usually replies instantly",
-      supportGreeting:"Hi! Ask me about minifigures, shipping, payment, or how ordering works.",
-      send:"Send", searchPh:"Search minifigures, sets, parts…", supportPh:"Type a question…",
+      supportGreeting:"Hi! Ask me about minifigures, shipping, payment, or how ordering works.", searchPh:"Search by name or set number…", supportPh:"Type a question…", send:"Send",
       newUser:"New User", enterEmail:"Enter both your email and password to continue.",
       photosLbl:"Photos (up to 4)", uploading:"Uploading…", checkEmail:"Check your email to confirm your account, then sign in.",
       noPhotos:"No photos", noDescription:"No description provided.", deleteListing:"Delete listing",
@@ -1217,11 +1383,10 @@
       deleteAccountWarn:"Deleting your account removes your listings and profile permanently. This can't be undone.",
       confirmDeleteAccount:"Permanently delete your account and all your listings?",
       typeDeleteToConfirm:"Type DELETE to confirm.", accountDeleted:"Your account has been deleted.",
-      privacyPolicy:"Privacy Policy", termsOfService:"Terms of Service",
-      categoriesTitle:"Categories", listingsTitle:"In Stock",
-      introMain:"Buy from our stock, or from collectors across Saudi Arabia.",
-      introFree:"Free to list", introDirect:"Or meet in person",
-      introFee:"3% only when your item sells", loading:"Loading…",
+      privacyPolicy:"Privacy Policy", termsOfService:"Terms of Service", listingsTitle:"Available Now",
+      introMain:"Ninjago minifigures, delivered across Saudi Arabia.",
+      introFree:"Genuine figures only", introDirect:"Or collect in person",
+      introFee:"RedBox delivery 25 SAR", loading:"Loading…",
       cart:"Cart", addToCart:"Add to Cart",
       signInNeeded:"Sign in to continue",
       signInNeededBody:"You need an account to order. It only takes a moment, and it lets you track your order afterwards.", soldOut:"Sold", inStock:"In stock",
@@ -1242,7 +1407,7 @@
       orderPlaced:"Order placed", orderPlacedBody:"Thanks! I'll contact you shortly with payment details and to confirm delivery.",
       noOrdersYet:"No orders yet.", itemsWord:"items",
       shippingTo:"Redbox —", meetupOrder:"Meetup", shipTo:"Redbox —", meetup:"Meetup",
-      addProduct:"+ Post a Listing", openOrders:"Open Orders", noOpenOrders:"No open orders.",
+      addProduct:"+ Add Figure", openOrders:"Open Orders", noOpenOrders:"No open orders.",
       revenueLbl:"Revenue", productsLbl:"Products for sale", openOrdersLbl:"Open orders", completedLbl:"Completed",
       markPaid:"Mark paid", markPreparing:"Preparing", markShippedShop:"Mark shipped",
       markReady:"Ready for pickup", markComplete:"Complete", cancelOrder:"Cancel",
@@ -1260,16 +1425,14 @@
       newPasswordLbl:"New password", savePassword:"Save Password",
       passwordTooShort:"Password must be at least 6 characters.", passwordUpdated:"Your password has been updated.",
       editListing:"Edit listing", editListingTitle:"Edit Listing",
-      allCities:"All Cities", anyCondition:"Any Condition", anyYear:"Any Year", olderThan2010:"Before 2010",
+      allCities:"All Cities", anyCondition:"Any Condition",
       releaseYearLbl:"Release year", setNumberLbl:"Set number", setNumberPh:"e.g. 71741",
-      releasedIn:"Released", sortYear:"Newest sets first",
       skipToContent:"Skip to listings",
       ownerOnly:"Owner access only.",
     },
     ar: {
-      search:"بحث", browsing:"التصفح: الدمام، المنطقة الشرقية", messages:"الرسائل", signIn:"تسجيل الدخول",
-      createAccount:"إنشاء حساب", signInPrompt:"سجّل الدخول لتطلب وتتابع مشترياتك.", ownerDash:"لوحة المالك", signOut:"تسجيل الخروج", categories:"الأقسام",
-      allListings:"الكل", completeSets:"مجموعات كاملة", mechs:"روبوتات", vehicles:"مركبات وتنانين", figures:"شخصيات",
+      search:"بحث", browsing:"التصفح: الدمام، المنطقة الشرقية", signIn:"تسجيل الدخول",
+      createAccount:"إنشاء حساب", signInPrompt:"سجّل الدخول لتطلب وتتابع مشترياتك.", ownerDash:"لوحة المالك", signOut:"تسجيل الخروج", categories:"الأقسام", completeSets:"مجموعات كاملة", mechs:"روبوتات", vehicles:"مركبات وتنانين", figures:"شخصيات",
       bundles:"باقات", looseParts:"قطع منفصلة", city:"المدينة", condition:"الحالة", condNew:"جديد، مغلق",
       condUsed:"مستعمل، كامل", condParts:"قطع متفرقة", marketTitle:"سوق نينجابركس",
       marketSub:"بيع وشراء مباشر مع الهواة القريبين منك.", sortNew:"الأحدث أولاً", sortLow:"السعر: من الأقل للأعلى",
@@ -1277,32 +1440,19 @@
       emptyP:"لا يوجد شيء هنا بعد. تُضاف شخصيات ومجموعات جديدة باستمرار — عد قريباً.",
       footerLine:"سوق مستقل لهواة قطع نينجا-بريكس. غير مرتبط بأي علامة ألعاب أو إعلامية.",
       postListing2:"إضافة منتج", postSub:"أضف مجموعة إلى متجرك. سيراها المشترون فوراً.",
-      titleLbl:"العنوان", titlePh:"مثال: مجموعة روبوت نينجا كاملة مع الشخصيات", categoryLbl:"القسم", conditionLbl:"الحالة",
+      titleLbl:"العنوان", titlePh:"مثال: لويد — دراغونز رايزنق", conditionLbl:"الحالة",
       priceLbl:"السعر (ريال)", cityLbl:"المدينة", descLbl:"الوصف", descPh:"عدد القطع، الأجزاء الناقصة، حالة العلبة…",
       cancel:"إلغاء", mustSignIn:"الرجاء تسجيل الدخول قبل نشر إعلان.", photoTooBig:"هذه الصورة كبيرة جداً - اختر صورة أقل من 12 ميجابايت.", tooManyListings:"وصلت إلى الحد اليومي للإعلانات. حاول غداً.", fillRequired:"الرجاء تعبئة العنوان والسعر والمدينة.", fullNameLbl:"الاسم الكامل",
       fullNamePh:"اسمك", roleOwner:"مالك", emailLbl:"البريد الإلكتروني",
       passwordLbl:"كلمة المرور", continueBtn:"متابعة",
       ownerAccess:"صلاحية المالك", close:"إغلاق",
-      messages:"الرسائل", conversations:"المحادثات", noConvos:"لا توجد محادثات بعد.",
-      nothingHere:"لا يوجد شيء هنا بعد", msgEmptyP:"عندما يراسلك أحد بخصوص إعلان، ستظهر المحادثة هنا.",
-      typeMessage:"اكتب رسالة\u2026", asBuyer:"أنت المشتري", asSeller:"أنت البائع",
-      listingRemoved:"تم حذف الإعلان", contactSeller:"تواصل مع البائع", cantMessageSelf:"هذا إعلانك أنت.",
-      listedBy:"نشره", soldByShop:"يباع من نينجابركس",
-      contactSellerInstead:"هذه القطعة يبيعها صاحبها مباشرة \u2014 راسله بدلاً من ذلك.",
-      markSold:"تم البيع", markSoldTitle:"تسجيل عملية بيع", finalPriceLbl:"سعر البيع النهائي (ريال)",
-      soldNotice:"تأخذ نينجابركس 3% من سعر البيع النهائي، وستصلك فاتورة بها بشكل منفصل.",
-      confirmSale:"تأكيد البيع", salePrice:"سعر البيع", ninjabrixFee:"عمولة نينجابركس (3%)", youKeep:"تحصل على",
-      enterSalePrice:"أدخل سعر البيع النهائي.", saleRecorded:"تم تسجيل البيع.",
-      mySales:"مبيعاتي والعمولة", mySalesSub:"المبيعات التي سجّلتها والعمولة المستحقة 3% على كل منها.",
-      totalSold:"إجمالي المبيعات", commissionOwed:"العمولة المستحقة", noSalesYet:"لم تسجّل أي مبيعات بعد.",
-      paid:"مدفوعة", unpaid:"غير مدفوعة", commissionDue:"عمولة مستحقة",
-      commissionDueBody:"راسل support@ninjabrix.com لتسوية المبلغ المستحق.",
-      reportListing:"الإبلاغ عن هذا الإعلان", reportPrompt:"ما المشكلة في هذا الإعلان؟",
-      reportPlaceholder:"وضّح لنا ما المشكلة", sendReport:"إرسال البلاغ",
-      reportThanks:"شكراً \u2014 سنراجع هذا الإعلان.",
+      browse:"تصفح", seasonLbl:"الموسم", allSeasons:"كل المواسم", allFigures:"كل الشخصيات",
+      heroTitle:"صُنع لهواة الجمع",
+      heroSub:"شخصيات أصلية · تُفحص قبل الشحن · توصيل لجميع أنحاء السعودية",
+      shopNow:"تسوق الآن", sortBy:"الترتيب", anyPrice:"الكل", clearAll:"مسح الكل", done:"تم",
+      figureWord:"شخصية", figuresWord:"شخصية",
       supportTitle:"دعم نينجابركس", supportSub:"يرد عادة فوراً",
-      supportGreeting:"مرحباً! اسألني عن الشحن أو الدفع أو حالة المجموعات أو كيفية الطلب.",
-      send:"إرسال", searchPh:"ابحث عن شخصيات، مجموعات، قطع…", supportPh:"اكتب سؤالك…",
+      supportGreeting:"مرحباً! اسألني عن الشحن أو الدفع أو حالة المجموعات أو كيفية الطلب.", searchPh:"ابحث بالاسم أو رقم المجموعة…", supportPh:"اكتب سؤالك…", send:"إرسال",
       newUser:"مستخدم جديد", enterEmail:"أدخل بريدك الإلكتروني وكلمة المرور للمتابعة.",
       photosLbl:"الصور (حتى ٤)", uploading:"جاري الرفع…", checkEmail:"تحقق من بريدك الإلكتروني لتأكيد حسابك، ثم سجّل الدخول.",
       noPhotos:"لا توجد صور", noDescription:"لا يوجد وصف.", deleteListing:"حذف الإعلان",
@@ -1311,11 +1461,10 @@
       deleteAccountWarn:"حذف حسابك يزيل إعلاناتك وملفك الشخصي نهائياً. لا يمкан التراجع عن هذا.",
       confirmDeleteAccount:"حذف حسابك وجميع إعلاناتك نهائياً؟",
       typeDeleteToConfirm:"اكتب DELETE للتأكيد.", accountDeleted:"تم حذف حسابك.",
-      privacyPolicy:"سياسة الخصوصية", termsOfService:"شروط الاستخدام",
-      categoriesTitle:"الأقسام", listingsTitle:"المتوفر",
-      introMain:"اشترِ من مخزوننا أو من الهواة في جميع أنحاء السعودية.",
-      introFree:"النشر مجاني", introDirect:"أو استلام شخصي",
-      introFee:"عمولة 3% عند بيع قطعتك فقط", loading:"جاري التحميل…",
+      privacyPolicy:"سياسة الخصوصية", termsOfService:"شروط الاستخدام", listingsTitle:"المتوفر الآن",
+      introMain:"شخصيات نينجاقو، تُوصل إلى جميع أنحاء السعودية.",
+      introFree:"شخصيات أصلية فقط", introDirect:"أو استلام شخصي",
+      introFee:"توصيل ردبوكس 25 ريال", loading:"جاري التحميل…",
       cart:"السلة", addToCart:"أضف إلى السلة",
       signInNeeded:"سجّل الدخول للمتابعة",
       signInNeededBody:"تحتاج إلى حساب لإتمام الطلب. لن يستغرق سوى لحظات، ويتيح لك متابعة طلبك لاحقاً.", soldOut:"تم البيع", inStock:"متوفر",
@@ -1336,7 +1485,7 @@
       orderPlaced:"تم إرسال الطلب", orderPlacedBody:"شكراً لك! سأتواصل معك قريباً بتفاصيل الدفع وتأكيد التوصيل.",
       noOrdersYet:"لا توجد طلبات بعد.", itemsWord:"قطع",
       shippingTo:"ردبوكس —", meetupOrder:"استلام شخصي", shipTo:"ردبوكس —", meetup:"استلام شخصي",
-      addProduct:"+ أضف إعلان", openOrders:"الطلبات المفتوحة", noOpenOrders:"لا توجد طلبات مفتوحة.",
+      addProduct:"+ إضافة شخصية", openOrders:"الطلبات المفتوحة", noOpenOrders:"لا توجد طلبات مفتوحة.",
       revenueLbl:"الإيرادات", productsLbl:"منتجات معروضة", openOrdersLbl:"طلبات مفتوحة", completedLbl:"مكتملة",
       markPaid:"تم الدفع", markPreparing:"قيد التجهيز", markShippedShop:"تم الشحن",
       markReady:"جاهز للاستلام", markComplete:"إكمال", cancelOrder:"إلغاء",
@@ -1354,9 +1503,8 @@
       newPasswordLbl:"كلمة المرور الجديدة", savePassword:"حفظ كلمة المرور",
       passwordTooShort:"يجب ألا تقل كلمة المرور عن 6 أحرف.", passwordUpdated:"تم تحديث كلمة المرور.",
       editListing:"تعديل الإعلان", editListingTitle:"تعديل الإعلان",
-      allCities:"كل المدن", anyCondition:"أي حالة", anyYear:"أي سنة", olderThan2010:"قبل 2010",
+      allCities:"كل المدن", anyCondition:"أي حالة",
       releaseYearLbl:"سنة الإصدار", setNumberLbl:"رقم المجموعة", setNumberPh:"مثال: 71741",
-      releasedIn:"صدرت", sortYear:"الأحدث إصداراً",
       skipToContent:"تخطي إلى الإعلانات",
       ownerOnly:"هذه الصلاحية للمالك فقط.",
     }
@@ -1385,10 +1533,9 @@
   }
 
   // ===== MARKETPLACE (real data from Supabase) =====
-  // Seller names, cached. Shown on every listing (ZATCA identification rule).
-  const sellerNameCache = {};
   let listings = [];
-  const tones = { sets:"var(--brick-blue)", mechs:"var(--brick-red)", vehicles:"var(--brick-green)", figures:"var(--brick-yellow)", bundle:"var(--brick-blue)", parts:"var(--muted)" };
+  const tones = { ninja:"var(--brick-blue)", villains:"var(--brick-red)", dragons:"var(--brick-green)",
+                  rare:"var(--brick-yellow)", bundles:"var(--brick-blue)", accessories:"var(--muted)" };
 
   const grid = document.getElementById('grid');
   const emptyState = document.getElementById('emptyState');
@@ -1408,9 +1555,9 @@
           <div class="l-title">${escapeHtml(l.title)}</div>
           ${l.release_year || l.set_number ? `<div class="l-setinfo">${l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : ''}${l.set_number && l.release_year ? '<span class="ls-sep"></span>' : ''}${l.release_year ? `<span class="ls-year">${Number(l.release_year)}</span>` : ''}</div>` : ''}
           <div class="l-price">${Number(l.price).toLocaleString()} SAR</div>
-          <div class="l-seller">${l.is_shop_item ? t('soldByShop') : (sellerNameCache[l.seller_id] ? escapeHtml(sellerNameCache[l.seller_id]) : '…')}</div>
-          <div class="l-meta"><span>${t(condLabels[l.condition] || l.condition)}</span>${(l.is_shop_item && l.stock <= 0) ? `<span class="sold-tag">${t('soldOut')}</span>` : ''}</div>
-          <button class="contact-btn" ${(l.is_shop_item && l.stock <= 0) ? 'disabled' : ''} data-listing="${l.id}">${l.is_shop_item ? (l.stock > 0 ? t('addToCart') : t('soldOut')) : t('contactSeller')}</button>
+          ${l.season ? `<div class="l-season">${escapeHtml(l.season)}</div>` : ''}
+          <div class="l-meta"><span>${t(condLabels[l.condition] || l.condition)}</span>${l.stock <= 0 ? `<span class="sold-tag">${t('soldOut')}</span>` : ''}</div>
+          <button class="contact-btn" ${l.stock <= 0 ? 'disabled' : ''} data-listing="${l.id}">${l.stock > 0 ? t('addToCart') : t('soldOut')}</button>
         </div>`;
       el.addEventListener('click', (e)=>{
         if(e.target.closest('.contact-btn')) return;
@@ -1422,21 +1569,13 @@
         openDetail(l);
       });
       const btn = el.querySelector('.contact-btn');
-      const mine = currentUser && currentUser.id === l.seller_id;
-      if(mine){
-        btn.textContent = l.is_shop_item ? t('editProduct') : t('markSold');
+      if(currentUser && currentUser.role === 'Owner'){
+        btn.textContent = t('editProduct');
         btn.disabled = false;
-        btn.style.background = l.is_shop_item ? 'var(--ink)' : 'var(--brick-green)';
-        btn.addEventListener('click', (e)=>{
-          e.stopPropagation(); detailListing = l;
-          l.is_shop_item ? editListing() : openSoldPanel(l.id, l.title, l.price);
-        });
-      } else if(l.is_shop_item){
-        if(l.stock > 0) btn.addEventListener('click', (e)=>{ e.stopPropagation(); addToCart(l); });
-      } else {
-        btn.textContent = t('contactSeller');
-        btn.disabled = false;
-        btn.addEventListener('click', (e)=>{ e.stopPropagation(); startConversation(l.id, l.seller_id, l.title); });
+        btn.style.background = 'var(--ink)';
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); detailListing = l; editListing(); });
+      } else if(l.stock > 0){
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); addToCart(l); });
       }
       frag.appendChild(el);
     });
@@ -1455,87 +1594,53 @@
     applyFilters();
   }
 
-  let currentCat = 'all';
-  let currentCity = 'all';
-  let currentCond = 'all';
-  let currentYear = 'all';
+  let currentSort   = 'new';
+  let currentCond   = 'all';
+  let currentSeason = 'all';
 
-  function matchesYear(l){
-    if(currentYear === 'all') return true;
-    const y = l.release_year;
-    if(!y) return false;
-    if(currentYear === 'older') return y < 2010;
-    if(currentYear === '2024')  return y >= 2024;
-    if(currentYear === '2020')  return y >= 2020 && y <= 2023;
-    if(currentYear === '2015')  return y >= 2015 && y <= 2019;
-    if(currentYear === '2010')  return y >= 2010 && y <= 2014;
-    return true;
+  function toggleDrawer(){
+    const d = document.getElementById('drawer');
+    const sc = document.getElementById('drawerScrim');
+    const open = !d.classList.contains('open');
+    d.classList.toggle('open', open);
+    sc.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
   }
 
-  function applyFilters(){
-    const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    let filtered = listings.filter(l=>
-      (currentCat==='all' || l.category===currentCat) &&
-      (currentCity==='all' || l.city===currentCity) &&
-      (currentCond==='all' || l.condition===currentCond) &&
-      matchesYear(l) &&
-      (!q || l.title.toLowerCase().includes(q)
-          || (l.description||'').toLowerCase().includes(q)
-          || (l.set_number||'').toLowerCase().includes(q))
-    );
-
-    const sortEl = document.getElementById('sortSelect');
-    const sort = sortEl ? sortEl.value : 'new';
-    if(sort === 'low') filtered.sort((a,b)=> Number(a.price) - Number(b.price));
-    else if(sort === 'high') filtered.sort((a,b)=> Number(b.price) - Number(a.price));
-    else if(sort === 'year') filtered.sort((a,b)=> (b.release_year || 0) - (a.release_year || 0));
-    else filtered.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
-
-    render(filtered);
+  function setActive(group, el){
+    document.querySelectorAll('.drawer-link['+group+']').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
   }
+
+  function pickSeason(el){
+    currentSeason = el.getAttribute('data-season');
+    setActive('data-season', el);
+    applyFilters();
+    toggleDrawer();
+  }
+  function pickCond(el){
+    currentCond = el.getAttribute('data-cond');
+    setActive('data-cond', el);
+    applyFilters();
+  }
+  function pickSort(el){
+    currentSort = el.getAttribute('data-sort');
+    setActive('data-sort', el);
+    applyFilters();
+  }
+
   function filterListings(){ applyFilters(); }
-  let searchTimer = null;
-  document.getElementById('searchInput').addEventListener('input', ()=>{
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(applyFilters, 220);
-  });
 
-  function selectCategory(cat){
-    currentCat = cat;
-    document.querySelectorAll('.mchip').forEach(i=>i.classList.toggle('active', i.dataset.cat===cat));
-    // Paint the pressed state first, then re-render the grid
-    requestAnimationFrame(()=> applyFilters());
+  function clearBrowse(){
+    currentSort='new'; currentCond='all'; currentSeason='all';
+    document.querySelectorAll('.drawer-link').forEach(b=>b.classList.remove('active'));
+    document.querySelector('.drawer-link[data-season="all"]').classList.add('active');
+    document.querySelector('.drawer-link[data-cond="all"]').classList.add('active');
+    document.querySelector('.drawer-link[data-sort="new"]').classList.add('active');
+    document.getElementById('searchInput').value = '';
+    applyFilters();
   }
-  document.querySelectorAll('.cat-item[data-cat]').forEach(item=>{
-    item.addEventListener('click', ()=>selectCategory(item.dataset.cat));
-  });
-  document.querySelectorAll('.mchip').forEach(chip=>{
-    chip.addEventListener('click', ()=>selectCategory(chip.dataset.cat));
-  });
 
-  document.querySelectorAll('.cat-item[data-city]').forEach(item=>{
-    item.addEventListener('click', ()=>{
-      currentCity = item.dataset.city;
-      document.querySelectorAll('.cat-item[data-city]').forEach(i=>i.classList.toggle('active', i===item));
-      requestAnimationFrame(()=> applyFilters());
-    });
-  });
-
-  document.querySelectorAll('.cat-item[data-year]').forEach(item=>{
-    item.addEventListener('click', ()=>{
-      currentYear = item.dataset.year;
-      document.querySelectorAll('.cat-item[data-year]').forEach(i=>i.classList.toggle('active', i===item));
-      requestAnimationFrame(()=> applyFilters());
-    });
-  });
-
-  document.querySelectorAll('.cat-item[data-cond]').forEach(item=>{
-    item.addEventListener('click', ()=>{
-      currentCond = item.dataset.cond;
-      document.querySelectorAll('.cat-item[data-cond]').forEach(i=>i.classList.toggle('active', i===item));
-      requestAnimationFrame(()=> applyFilters());
-    });
-  });
 
   loadListings();
 
@@ -1613,7 +1718,8 @@
       const fields = {
         title: title,
         description: document.getElementById('sellDesc').value.trim(),
-        category: document.getElementById('sellCategory').value,
+        category: 'figure',
+        season: document.getElementById('sellSeason').value || null,
         condition: document.getElementById('sellCondition').value,
         price: Number(price),
         city: city,
@@ -1753,6 +1859,9 @@
         currentUser.role === 'Owner' ? t('roleOwner') : currentUser.email;
       const isOwner = currentUser.role === 'Owner';
       document.getElementById('amAdminLink').style.display = isOwner ? 'block' : 'none';
+      ['addProductBtn','addFirstBtn'].forEach(id=>{
+        const b=document.getElementById(id); if(b) b.style.display = isOwner ? 'inline-flex' : 'none';
+      });
       // Cards were rendered before the session resolved — redraw them now
       // so the right button shows on the user's own listings.
       if(typeof listings !== 'undefined' && listings.length) applyFilters();
@@ -1761,6 +1870,9 @@
       btn.textContent = t('signIn');
       signedOut.style.display = 'block';
       signedIn.style.display = 'none';
+      ['addProductBtn','addFirstBtn'].forEach(id=>{
+        const b=document.getElementById(id); if(b) b.style.display = 'none';
+      });
 
     }
   }
@@ -1849,7 +1961,6 @@
   // ===== LISTING DETAIL, REPORTING, DELETION =====
   let detailListing = null;
   const condLabels = { new:'condNew', used:'condUsed', parts:'condParts' };
-  const catLabels = { sets:'completeSets', mechs:'mechs', vehicles:'vehicles', figures:'figures', bundle:'bundles', parts:'looseParts' };
 
   function openDetail(l){
     detailListing = l;
@@ -1869,40 +1980,31 @@
 
     document.getElementById('detailPrice').textContent = Number(l.price).toLocaleString() + ' SAR';
     document.getElementById('detailTags').innerHTML =
-      `<span>${t(catLabels[l.category] || l.category)}</span>` +
+      (l.season ? `<span class="tag-strong">${escapeHtml(l.season)}</span>` : '') +
       `<span>${t(condLabels[l.condition] || l.condition)}</span>` +
       `<span>${escapeHtml(l.city)}</span>`;
     document.getElementById('detailDesc').textContent = l.description || t('noDescription');
 
     // Show the date immediately; fill in the seller name when it arrives.
     // Waiting on the network here is what made taps feel unresponsive.
-    document.getElementById('detailSeller').textContent = l.is_shop_item
-      ? (l.stock > 0 ? t('soldByShop') + ' · ' + t('inStock') : t('soldOut'))
-      : t('listedBy') + ' ' + (sellerNameCache[l.seller_id] || '…');
+    document.getElementById('detailSeller').textContent =
+      l.stock > 0 ? t('inStock') : t('soldOut');
 
     const action = document.getElementById('detailAction');
-    const mine = currentUser && currentUser.id === l.seller_id;
+    const mine = currentUser && currentUser.role === 'Owner';
     const inStock = l.stock > 0;
 
     if(mine){
-      action.textContent = l.is_shop_item ? t('editProduct') : t('markSold');
+      action.textContent = t('editProduct');
       action.disabled = false;
-      action.onclick = ()=> l.is_shop_item
-        ? editListing()
-        : (document.getElementById('detailOverlay').classList.remove('open'), openSoldPanel(l.id, l.title, l.price));
-    } else if(l.is_shop_item){
+      action.onclick = ()=> editListing();
+    } else {
       action.textContent = inStock ? t('addToCart') : t('soldOut');
       action.disabled = !inStock;
       action.onclick = inStock
         ? ()=>{ addToCart(l); document.getElementById('detailOverlay').classList.remove('open'); }
         : null;
-    } else {
-      action.textContent = t('contactSeller');
-      action.disabled = false;
-      action.onclick = ()=>{ document.getElementById('detailOverlay').classList.remove('open');
-                             startConversation(l.id, l.seller_id, l.title); };
     }
-    document.getElementById('detailReport').style.display = mine ? 'none' : 'block';
     document.getElementById('detailDelete').style.display = mine ? 'block' : 'none';
     document.getElementById('detailEdit').style.display = mine ? 'block' : 'none';
     document.getElementById('detailOverlay').classList.add('open');
@@ -2003,8 +2105,8 @@
     document.getElementById('sellPrice').value = detailListing.price;
     document.getElementById('sellCity').value = detailListing.city;
     document.getElementById('sellDesc').value = detailListing.description || '';
-    document.getElementById('sellCategory').value = detailListing.category;
     document.getElementById('sellCondition').value = detailListing.condition;
+    document.getElementById('sellSeason').value = detailListing.season || '';
     document.getElementById('sellYear').value = detailListing.release_year || '';
     document.getElementById('sellSetNumber').value = detailListing.set_number || '';
     document.getElementById('sellPanelTitle').textContent = t('editListingTitle');
@@ -2015,7 +2117,7 @@
   function resetSellPanel(){
     editingListingId = null;
     document.getElementById('sellPanelTitle').textContent = t('postListing2');
-    ['sellTitle','sellPrice','sellCity','sellDesc','sellPhotos','sellYear','sellSetNumber'].forEach(id=>{
+    ['sellTitle','sellPrice','sellCity','sellDesc','sellPhotos','sellYear','sellSetNumber','sellSeason'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.value = '';
     });
     document.getElementById('photoPreview').innerHTML = '';
@@ -2097,6 +2199,10 @@
     document.body.style.overflow = '';
   }
 
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+  });
+
   const lightboxEl = document.getElementById('lightbox');
   document.addEventListener('keydown', (e)=>{
     if(!lightboxEl.classList.contains('open')) return;
@@ -2129,7 +2235,6 @@
 
   function addToCart(l){
     if(!currentUser){ promptSignIn(); return; }
-    if(!l.is_shop_item){ toast(t('contactSellerInstead')); return; }
     if(cart.some(c=> c.id === l.id)){ toast(t('alreadyInCart')); return; }
     cart.push({ id:l.id, title:l.title, price:Number(l.price),
                 set_number:l.set_number, release_year:l.release_year,
@@ -2339,191 +2444,6 @@
 
   updateCartCount();
 
-
-  // ===== MESSAGING (buyer <-> third-party seller) =====
-  let activeConversation = null;
-  let messagePoller = null;
-
-  async function startConversation(listingId, sellerId, listingTitle){
-    if(!currentUser){ promptSignIn(); return; }
-    if(currentUser.id === sellerId){ toast(t('cantMessageSelf')); return; }
-
-    const { data: existing } = await db.from('conversations')
-      .select('*').eq('listing_id', listingId).eq('buyer_id', currentUser.id).maybeSingle();
-
-    let convo = existing;
-    if(!convo){
-      const { data, error } = await db.from('conversations')
-        .insert({ listing_id: listingId, buyer_id: currentUser.id, seller_id: sellerId })
-        .select().single();
-      if(error){ alert(error.message); return; }
-      convo = data;
-    }
-    document.getElementById('messagesOverlay').classList.add('open');
-    await loadConversations();
-    openThread(convo.id, listingTitle);
-  }
-
-  async function loadConversations(){
-    const listEl = document.getElementById('threadList');
-    if(!currentUser){ listEl.innerHTML = `<div class="admin-empty" style="padding:16px;">${t('signInPrompt')}</div>`; return; }
-
-    const { data, error } = await db.from('conversations')
-      .select('*, listings(title)').order('created_at', { ascending:false });
-    if(error){ console.error(error.message); return; }
-    if(!data || !data.length){
-      listEl.innerHTML = `<div class="admin-empty" style="padding:16px;">${t('noConvos')}</div>`; return;
-    }
-    listEl.innerHTML = data.map(c=>{
-      const title = c.listings ? c.listings.title : t('listingRemoved');
-      const role  = c.buyer_id === currentUser.id ? t('asBuyer') : t('asSeller');
-      return `<div class="thread-item" data-convo="${c.id}" data-title="${escapeHtml(title)}">
-        <div class="tt">${escapeHtml(title)}</div><div class="tw">${role}</div></div>`;
-    }).join('');
-    listEl.querySelectorAll('.thread-item').forEach(item=>{
-      item.addEventListener('click', ()=> openThread(item.dataset.convo, item.dataset.title));
-    });
-  }
-
-  function backToThreadList(){
-    document.querySelector('.msg-panel').classList.remove('viewing-thread');
-    activeConversation = null;
-    if(messagePoller){ clearInterval(messagePoller); messagePoller = null; }
-  }
-
-  function closeMessages(){
-    document.getElementById('messagesOverlay').classList.remove('open');
-    document.querySelector('.msg-panel').classList.remove('viewing-thread');
-    activeConversation = null;
-    if(messagePoller){ clearInterval(messagePoller); messagePoller = null; }
-  }
-
-  function openMessages(){
-    document.getElementById('accountMenu').classList.remove('open');
-    if(!currentUser){ promptSignIn(); return; }
-    document.querySelector('.msg-panel').classList.remove('viewing-thread');
-    document.getElementById('messagesOverlay').classList.add('open');
-    loadConversations();
-  }
-
-  async function openThread(convoId, title){
-    activeConversation = convoId;
-    document.querySelector('.msg-panel').classList.add('viewing-thread');
-    document.getElementById('threadPlaceholder').style.display = 'none';
-    document.getElementById('threadView').style.display = 'flex';
-    document.getElementById('threadTitle').textContent = title;
-    document.querySelectorAll('.thread-item').forEach(i=>i.classList.toggle('active', i.dataset.convo === convoId));
-    await loadMessages();
-    if(messagePoller) clearInterval(messagePoller);
-    messagePoller = setInterval(()=>{ if(document.visibilityState === 'visible') loadMessages(); }, 5000);
-  }
-
-  async function loadMessages(){
-    if(!activeConversation) return;
-    const { data, error } = await db.from('messages')
-      .select('*').eq('conversation_id', activeConversation).order('created_at', { ascending:true });
-    if(error){ console.error(error.message); return; }
-    const box = document.getElementById('threadMsgs');
-    const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 50;
-    box.innerHTML = (data || []).map(m=>
-      `<div class="tmsg ${m.sender_id === currentUser.id ? 'mine' : 'theirs'}">${escapeHtml(m.body)}</div>`).join('');
-    if(atBottom) box.scrollTop = box.scrollHeight;
-  }
-
-  async function sendMessage(){
-    const input = document.getElementById('threadInput');
-    const text = input.value.trim();
-    if(!text || !activeConversation || !currentUser) return;
-    input.value = '';
-    const { error } = await db.from('messages')
-      .insert({ conversation_id: activeConversation, sender_id: currentUser.id, body: text });
-    if(error){ alert(error.message); return; }
-    await loadMessages();
-  }
-
-  // ===== COMMISSION ON THIRD-PARTY SALES =====
-  let soldListingId = null;
-
-  function openSoldPanel(listingId, title, price){
-    soldListingId = listingId;
-    document.getElementById('soldListingName').textContent = title;
-    document.getElementById('soldPrice').value = price || '';
-    document.getElementById('soldOverlay').classList.add('open');
-    updateCommissionPreview();
-  }
-
-  function updateCommissionPreview(){
-    const price = Number(document.getElementById('soldPrice').value) || 0;
-    const box = document.getElementById('commissionPreview');
-    if(price <= 0){ box.classList.remove('show'); return; }
-    const fee = Math.round(price * 0.03 * 100) / 100;
-    box.innerHTML = `
-      <div class="row"><span>${t('salePrice')}</span><span>${price.toLocaleString()} SAR</span></div>
-      <div class="row"><span>${t('ninjabrixFee')}</span><span>-${fee.toLocaleString()} SAR</span></div>
-      <div class="row total"><span>${t('youKeep')}</span><span>${(price-fee).toLocaleString()} SAR</span></div>`;
-    box.classList.add('show');
-  }
-
-  async function confirmSold(){
-    if(!currentUser || !soldListingId) return;
-    const price = Number(document.getElementById('soldPrice').value);
-    if(!price || price <= 0){ alert(t('enterSalePrice')); return; }
-
-    const { data: convo } = await db.from('conversations')
-      .select('buyer_id').eq('listing_id', soldListingId).limit(1).maybeSingle();
-
-    const { error } = await db.from('sales').insert({
-      listing_id: soldListingId,
-      buyer_id: convo ? convo.buyer_id : currentUser.id,
-      seller_id: currentUser.id,
-      sale_price: price,
-      status: 'pending'
-    });
-    if(error){ alert(error.message); return; }
-    await db.from('listings').update({ status:'sold' }).eq('id', soldListingId);
-    document.getElementById('soldOverlay').classList.remove('open');
-    soldListingId = null;
-    await loadListings();
-    toast(t('saleRecorded'));
-  }
-
-  async function openMySales(){
-    document.getElementById('accountMenu').classList.remove('open');
-    if(!currentUser){ promptSignIn(); return; }
-    document.getElementById('mySalesOverlay').classList.add('open');
-
-    const { data } = await db.from('sales')
-      .select('*, listings(title)').eq('seller_id', currentUser.id)
-      .order('created_at', { ascending:false });
-    const sales = data || [];
-    const total = sales.reduce((s,x)=> s + Number(x.sale_price||0), 0);
-    const owed  = sales.filter(x=> x.status === 'pending')
-                       .reduce((s,x)=> s + Number(x.commission_amount||0), 0);
-    document.getElementById('mySalesTotal').textContent = total.toLocaleString() + ' SAR';
-    document.getElementById('myCommissionOwed').textContent = owed.toLocaleString() + ' SAR';
-    document.getElementById('owedNotice').style.display = owed > 0 ? 'block' : 'none';
-
-    document.getElementById('mySalesList').innerHTML = sales.length ? sales.map(x=>`
-      <div class="sale-row">
-        <div><div style="font-weight:700;">${escapeHtml(x.listings ? x.listings.title : t('listingRemoved'))}</div>
-        <div style="color:var(--muted);font-size:13px;">${Number(x.sale_price).toLocaleString()} SAR · ${x.status === 'paid_out' ? t('paid') : t('unpaid')}</div></div>
-        <div class="sr-com">${Number(x.commission_amount).toLocaleString()} SAR</div>
-      </div>`).join('') : `<div class="admin-empty">${t('noSalesYet')}</div>`;
-  }
-
-  // ===== REPORTING =====
-  async function reportListing(){
-    if(!currentUser){ promptSignIn(); return; }
-    if(!detailListing) return;
-    const reason = await showDialog({ title:t('reportListing'), body:t('reportPrompt'),
-                                      input:{ placeholder:t('reportPlaceholder') }, okLabel:t('sendReport') });
-    if(!reason || !reason.trim()) return;
-    const { error } = await db.from('reports').insert({
-      listing_id: detailListing.id, reporter_id: currentUser.id, reason: reason.trim() });
-    if(error){ alert(error.message); return; }
-    toast(t('reportThanks'));
-    document.getElementById('detailOverlay').classList.remove('open');
-  }
 
   // ===== SUPPORT WIDGET =====
   function toggleSupport(){ document.getElementById('supportWindow').classList.toggle('open'); }
