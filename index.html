@@ -1726,7 +1726,8 @@
       .from('listings')
       .select('*')
       .in('status', ['active','reserved','sold'])
-      .order('created_at', { ascending:false });
+      .order('display_order', { ascending:true, nullsFirst:false })
+      .limit(2000);
     if(error){ console.error('Failed to load listings:', error.message); return; }
     listings = data || [];
 
