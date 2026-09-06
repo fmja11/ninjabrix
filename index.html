@@ -1253,8 +1253,6 @@
       </select></div>
     <div class="field"><label data-i18n="releaseYearLbl">Release year</label>
         <input type="number" id="sellYear" min="1950" max="2030" placeholder="e.g. 2019"></div>
-      <div class="field"><label data-i18n="setNumberLbl">Set number</label>
-        <input type="text" id="sellSetNumber" data-i18n-ph="setNumberPh"></div>
     </div>
     <div class="field"><label data-i18n="descLbl">Description</label><textarea id="sellDesc" data-i18n-ph="descPh"></textarea></div>
     <div class="field">
@@ -1561,7 +1559,7 @@
       passwordTooShort:"Password must be at least 6 characters.", passwordUpdated:"Your password has been updated.",
       editListing:"Edit listing", editListingTitle:"Edit Listing",
       allCities:"All Cities", anyCondition:"Any Condition",
-      releaseYearLbl:"Release year", setNumberLbl:"Set number", setNumberPh:"e.g. 71741",
+      releaseYearLbl:"Release year",
       skipToContent:"Skip to listings",
       ownerOnly:"Owner access only.",
     },
@@ -1639,7 +1637,7 @@
       passwordTooShort:"يجب ألا تقل كلمة المرور عن 6 أحرف.", passwordUpdated:"تم تحديث كلمة المرور.",
       editListing:"تعديل الإعلان", editListingTitle:"تعديل الإعلان",
       allCities:"كل المدن", anyCondition:"أي حالة",
-      releaseYearLbl:"سنة الإصدار", setNumberLbl:"رقم المجموعة", setNumberPh:"مثال: 71741",
+      releaseYearLbl:"سنة الإصدار",
       skipToContent:"تخطي إلى الإعلانات",
       ownerOnly:"هذه الصلاحية للمالك فقط.",
     }
@@ -1688,7 +1686,7 @@
         </div>
         <div class="l-body">
           <div class="l-title">${escapeHtml(l.title)}</div>
-          ${l.release_year || l.set_number ? `<div class="l-setinfo">${l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : ''}${l.set_number && l.release_year ? '<span class="ls-sep"></span>' : ''}${l.release_year ? `<span class="ls-year">${Number(l.release_year)}</span>` : ''}</div>` : ''}
+          ${l.release_year ? `<div class="l-setinfo"><span class="ls-year">${Number(l.release_year)}</span></div>` : ''}
           <div class="l-price">${l.stock > 0 ? Number(l.price).toLocaleString() + ' SAR' : t('soldOut')}</div>
           ${l.suit ? `<div class="l-season">${escapeHtml(l.suit)}</div>` : (l.season ? `<div class="l-season">${escapeHtml(l.season)}</div>` : '')}
           <div class="l-meta"><span>${t(condLabels[l.condition] || l.condition)}</span>${l.stock <= 0 ? `<span class="sold-tag">${t('soldOut')}</span>` : ''}</div>
@@ -1788,7 +1786,6 @@
       (currentSuit === 'all' || l.suit === currentSuit) &&
       (!q || l.title.toLowerCase().includes(q)
           || (l.description||'').toLowerCase().includes(q)
-          || (l.set_number||'').toLowerCase().includes(q)
           || (l.season||'').toLowerCase().includes(q)
           || (l.suit||'').toLowerCase().includes(q))
     );
@@ -1914,7 +1911,6 @@
         price: Number(price),
         city: city,
         release_year: yearVal ? Number(yearVal) : null,
-        set_number: document.getElementById('sellSetNumber').value.trim() || null
       };
 
       let error;
@@ -2162,11 +2158,8 @@
 
     document.getElementById('detailTitle').textContent = l.title;
     const setLine = document.getElementById('detailSetLine');
-    setLine.innerHTML =
-      (l.set_number ? `<span>#${escapeHtml(l.set_number)}</span>` : '') +
-      (l.set_number && l.release_year ? '<span class="ls-sep"></span>' : '') +
-      (l.release_year ? `<span class="ls-year">${Number(l.release_year)}</span>` : '');
-    setLine.style.display = (l.set_number || l.release_year) ? 'inline-flex' : 'none';
+    setLine.innerHTML = l.release_year ? `<span class="ls-year">${Number(l.release_year)}</span>` : '';
+    setLine.style.display = l.release_year ? 'inline-flex' : 'none';
 
     document.getElementById('detailPrice').textContent = Number(l.price).toLocaleString() + ' SAR';
     document.getElementById('detailTags').innerHTML =
@@ -2300,7 +2293,6 @@
     document.getElementById('sellSeason').value = detailListing.season || '';
     document.getElementById('sellSuit').value = detailListing.suit || '';
     document.getElementById('sellYear').value = detailListing.release_year || '';
-    document.getElementById('sellSetNumber').value = detailListing.set_number || '';
     document.getElementById('sellPanelTitle').textContent = t('editListingTitle');
     document.getElementById('detailOverlay').classList.remove('open');
     document.getElementById('sellOverlay').classList.add('open');
@@ -2309,7 +2301,7 @@
   function resetSellPanel(){
     editingListingId = null;
     document.getElementById('sellPanelTitle').textContent = t('postListing2');
-    ['sellTitle','sellPrice','sellCity','sellDesc','sellPhotos','sellYear','sellSetNumber','sellSeason','sellSuit'].forEach(id=>{
+    ['sellTitle','sellPrice','sellCity','sellDesc','sellPhotos','sellYear','sellSeason','sellSuit'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.value = '';
     });
     document.getElementById('photoPreview').innerHTML = '';
@@ -2429,7 +2421,7 @@
     if(!currentUser){ promptSignIn(); return; }
     if(cart.some(c=> c.id === l.id)){ toast(t('alreadyInCart')); return; }
     cart.push({ id:l.id, title:l.title, price:Number(l.price),
-                set_number:l.set_number, release_year:l.release_year,
+                release_year:l.release_year,
                 photo:(l.photo_urls && l.photo_urls[0]) || null });
     updateCartCount();
     toast(t('addedToCart'));
@@ -2467,7 +2459,7 @@
         <div class="cart-thumb">${c.photo ? `<img src="${escapeHtml(c.photo)}" alt="">` : ''}</div>
         <div class="cart-info">
           <div class="cart-title">${escapeHtml(c.title)}</div>
-          ${c.set_number || c.release_year ? `<div class="cart-set">${c.set_number ? '#'+escapeHtml(c.set_number) : ''}${c.set_number && c.release_year ? ' · ' : ''}${Number(c.release_year) || ''}</div>` : ''}
+          ${c.release_year ? `<div class="cart-set">${Number(c.release_year)}</div>` : ''}
         </div>
         <div class="cart-price">${c.price.toLocaleString()} SAR</div>
         <button class="cart-remove" onclick="removeFromCart('${c.id}')" aria-label="Remove">&times;</button>
