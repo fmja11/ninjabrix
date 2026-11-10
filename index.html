@@ -24,6 +24,7 @@
 <noscript><link rel="stylesheet"
   href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Archivo+Black&family=Cairo:wght@400;700&display=swap"></noscript>
 <style>
+  :root{ color-scheme:light; }
   /* ============================================================
      NINJABRIX — design tokens
      Palette taken from actual brick colours, not a theme.
@@ -541,6 +542,8 @@
   }
   .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--brick-blue); }
   .field textarea{ resize:vertical; min-height:90px; }
+  .field input, .field select, .field textarea{ background-color:var(--surface); -webkit-text-fill-color:var(--ink); opacity:1; }
+  .field input::placeholder, .field textarea::placeholder{ color:var(--muted); opacity:1; -webkit-text-fill-color:var(--muted); }
   .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .redbox-find{ display:inline-block; margin-top:9px; font-weight:700;
     color:var(--brick-blue-d); text-decoration:underline; }
@@ -553,7 +556,7 @@
   .btn-submit:hover{ background:var(--brick-blue-d); }
   .btn-submit:disabled{ background:var(--muted); cursor:not-allowed; }
   .btn-cancel{ display:inline-flex; align-items:center; justify-content:center;
-    background:transparent; border:2px solid var(--line); color:var(--ink-2);
+    background:var(--surface); border:2px solid var(--line); color:var(--ink-2);
     height:var(--tap); padding:0 22px; border-radius:var(--radius); font-weight:700; line-height:1; }
   .btn-danger{ display:inline-flex; align-items:center; justify-content:center;
     background:var(--brick-red); color:#fff; border:0; height:var(--tap);
@@ -569,7 +572,7 @@
     border-bottom:3px solid transparent; margin-bottom:-2px; cursor:pointer; }
   .auth-tab.active{ color:var(--ink); border-bottom-color:var(--brick-blue); }
   .role-pick{ display:flex; gap:10px; margin-bottom:16px; }
-  .role-opt{ flex:1; text-align:center; padding:13px; border:2px solid var(--line);
+  .role-opt{ flex:1; text-align:center; padding:13px; border:2px solid var(--line); background:var(--surface);
     border-radius:var(--radius); font-weight:700; color:var(--muted); cursor:pointer; }
   .role-opt.active{ border-color:var(--brick-blue); background:#EAF2FE; color:var(--ink); }
   .demo-note{ font-size:14px; color:var(--muted); margin-top:14px; text-align:center; }
