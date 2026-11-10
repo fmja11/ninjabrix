@@ -653,6 +653,17 @@
   .contact-btn:disabled{ background:var(--line); color:var(--muted); cursor:not-allowed; }
 
   /* ===== TOAST ===== */
+  .oc-sub{ font-size:13.5px; color:var(--muted); margin-top:2px; }
+  .oc-items{ list-style:none; margin:12px 0 4px; padding:0; }
+  .oc-items li{ display:flex; justify-content:space-between; gap:12px; padding:7px 0;
+    border-bottom:1px dashed var(--line); font-size:15px; }
+  .oc-detail{ margin:10px 0 4px; }
+  .oc-row{ display:flex; gap:12px; padding:5px 0; font-size:14.5px; }
+  .oc-k{ flex:0 0 118px; color:var(--muted); font-weight:700; }
+  .oc-v{ flex:1; word-break:break-word; }
+  .oc-v a{ color:var(--brick-blue-d); font-weight:600; }
+  .oc-note-box{ margin:10px 0 6px; padding:12px 14px; background:#FFF6DD;
+    border:1px solid #F2D27A; border-radius:8px; font-size:15px; line-height:1.55; }
   .toast{ position:fixed; left:50%; bottom:26px; transform:translate(-50%,20px);
     background:var(--ink); color:#fff; padding:14px 24px; border-radius:10px;
     font-weight:700; z-index:300; opacity:0; pointer-events:none;
@@ -1507,7 +1518,7 @@
       fullNamePh:"Your name", roleOwner:"Owner", emailLbl:"Email",
       passwordLbl:"Password", continueBtn:"Continue",
       ownerAccess:"Owner Access", close:"Close",
-      browse:"Browse", stockLbl:"Availability", inStockOpt:"In stock", outOfStockOpt:"Out of stock", suitLbl:"Suit / Gi", allSuits:"All suits", availability:"Availability", showAll:"Show all", inStockOnly:"In stock only", seasonLbl:"Season", allSeasons:"All seasons", allFigures:"All figures",
+      browse:"Browse", oiContact:"Contact", oiDelivery:"Delivery", oiStation:"RedBox station", oiMeetup:"Meetup area / time", oiPayment:"Payment", oiNote:"Buyer\u2019s message", oiNotGiven:"Not specified", stockLbl:"Availability", inStockOpt:"In stock", outOfStockOpt:"Out of stock", suitLbl:"Suit / Gi", allSuits:"All suits", availability:"Availability", showAll:"Show all", inStockOnly:"In stock only", seasonLbl:"Season", allSeasons:"All seasons", allFigures:"All figures",
       heroTitle:"Made for Collectors",
       heroSub:"Genuine figures · Checked before shipping · Delivered anywhere in Saudi Arabia",
       shopNow:"Shop now", sortBy:"Sort by", anyPrice:"Any", clearAll:"Clear all", done:"Done",
@@ -1585,7 +1596,7 @@
       fullNamePh:"اسمك", roleOwner:"مالك", emailLbl:"البريد الإلكتروني",
       passwordLbl:"كلمة المرور", continueBtn:"متابعة",
       ownerAccess:"صلاحية المالك", close:"إغلاق",
-      browse:"تصفح", stockLbl:"التوفر", inStockOpt:"متوفر", outOfStockOpt:"غير متوفر", suitLbl:"الزي", allSuits:"كل الأزياء", availability:"التوفر", showAll:"عرض الكل", inStockOnly:"المتوفر فقط", seasonLbl:"الموسم", allSeasons:"كل المواسم", allFigures:"كل الشخصيات",
+      browse:"تصفح", oiContact:"التواصل", oiDelivery:"التوصيل", oiStation:"محطة ردبوكس", oiMeetup:"مكان / وقت اللقاء", oiPayment:"الدفع", oiNote:"رسالة المشتري", oiNotGiven:"غير محدد", stockLbl:"التوفر", inStockOpt:"متوفر", outOfStockOpt:"غير متوفر", suitLbl:"الزي", allSuits:"كل الأزياء", availability:"التوفر", showAll:"عرض الكل", inStockOnly:"المتوفر فقط", seasonLbl:"الموسم", allSeasons:"كل المواسم", allFigures:"كل الشخصيات",
       heroTitle:"صُنع لهواة الجمع",
       heroSub:"شخصيات أصلية · تُفحص قبل الشحن · توصيل لجميع أنحاء السعودية",
       shopNow:"تسوق الآن", sortBy:"الترتيب", anyPrice:"الكل", clearAll:"مسح الكل", done:"تم",
@@ -2076,13 +2087,20 @@
   refreshCurrentUser();
 
   async function loadAdminData(){
-    const [prodRes, ordersRes, revenueRes] = await Promise.all([
+    // Orders are read straight from shop_orders (with their items) so the
+    // dashboard shows everything the buyer entered: meetup note, message,
+    // email, station, payment method and exactly which figures they chose.
+    const [prodRes, openRes, revenueRes] = await Promise.all([
       db.from('listings').select('id', { count:'exact', head:true }).eq('status','active'),
-      db.from('orders_to_action').select('*'),
+      db.from('shop_orders')
+        .select('*, shop_order_items(title, unit_price, quantity)')
+        .not('status','in','(completed,cancelled)')
+        .order('created_at', { ascending:false }),
       db.from('shop_orders').select('order_total, status')
     ]);
 
-    const orders = ordersRes.data || [];
+    if(openRes.error){ console.error(openRes.error.message); }
+    const orders = openRes.data || [];
     const allOrders = revenueRes.data || [];
     const revenue = allOrders
       .filter(o=> ['paid','preparing','shipped','ready_for_pickup','completed'].includes(o.status))
@@ -2093,25 +2111,50 @@
     document.getElementById('statSales').textContent     = allOrders.filter(o=> o.status === 'completed').length;
     document.getElementById('statCommission').textContent = revenue.toLocaleString() + ' SAR';
 
+    const row = (label, value) => value
+      ? `<div class="oc-row"><span class="oc-k">${label}</span><span class="oc-v">${value}</span></div>` : '';
+
     const el = document.getElementById('adminOrders');
-    el.innerHTML = orders.length ? orders.map(o=>`
+    el.innerHTML = orders.length ? orders.map(o=>{
+      const items = (o.shop_order_items || []).map(i=>
+        `<li>${escapeHtml(i.title)} <b>${Number(i.unit_price).toLocaleString()} SAR</b></li>`).join('');
+      const isShip = o.delivery_method === 'shipping';
+      const payLbl = o.payment_method === 'cash' ? t('payCash') : t('payTransfer');
+
+      return `
       <div class="order-card">
         <div class="oc-top">
           <div>
             <div class="oc-title">${escapeHtml(o.contact_name)}</div>
-            <div style="font-size:14px;color:var(--muted);">
-              ${o.item_count} ${t('itemsWord')} ·
-              ${o.delivery_method === 'shipping' ? t('shipTo') + ' ' + escapeHtml(o.address_line || '') + ', ' + escapeHtml(o.city || '') : t('meetup')} ·
-              ${escapeHtml(o.contact_phone)}
-            </div>
+            <div class="oc-sub">${new Date(o.created_at).toLocaleString()}</div>
           </div>
           <div class="oc-amt">${Number(o.order_total).toLocaleString()} SAR</div>
         </div>
+
         <div class="oc-status ${o.status === 'awaiting_payment' ? 'held' : 'shipped'}">${t('st_'+o.status) || o.status}</div>
+
+        <ul class="oc-items">${items}</ul>
+
+        <div class="oc-detail">
+          ${row(t('oiContact'),
+              `<a href="tel:${escapeHtml(o.contact_phone)}">${escapeHtml(o.contact_phone)}</a>` +
+              (o.contact_email ? ` · <a href="mailto:${escapeHtml(o.contact_email)}">${escapeHtml(o.contact_email)}</a>` : ''))}
+          ${row(t('oiDelivery'), isShip ? t('deliveryShip') : t('deliveryMeet'))}
+          ${isShip ? row(t('oiStation'), escapeHtml(o.address_line || '—')) : ''}
+          ${isShip ? row(t('cityLbl'), escapeHtml(o.city || '—')) : ''}
+          ${!isShip ? row(t('oiMeetup'), escapeHtml(o.meetup_note || t('oiNotGiven'))) : ''}
+          ${row(t('oiPayment'), escapeHtml(payLbl))}
+          ${o.items_total != null ? row(t('itemsTotal'), Number(o.items_total).toLocaleString() + ' SAR') : ''}
+          ${Number(o.shipping_fee) > 0 ? row(t('redboxFee'), Number(o.shipping_fee).toLocaleString() + ' SAR') : ''}
+        </div>
+
+        ${o.buyer_note ? `<div class="oc-note-box"><b>${t('oiNote')}</b><br>${escapeHtml(o.buyer_note)}</div>` : ''}
+
         <div class="oc-actions">
           ${adminNextActions(o)}
         </div>
-      </div>`).join('') : `<div class="admin-empty">${t('noOpenOrders')}</div>`;
+      </div>`;
+    }).join('') : `<div class="admin-empty">${t('noOpenOrders')}</div>`;
   }
 
   function adminNextActions(o){
